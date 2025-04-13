@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+  <meta charset="UTF-8" />
+  <title>Classic Star Wars Intro</title>
+  <!-- Koppla till CSS -->
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <!-- Stjärnhimmel -->
+  <div class="stars"></div>
+  
+  <!-- "A long time ago..." (blå text) -->
+  <div id="intro-text">
+    A long time ago in a galaxy far, far away...
+  </div>
+
+  <!-- Star Wars-logga -->
+  <div id="logo">
+    <img src="static/images/starwars_logo.png" alt="Star Wars Logo" />
+  </div>
+
+  <!-- Crawl-container (perspektiv) -->
+  <div class="star-wars" id="crawl-container">
+    <div class="crawl" id="crawl-text">
+      <p>Episode XX</p>
+      <p><strong>THE RETURN OF THE JESP</strong></p>
+      <p>
+        It is a period of conceptual war. Rebel coders, striking
+        from a hidden desk, have won their first victory against
+        the evil corporate backlog.
+      </p>
+      <p>
+        During the battle, rebel code reviews managed to steal
+        hidden secrets to the Empire's ultimate weapon...
+      </p>
+      <p>
+        ...and so on – du väljer texten själv! Kopiera helt från
+        originalet om du vill, eller skriv egen.
+      </p>
+      <p>
+        May the JESP be with you...
+      </p>
+    </div>
+  </div>
+
+  <!-- Planet som visas efter crawlen -->
+  <img id="planet-effect" src="static/images/planet.png" alt="Planet" />
+
+  <!-- Ljud (valfritt) -->
+  <audio id="bgMusic" src="static/sounds/starwars_theme.mp3" preload="auto"></audio>
+
+  <!-- Koppla till JS -->
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,142 @@
+/*****************************************************
+ * BAS & BAKGRUND
+ *****************************************************/
+body {
+  margin: 0;
+  padding: 0;
+  background: black;
+  overflow: hidden;
+  font-family: "Courier New", monospace;
+  color: #fff;
+}
+
+/* Stjärnhimmel */
+.stars {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: black url("static/images/stars.jpg") repeat;
+  background-size: cover;
+  z-index: -999;
+}
+
+/*****************************************************
+ * INTRO-TEXT (BLÅ)
+ * "A long time ago..." – fade in/out
+ *****************************************************/
+#intro-text {
+  position: absolute;
+  top: 40%;
+  width: 100%;
+  text-align: center;
+  color: #4ee;
+  font-size: 1.8em;
+  opacity: 0;
+  animation: introFade 5s ease forwards;
+}
+@keyframes introFade {
+  0%   { opacity: 0; }
+  15%  { opacity: 1; }  /* Fada in tills ca 0.75s */
+  80%  { opacity: 1; }  /* Håll texten synlig */
+  100% { opacity: 0; }  /* Fada ut vid 5s */
+}
+
+/*****************************************************
+ * STAR WARS-LOGO
+ * Stor → åker bort i djupet
+ *****************************************************/
+#logo {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  text-align: center;
+  pointer-events: none; /* Inte klickbar */
+  opacity: 0;
+  display: none; /* Startar "off" – visas via JS */
+}
+#logo img {
+  width: 40%;
+  animation: logoFly 4s ease forwards;
+}
+@keyframes logoFly {
+  /* Börja "stort och nära", gå till litet och långt bort */
+  0%   { transform: scale(3) translateY(0); opacity: 1; }
+  80%  { opacity: 1; }
+  100% { transform: scale(0.05) translateY(-1500px); opacity: 0; }
+}
+
+/*****************************************************
+ * CRAWL-SEKTION
+ * 3D-perspektiv, text rullar upp
+ *****************************************************/
+.star-wars {
+  display: none; /* visas via JS efter logon */
+  position: relative;
+  height: 100vh;
+  overflow: hidden;
+  perspective: 400px;
+}
+.crawl {
+  position: absolute;
+  bottom: -100%;
+  width: 75%;
+  left: 12.5%;
+  transform-origin: 50% 100%;
+  text-align: justify;
+  font-size: 130%;
+  line-height: 1.6;
+  color: #ffe81f;
+  text-shadow: 0 0 5px #ffe81f, 0 0 10px #ffe81f;
+  animation: crawl 20s linear forwards;
+}
+@keyframes crawl {
+  0%   { bottom: -100%; transform: rotateX(25deg); }
+  100% { bottom: 400%;  transform: rotateX(25deg); opacity: 0; }
+}
+
+/*****************************************************
+ * PLANET
+ * "Kamerapanorering" – planet syns nedtill
+ *****************************************************/
+#planet-effect {
+  display: none;
+  position: fixed;
+  bottom: -40%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  opacity: 0;
+  z-index: -2;
+  filter: drop-shadow(0 0 10px #ffe81f);
+  animation: planetUp 4s ease-out forwards;
+}
+@keyframes planetUp {
+  0%   { transform: translate(-50%, 150%); opacity: 0; }
+  100% { transform: translate(-50%, 0);    opacity: 1; }
+}
+
+/*****************************************************
+ * LJUDKONTROLL (om du vill)
+ *****************************************************/
+audio {
+  display: none;
+}
+
+/*****************************************************
+ * RESPONSIV ANPASSNING
+ *****************************************************/
+@media (max-width: 768px) {
+  #intro-text {
+    font-size: 1.2em;
+  }
+  .crawl {
+    width: 80%;
+    left: 10%;
+    font-size: 1em;
+  }
+  #logo img {
+    width: 60%;
+  }
+}
