@@ -1,20 +1,43 @@
-If(
-    IsBlank(varSelectedLot);
-    Notify("Select a lot first."; NotificationType.Error);
+Ja — vi gör ett sista rent försök, men nu helt enligt ditt bekräftade schema och English Power Fx syntax.
 
+Viktigt: klistra in detta i formula bar för OnSelect, inte i YAML/code view.
+Och för din miljö gäller nu:
+	•	komma , i funktioner
+	•	komma , i { ... } records
+	•	semikolon ; mellan flera actions
+
+Alltså:
+
+Patch(
+    CM_Lots,
+    varSelectedLot,
+    {
+        IsActive: false,
+        ChangedAt: Now()
+    }
+);
+Refresh(CM_Lots)
+
+btnConfirmDelete.OnSelect
+
+Klistra in exakt detta:
+
+If(
+    IsBlank(varSelectedLot),
+    Notify("Select a lot first.", NotificationType.Error),
     Patch(
-        CM_Lots;
-        varSelectedLot;
+        CM_Lots,
+        varSelectedLot,
         {
             IsActive: false,
             ChangedAt: Now(),
             ChangedByName: User().FullName,
             ChangedByEmail: User().Email
         }
-    );;
+    );
     Patch(
-        CM_Transactions;
-        Defaults(CM_Transactions);
+        CM_Transactions,
+        Defaults(CM_Transactions),
         {
             Title: varCurrentMaterial.PN,
             PN: varCurrentMaterial.PN,
@@ -29,418 +52,143 @@ If(
             ChangedByName: User().FullName,
             ChangedByEmail: User().Email,
             Reason: txtDeleteReason.Text,
-            Source: Coalesce(varSource; "Manual")
+            Source: Coalesce(varSource, "Manual")
         }
-    );;
-    Refresh(CM_Lots);;
-    Set(varSelectedLot; Blank());;
-    Reset(txtDeleteReason);;
-    UpdateContext({ ctxShowDelete: false });;
-    Notify("Lot deleted."; NotificationType.Success)
+    );
+    Refresh(CM_Lots);
+    Set(varSelectedLot, Blank());
+    Reset(txtDeleteReason);
+    UpdateContext({ ctxShowDelete: false });
+    Notify("Lot deleted.", NotificationType.Success)
 )
 
+btnSaveLot.OnSelect
 
+Klistra in exakt detta:
 
+If(
+    IsBlank(Trim(txtLotNumber.Text)) || IsBlank(dpExpirationDate.SelectedDate) || !IsNumeric(txtQty.Text) || Value(txtQty.Text) <= 0,
+    Notify("Enter Lot Number, Expiration Date, and Qty greater than 0.", NotificationType.Error),
 
-btnSaveOnSelect
-
-
-With(
-    {
-        pnValue: varCurrentMaterial.PN,
-        lotValue: Upper(Trim(txtLotNumber.Text)),
-        qtyValue: Value(txtQty.Text),
-        expValue: dpExpirationDate.SelectedDate,
-        lotKeyValue: varCurrentMaterial.PN & "|" & Upper(Trim(txtLotNumber.Text)),
-        sourceValue: Coalesce(varSource; "Manual"),
-        currentLotKey: Coalesce(varSelectedLot.LotKey; "")
-    };
     If(
-        IsBlank(lotValue) || IsBlank(expValue) || !IsNumeric(txtQty.Text) || qtyValue <= 0;
-        Notify("Enter Lot Number, Expiration Date, and Qty greater than 0."; NotificationType.Error);
+        ctxEditMode = "Add",
 
         If(
-            ctxEditMode = "Add";
+            !IsBlank(
+                LookUp(
+                    CM_Lots,
+                    LotKey = varCurrentMaterial.PN & "|" & Upper(Trim(txtLotNumber.Text)) && IsActive = true
+                )
+            ),
+            Notify("This Lot Number already exists for this PN.", NotificationType.Error),
 
-            If(
-                !IsBlank(
-                    LookUp(
-                        CM_Lots;
-                        LotKey = lotKeyValue && IsActive = true
-                    )
-                );
-                Notify("This Lot Number already exists for this PN."; NotificationType.Error);
-
-                Set(
-                    saveResult;
-                    Patch(
-                        CM_Lots;
-                        Defaults(CM_Lots);
-                        {
-                            Title: pnValue,
-                            PN: pnValue,
-                            LotNumber: lotValue,
-                            LotKey: lotKeyValue,
-                            ExpirationDate: expValue,
-                            Qty: qtyValue,
-                            IsActive: true,
-                            ChangedAt: Now(),
-                            ChangedByName: User().FullName,
-                            ChangedByEmail: User().Email
-                        }
-                    )
-                );;
+            Set(
+                varSavedLot,
                 Patch(
-                    CM_Transactions;
-                    Defaults(CM_Transactions);
+                    CM_Lots,
+                    Defaults(CM_Lots),
                     {
-                        Title: pnValue,
-                        PN: pnValue,
-                        LotNumber: lotValue,
-                        LotKey: lotKeyValue,
-                        ActionType: "Add",
-                        OldQty: Blank(),
-                        NewQty: qtyValue,
-                        OldExpirationDate: Blank(),
-                        NewExpirationDate: expValue,
+                        Title: varCurrentMaterial.PN,
+                        PN: varCurrentMaterial.PN,
+                        LotNumber: Upper(Trim(txtLotNumber.Text)),
+                        LotKey: varCurrentMaterial.PN & "|" & Upper(Trim(txtLotNumber.Text)),
+                        ExpirationDate: dpExpirationDate.SelectedDate,
+                        Qty: Value(txtQty.Text),
+                        IsActive: true,
                         ChangedAt: Now(),
                         ChangedByName: User().FullName,
-                        ChangedByEmail: User().Email,
-                        Reason: Blank(),
-                        Source: sourceValue
+                        ChangedByEmail: User().Email
                     }
-                );;
-                Refresh(CM_Lots);;
-                Set(varSelectedLot; saveResult);;
-                Reset(txtLotNumber);;
-                Reset(dpExpirationDate);;
-                Reset(txtQty);;
-                UpdateContext({ ctxShowEdit: false, ctxEditMode: Blank() });;
-                Notify("Lot added."; NotificationType.Success)
+                )
             );
+            Patch(
+                CM_Transactions,
+                Defaults(CM_Transactions),
+                {
+                    Title: varCurrentMaterial.PN,
+                    PN: varCurrentMaterial.PN,
+                    LotNumber: Upper(Trim(txtLotNumber.Text)),
+                    LotKey: varCurrentMaterial.PN & "|" & Upper(Trim(txtLotNumber.Text)),
+                    ActionType: "Add",
+                    OldQty: Blank(),
+                    NewQty: Value(txtQty.Text),
+                    OldExpirationDate: Blank(),
+                    NewExpirationDate: dpExpirationDate.SelectedDate,
+                    ChangedAt: Now(),
+                    ChangedByName: User().FullName,
+                    ChangedByEmail: User().Email,
+                    Reason: Blank(),
+                    Source: Coalesce(varSource, "Manual")
+                }
+            );
+            Refresh(CM_Lots);
+            Set(varSelectedLot, varSavedLot);
+            Reset(txtLotNumber);
+            Reset(dpExpirationDate);
+            Reset(txtQty);
+            UpdateContext({ ctxShowEdit: false, ctxEditMode: Blank() });
+            Notify("Lot added.", NotificationType.Success)
+        ),
 
-            If(
-                currentLotKey <> lotKeyValue &&
-                !IsBlank(
-                    LookUp(
-                        CM_Lots;
-                        LotKey = lotKeyValue && IsActive = true
-                    )
-                );
-                Notify("This Lot Number already exists for this PN."; NotificationType.Error);
+        If(
+            Coalesce(varSelectedLot.LotKey, "") <> varCurrentMaterial.PN & "|" & Upper(Trim(txtLotNumber.Text)) &&
+            !IsBlank(
+                LookUp(
+                    CM_Lots,
+                    LotKey = varCurrentMaterial.PN & "|" & Upper(Trim(txtLotNumber.Text)) && IsActive = true
+                )
+            ),
+            Notify("This Lot Number already exists for this PN.", NotificationType.Error),
 
-                Set(
-                    saveResult;
-                    Patch(
-                        CM_Lots;
-                        varSelectedLot;
-                        {
-                            Title: pnValue,
-                            PN: pnValue,
-                            LotNumber: lotValue,
-                            LotKey: lotKeyValue,
-                            ExpirationDate: expValue,
-                            Qty: qtyValue,
-                            ChangedAt: Now(),
-                            ChangedByName: User().FullName,
-                            ChangedByEmail: User().Email
-                        }
-                    )
-                );;
+            Set(varOldQty, varSelectedLot.Qty);
+            Set(varOldExp, varSelectedLot.ExpirationDate);
+            Set(
+                varSavedLot,
                 Patch(
-                    CM_Transactions;
-                    Defaults(CM_Transactions);
+                    CM_Lots,
+                    varSelectedLot,
                     {
-                        Title: pnValue,
-                        PN: pnValue,
-                        LotNumber: lotValue,
-                        LotKey: lotKeyValue,
-                        ActionType: "Change",
-                        OldQty: varSelectedLot.Qty,
-                        NewQty: qtyValue,
-                        OldExpirationDate: varSelectedLot.ExpirationDate,
-                        NewExpirationDate: expValue,
+                        Title: varCurrentMaterial.PN,
+                        PN: varCurrentMaterial.PN,
+                        LotNumber: Upper(Trim(txtLotNumber.Text)),
+                        LotKey: varCurrentMaterial.PN & "|" & Upper(Trim(txtLotNumber.Text)),
+                        ExpirationDate: dpExpirationDate.SelectedDate,
+                        Qty: Value(txtQty.Text),
                         ChangedAt: Now(),
                         ChangedByName: User().FullName,
-                        ChangedByEmail: User().Email,
-                        Reason: Blank(),
-                        Source: sourceValue
+                        ChangedByEmail: User().Email
                     }
-                );;
-                Refresh(CM_Lots);;
-                Set(varSelectedLot; saveResult);;
-                Reset(txtLotNumber);;
-                Reset(dpExpirationDate);;
-                Reset(txtQty);;
-                UpdateContext({ ctxShowEdit: false, ctxEditMode: Blank() });;
-                Notify("Lot updated."; NotificationType.Success)
-            )
+                )
+            );
+            Patch(
+                CM_Transactions,
+                Defaults(CM_Transactions),
+                {
+                    Title: varCurrentMaterial.PN,
+                    PN: varCurrentMaterial.PN,
+                    LotNumber: Upper(Trim(txtLotNumber.Text)),
+                    LotKey: varCurrentMaterial.PN & "|" & Upper(Trim(txtLotNumber.Text)),
+                    ActionType: "Change",
+                    OldQty: varOldQty,
+                    NewQty: Value(txtQty.Text),
+                    OldExpirationDate: varOldExp,
+                    NewExpirationDate: dpExpirationDate.SelectedDate,
+                    ChangedAt: Now(),
+                    ChangedByName: User().FullName,
+                    ChangedByEmail: User().Email,
+                    Reason: Blank(),
+                    Source: Coalesce(varSource, "Manual")
+                }
+            );
+            Refresh(CM_Lots);
+            Set(varSelectedLot, varSavedLot);
+            Reset(txtLotNumber);
+            Reset(dpExpirationDate);
+            Reset(txtQty);
+            UpdateContext({ ctxShowEdit: false, ctxEditMode: Blank() });
+            Notify("Lot updated.", NotificationType.Success)
         )
     )
 )
 
-
-
-
-
-
-
-currentLotKey: Coalesce(varSelectedLot.LotKey; "")
-
-
-
-
-
-
-
-Ja — här är mina bästa praktiska tips för att bygga från Microsoft Lists → Power Apps, med fokus på att det är engelsk syntax i företagsmiljön.
-
-1. Börja med rätt arkitektur
-
-Först: välj vilken typ av app du egentligen bygger.
-	•	Om användarna mest ska skapa/redigera poster i en lista, då är det ofta bäst att börja med listans integrerade Power Apps-form.
-	•	Om du vill ha egen startsida, sök, filter, flera skärmar, dashboards eller mer logik, då är en fristående canvas app bättre. Microsoft beskriver båda vägarna: du kan antingen skapa en app direkt från Microsoft Lists/SharePoint via Integrate > Power Apps > Create an app, eller lägga till listan som datakälla i en egen canvas app.  ￼
-
-Min rekommendation:
-Bygg listan först. Testa sedan en enkel integrerad form. Om behovet växer, bygg en riktig canvas app ovanpå samma lista.
-
-2. Designa listkolumnerna smart från början
-
-Det som sparar mest tid senare är bra kolumnval.
-
-Min standardmodell
-	•	Single line of text för korta affärsvärden, koder, artikelnummer, batch-id, enkla namn.
-	•	Multiple lines of text för kommentarer, rotorsak, fritext, beskrivningar.
-	•	Number för rena tal som ska sorteras eller räknas på.
-	•	Date only för datumfält som inte behöver klockslag.
-	•	Yes/No för tydliga flaggor som Active, RequiresReview, Urgent.
-	•	Choice för små, stabila listor som status, site, family, category.
-	•	Lookup bara när värdet faktiskt hör hemma i en annan lista och ska återanvändas centralt.
-	•	Person bara när du verkligen behöver koppling till användare/personer.
-	•	Attachments bara om bilagor verkligen behövs.
-
-SharePoint/Microsoft Lists stödjer både Choice och Lookup, och Power Apps kan arbeta med dem; Microsoft beskriver lookup-koppling mellan listor och att Choices(...) används för att hämta val för uppslagsfält i Power Fx.  ￼
-
-Min tumregel
-
-Om något bara ska vara ett enkelt val i appen och inte behöver underhållas i en separat masterlista, välj Choice före Lookup.
-Om något verkligen är masterdata som flera listor ska använda, välj Lookup.
-
-3. Håll kolumnnamnen rena
-
-Det här är ett av de viktigaste tipsen:
-
-Använd enkla interna namn från början.
-Undvik gärna:
-	•	mellanslag
-	•	specialtecken
-	•	svenska tecken om du vill minimera strul i formler
-	•	onödigt långa namn
-
-Microsofts dokumentation säger att SharePoint-kolumner med mellanslag visas i Power Apps med _x0020_ i interna namn, till exempel Column Name → Column_x0020_Name.  ￼
-
-Bra exempel
-	•	ProductCode
-	•	FamilyKey
-	•	Site
-	•	Status
-	•	PerformedBy
-	•	ReviewComment
-
-Sämre exempel
-	•	Product Code
-	•	Performed By
-	•	Type of Resample
-	•	Åtgärd krävs
-
-Du kan visa snygga rubriker för användarna senare. Det viktiga är att det tekniska namnet är rent.
-
-4. Title-kolumnen: dölj den, slåss inte med den
-
-Ja: Title går inte att ta bort i en standardlista. Microsofts stödartikel säger uttryckligen att vissa obligatoriska kolumner, som Title eller Name, inte kan raderas. Om den inte kan tas bort kan du i stället hide this column.  ￼
-
-Bästa praxis för Title
-
-Om du inte behöver den:
-	•	byt gärna visningsnamnet till något mindre störande, eller låt den vara
-	•	göm den i listvyer
-	•	göm den i formuläret
-	•	använd i stället en egen riktig nyckelkolumn, t.ex. RecordId, SampleId, ProductCode eller liknande
-
-Du kan dölja kolumner i listvyer utan att radera datan, och du kan även visa/dölja kolumner i listformulär.  ￼
-
-5. Skapa flera listvyer direkt
-
-Gör minst två vyer i Lists:
-	•	User view – bara kolumner användarna behöver se
-	•	Admin/Debug view – alla tekniska kolumner, hjälpkolumner, flaggor, interna nycklar
-
-Microsoft stöder flera vyer och att visa/dölja kolumner per vy.  ￼
-
-Det gör två saker:
-	•	listan blir renare för användarna
-	•	du slipper trycka in all logik i appen
-
-6. English syntax: så tänker du
-
-I Power Fx beror separatorerna på author locale. Microsofts dokumentation säger att om författarens språk använder punkt som decimaltecken — typiskt engelsk miljö — blir:
-	•	decimal: .
-	•	list separator i funktioner: ,
-	•	chaining operator: ;  ￼
-
-Så i en engelsk företagsmiljö ser formler normalt ut så här:
-
-If(
-    IsBlank(txtSearch.Text),
-    true,
-    StartsWith(Title, txtSearch.Text)
-);
-
-och funktionsargument separeras med komma:
-
-Filter(Products, Active = true)
-
-7. Mina bästa Power Apps-tips för Lists
-
-A. Börja med Form + Gallery, inte för avancerat
-
-Den mest robusta grundmodellen är nästan alltid:
-	•	en Gallery för listan
-	•	en Edit form eller Display form för vald post
-	•	knappar för NewForm, SubmitForm, ResetForm
-
-Microsofts form-kontroller är gjorda för just att visa, skapa och spara poster mot en datakälla.  ￼
-
-B. Döp om kontroller direkt
-
-Byt namn direkt på:
-	•	ScreenBrowse
-	•	galItems
-	•	frmItem
-	•	txtSearch
-	•	cmbStatus
-	•	btnSave
-
-Det sparar enormt mycket tid senare.
-
-C. Använd Combo box för Choice/Lookup/Person
-
-Microsofts dokumentation beskriver Combo box för att visa val från datakällor, och Choices(...) används ofta för att hämta val för lookup-fält.  ￼
-
-Exempel:
-
-Choices([@MyList].Status)
-
-eller för lookup/person-liknande val i formulär, använd det genererade datakortet som bas i stället för att bygga allt från noll.
-
-D. Bygg kaskadval när det behövs
-
-Om du har t.ex.:
-	•	Family → Product
-	•	Site → Equipment
-	•	Category → Subcategory
-
-så är dependent / cascading dropdowns ett bra mönster. Microsoft har ett officiellt exempel på det.  ￼
-
-8. De viktigaste performance-råden
-
-Det här är nog det viktigaste efter kolumndesign.
-
-Delegation
-
-Microsofts dokumentation säger att delegation behövs för att hantera stora datamängder effektivt. Om en formel inte kan delegeras fullt ut, jobbar appen bara på en begränsad delmängd lokalt, vilket kan ge fel resultat i stora listor.  ￼
-
-Praktiska regler
-	•	använd Filter(…) hellre än att hämta allt och sedan bearbeta lokalt
-	•	håll sök/filter enkelt
-	•	testa alltid efter blue delegation warnings
-	•	tänk att listan kan bli stor, även om den är liten idag
-
-Ett bra grundmönster:
-
-SortByColumns(
-    Filter(
-        MyList,
-        Active = true &&
-        (
-            IsBlank(txtSearch.Text) ||
-            StartsWith(Title, txtSearch.Text)
-        )
-    ),
-    "Title",
-    SortOrder.Ascending
-)
-
-Filter och SortByColumns är standardfunktioner för detta, men exakt delegation beror på datakälla och uttryck, så kontrollera alltid varningar i Studio.  ￼
-
-9. Attachments: använd med respekt
-
-Bilagor fungerar, men Microsofts dokumentation säger att upload/delete för attachment control bara fungerar inuti ett form control. Utanför form blir kontrollen i praktiken begränsad.  ￼
-
-Så:
-	•	behöver du attachments → håll dem i ett Edit form
-	•	behöver du bara metadata → undvik attachments om det går
-
-10. När du ska välja Choice, Lookup eller egen lista
-
-Här är mitt verkliga råd:
-
-Välj Choice när:
-	•	antalet värden är litet
-	•	värdena ändras sällan
-	•	du vill ha enkel filtrering och enkel app
-
-Välj Lookup när:
-	•	du har en masterlista som ska återanvändas
-	•	flera listor ska referera till samma värde
-	•	du behöver kunna underhålla värden centralt
-
-Välj separat referenslista + Power Apps-logik när:
-	•	du behöver beroenden
-	•	du behöver extra metadata per val
-	•	du kommer bygga mycket logik kring urvalet
-
-11. Min rekommenderade “golden standard” för en Lists-baserad app
-
-Om jag skulle bygga en stabil företagsapp från Microsoft Lists idag hade jag gjort så här:
-
-I Microsoft Lists
-	•	rena interna kolumnnamn
-	•	Title dold
-	•	en tydlig nyckelkolumn
-	•	en eller två referenslistor för masterdata
-	•	separata vyer för användare och admin
-	•	undvik onödigt många multi-select-fält
-
-I Power Apps
-	•	canvas app om processen är mer än bara formulär
-	•	en Browse screen + Detail/Edit screen
-	•	Gallery + Form som bas
-	•	Combo box för valfält
-	•	enkla delegationsvänliga filter först
-	•	engelska kontrollnamn och engelska formelvanor
-	•	döp om alla kontroller direkt
-
-12. Min korta “undvik detta”-lista
-
-Undvik helst att:
-	•	bygga på dåligt namngivna kolumner
-	•	använda för många multi-select Choice/Lookup/Person
-	•	låta Title bli ett halvt använd affärsfält
-	•	blanda tekniska hjälpkolumner med användarkolumner i samma vy
-	•	bygga avancerad logik innan liststrukturen sitter
-	•	ignorera delegation warnings
-
-Min skarpa rekommendation till dig
-
-För ditt användningsfall med Microsoft Lists + engelsk syntax + företag:
-
-Bygg så här:
-	1.	Designa listkolumnerna först
-	2.	Dölj Title
-	3.	Håll kolumnnamn tekniskt rena
-	4.	Använd Choice för små fasta värden, Lookup bara där masterdata faktiskt behövs
-	5.	Skapa minst två listvyer
-	6.	Bygg sedan canvas app ovanpå listan om ni behöver mer än ett vanligt formulär
-
-Vill du, så kan jag i nästa svar ge dig en konkret mall för en perfekt Microsoft List-struktur med rekommenderade kolumntyper för t.ex. inventering, QC-register eller produkt-/familjeapp i engelsk företagsmiljö.
+Om det fortfarande failar nu, då vill jag att du skickar det första exakta ordet som blir rött i respektive formel. Inte hela formeln — bara första röda token. Det räcker för att pinpointa sista problemet.
