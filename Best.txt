@@ -1,3 +1,143 @@
+Ja — de där är mest accessibility/App Checker-fixar, inte funktionsfel.
+
+Power Apps flaggar Missing accessible label när ett interaktivt kontrollobjekt saknar text i AccessibleLabel. Den flaggar Missing tab stop när kontrollen inte deltar i tangentbordsnavigering, styrt av TabIndex för classic controls. Den flaggar Focus isn’t showing när fokusramen inte syns, typiskt när FocusedBorderThickness är 0. Microsoft rekommenderar också att man normalt använder TabIndex = 0 eller -1 för enkelhet.  ￼
+
+Gör exakt detta
+
+1) txtSearchPN
+
+Sätt:
+
+AccessibleLabel = "Search PN, barcode, or material name"
+TabIndex = 0
+FocusedBorderThickness = 2
+
+2) galMaterials
+
+Sätt:
+
+AccessibleLabel = "Search results list of materials"
+TabIndex = 0
+FocusedBorderThickness = 2
+
+Det gör galleryn fokusbar för tangentbordsanvändare, vilket också är viktigt för scrollning i galleries utan tydligt interaktivt innehåll.  ￼
+
+3) galLots
+
+Sätt:
+
+AccessibleLabel = "List of lots for selected material"
+TabIndex = 0
+FocusedBorderThickness = 2
+
+4) txtLotNumber
+
+Sätt:
+
+AccessibleLabel = "Lot number"
+TabIndex = 0
+FocusedBorderThickness = 2
+
+5) txtDeleteReason
+
+Sätt:
+
+AccessibleLabel = "Reason for deleting lot"
+TabIndex = 0
+FocusedBorderThickness = 2
+
+6) dpExpirationDate
+
+Sätt:
+
+AccessibleLabel = "Expiration date"
+TabIndex = 0
+FocusedBorderThickness = 2
+
+7) txtQty
+
+Sätt:
+
+AccessibleLabel = "Quantity"
+TabIndex = 0
+FocusedBorderThickness = 2
+
+
+⸻
+
+För lblNoMaterials
+
+Eftersom App Checker visar:
+	•	Missing tab stop
+	•	Focus isn’t showing
+
+på lblNoMaterials, betyder det att labeln troligen är fokusbar. För vanliga labels rekommenderar Microsoft att de inte deltar i tangentbordsnavigering om de inte verkligen behöver det.  ￼
+
+Sätt därför:
+
+TabIndex = -1
+
+Och om den ändå klagar på fokus, sätt också:
+
+FocusedBorderThickness = 2
+
+Men helst ska lblNoMaterials bara vara en vanlig label utan tab stop.
+
+⸻
+
+Min rekommendation för alla dina vanliga labels
+
+För vanliga textlabels som inte ska klickas:
+
+TabIndex = -1
+
+Det gäller till exempel:
+	•	lblTitle
+	•	lblLotsTitle
+	•	lblPNValue
+	•	lblMaterialNameValue
+	•	lblUnitValue
+	•	lblStorageLocationValue
+	•	lblLotsSectionTitle
+	•	lblNoLots
+
+⸻
+
+Extra bra fix
+
+För knappar kan du också sätta tydliga accessible labels, även om de ofta redan fungerar bra:
+
+Exempel
+
+btnAddLot.AccessibleLabel = "Add new lot"
+btnChangeLot.AccessibleLabel = "Change selected lot"
+btnDeleteLot.AccessibleLabel = "Delete selected lot"
+btnSaveLot.AccessibleLabel = "Save lot"
+btnCancelEdit.AccessibleLabel = "Cancel editing"
+btnConfirmDelete.AccessibleLabel = "Confirm delete"
+btnCancelDelete.AccessibleLabel = "Cancel delete"
+
+
+⸻
+
+Kort checklista
+
+För varje interaktiv kontroll:
+	•	fyll i AccessibleLabel
+	•	sätt TabIndex = 0
+	•	sätt FocusedBorderThickness = 2
+
+För vanliga labels:
+	•	sätt TabIndex = -1
+
+När du gjort detta, tryck Recheck i App Checker.  ￼
+
+Om du vill, nästa steg kan jag skriva en exakt lista kontroll för kontroll med vilka properties du ska sätta på hela appen, så du bara bockar av dem.
+
+
+
+
+
 Ja — nu ser jag felet.
 
 btnSaveLot använder fortfarande fel separatorer i funktionerna.
