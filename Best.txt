@@ -1,3 +1,198 @@
+If(
+    IsBlank(varSelectedLot);
+    Notify("Select a lot first."; NotificationType.Error);
+
+    Patch(
+        CM_Lots;
+        varSelectedLot;
+        {
+            IsActive: false,
+            ChangedAt: Now(),
+            ChangedByName: User().FullName,
+            ChangedByEmail: User().Email
+        }
+    );;
+    Patch(
+        CM_Transactions;
+        Defaults(CM_Transactions);
+        {
+            Title: varCurrentMaterial.PN,
+            PN: varCurrentMaterial.PN,
+            LotNumber: varSelectedLot.LotNumber,
+            LotKey: varSelectedLot.LotKey,
+            ActionType: "Delete",
+            OldQty: varSelectedLot.Qty,
+            NewQty: Blank(),
+            OldExpirationDate: varSelectedLot.ExpirationDate,
+            NewExpirationDate: Blank(),
+            ChangedAt: Now(),
+            ChangedByName: User().FullName,
+            ChangedByEmail: User().Email,
+            Reason: txtDeleteReason.Text,
+            Source: Coalesce(varSource; "Manual")
+        }
+    );;
+    Refresh(CM_Lots);;
+    Set(varSelectedLot; Blank());;
+    Reset(txtDeleteReason);;
+    UpdateContext({ ctxShowDelete: false });;
+    Notify("Lot deleted."; NotificationType.Success)
+)
+
+
+
+
+btnSaveOnSelect
+
+
+With(
+    {
+        pnValue: varCurrentMaterial.PN,
+        lotValue: Upper(Trim(txtLotNumber.Text)),
+        qtyValue: Value(txtQty.Text),
+        expValue: dpExpirationDate.SelectedDate,
+        lotKeyValue: varCurrentMaterial.PN & "|" & Upper(Trim(txtLotNumber.Text)),
+        sourceValue: Coalesce(varSource; "Manual"),
+        currentLotKey: Coalesce(varSelectedLot.LotKey; "")
+    };
+    If(
+        IsBlank(lotValue) || IsBlank(expValue) || !IsNumeric(txtQty.Text) || qtyValue <= 0;
+        Notify("Enter Lot Number, Expiration Date, and Qty greater than 0."; NotificationType.Error);
+
+        If(
+            ctxEditMode = "Add";
+
+            If(
+                !IsBlank(
+                    LookUp(
+                        CM_Lots;
+                        LotKey = lotKeyValue && IsActive = true
+                    )
+                );
+                Notify("This Lot Number already exists for this PN."; NotificationType.Error);
+
+                Set(
+                    saveResult;
+                    Patch(
+                        CM_Lots;
+                        Defaults(CM_Lots);
+                        {
+                            Title: pnValue,
+                            PN: pnValue,
+                            LotNumber: lotValue,
+                            LotKey: lotKeyValue,
+                            ExpirationDate: expValue,
+                            Qty: qtyValue,
+                            IsActive: true,
+                            ChangedAt: Now(),
+                            ChangedByName: User().FullName,
+                            ChangedByEmail: User().Email
+                        }
+                    )
+                );;
+                Patch(
+                    CM_Transactions;
+                    Defaults(CM_Transactions);
+                    {
+                        Title: pnValue,
+                        PN: pnValue,
+                        LotNumber: lotValue,
+                        LotKey: lotKeyValue,
+                        ActionType: "Add",
+                        OldQty: Blank(),
+                        NewQty: qtyValue,
+                        OldExpirationDate: Blank(),
+                        NewExpirationDate: expValue,
+                        ChangedAt: Now(),
+                        ChangedByName: User().FullName,
+                        ChangedByEmail: User().Email,
+                        Reason: Blank(),
+                        Source: sourceValue
+                    }
+                );;
+                Refresh(CM_Lots);;
+                Set(varSelectedLot; saveResult);;
+                Reset(txtLotNumber);;
+                Reset(dpExpirationDate);;
+                Reset(txtQty);;
+                UpdateContext({ ctxShowEdit: false, ctxEditMode: Blank() });;
+                Notify("Lot added."; NotificationType.Success)
+            );
+
+            If(
+                currentLotKey <> lotKeyValue &&
+                !IsBlank(
+                    LookUp(
+                        CM_Lots;
+                        LotKey = lotKeyValue && IsActive = true
+                    )
+                );
+                Notify("This Lot Number already exists for this PN."; NotificationType.Error);
+
+                Set(
+                    saveResult;
+                    Patch(
+                        CM_Lots;
+                        varSelectedLot;
+                        {
+                            Title: pnValue,
+                            PN: pnValue,
+                            LotNumber: lotValue,
+                            LotKey: lotKeyValue,
+                            ExpirationDate: expValue,
+                            Qty: qtyValue,
+                            ChangedAt: Now(),
+                            ChangedByName: User().FullName,
+                            ChangedByEmail: User().Email
+                        }
+                    )
+                );;
+                Patch(
+                    CM_Transactions;
+                    Defaults(CM_Transactions);
+                    {
+                        Title: pnValue,
+                        PN: pnValue,
+                        LotNumber: lotValue,
+                        LotKey: lotKeyValue,
+                        ActionType: "Change",
+                        OldQty: varSelectedLot.Qty,
+                        NewQty: qtyValue,
+                        OldExpirationDate: varSelectedLot.ExpirationDate,
+                        NewExpirationDate: expValue,
+                        ChangedAt: Now(),
+                        ChangedByName: User().FullName,
+                        ChangedByEmail: User().Email,
+                        Reason: Blank(),
+                        Source: sourceValue
+                    }
+                );;
+                Refresh(CM_Lots);;
+                Set(varSelectedLot; saveResult);;
+                Reset(txtLotNumber);;
+                Reset(dpExpirationDate);;
+                Reset(txtQty);;
+                UpdateContext({ ctxShowEdit: false, ctxEditMode: Blank() });;
+                Notify("Lot updated."; NotificationType.Success)
+            )
+        )
+    )
+)
+
+
+
+
+
+
+
+currentLotKey: Coalesce(varSelectedLot.LotKey; "")
+
+
+
+
+
+
+
 Ja — här är mina bästa praktiska tips för att bygga från Microsoft Lists → Power Apps, med fokus på att det är engelsk syntax i företagsmiljön.
 
 1. Börja med rätt arkitektur
