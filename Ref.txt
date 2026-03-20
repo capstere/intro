@@ -1,147 +1,250 @@
-Ja — bra, då har vi åtminstone fått själva lots-listan att fungera.
+Ja — nu ser jag vad som händer.
 
-Nu gör vi två saker:
-	1.	vi sätter en ren, enklare formel på btnConfirmDelete
-	2.	vi låser lagerordningen / z-order på scrLots
+Problemet är nästan säkert inte logiken längre. Det är syntaxen i Studio.
+
+Du sitter sannolikt i en miljö där Power Apps vill ha semikolon i formelfältet, även om appen i övrigt är på engelska.
+Det är därför du får röda streck över hela record-blocket i både Patch(...)-anropen.
+
+Det här syns tydligt i dina bilder:
+	•	hela { ... }-recorden blir röd
+	•	varje rad i recorden blir röd
+	•	samma mönster i både btnConfirmDelete och btnSaveLot
+
+Det är klassiskt separator-problem.
+
+Gör så här nu
+
+Regel
+
+I Studio-formelfältet ska du använda:
+	•	; mellan funktionsargument
+	•	; mellan fält i { ... }
+
+Inte kommatecken.
 
 ⸻
 
-1. Byt btnConfirmDelete.OnSelect till denna enklare version
-
-Klistra in exakt detta:
+1) Byt btnConfirmDelete.OnSelect till exakt detta
 
 If(
-    IsBlank(varSelectedLot),
-    Notify("Select a lot first.", NotificationType.Error),
+    IsBlank(varSelectedLot);
+    Notify("Select a lot first."; NotificationType.Error);
     IfError(
         Patch(
-            CM_Lots,
-            varSelectedLot,
+            CM_Lots;
+            varSelectedLot;
             {
-                IsActive: false,
-                ChangedAt: Now(),
-                ChangedByName: User().FullName,
+                IsActive: false;
+                ChangedAt: Now();
+                ChangedByName: User().FullName;
                 ChangedByEmail: User().Email
             }
         );
         Patch(
-            CM_Transactions,
-            Defaults(CM_Transactions),
+            CM_Transactions;
+            Defaults(CM_Transactions);
             {
-                Title: varCurrentMaterial.PN,
-                PN: varCurrentMaterial.PN,
-                LotNumber: varSelectedLot.LotNumber,
-                LotKey: varSelectedLot.LotKey,
-                ActionType: "Delete",
-                OldQty: varSelectedLot.Qty,
-                NewQty: Blank(),
-                OldExpirationDate: varSelectedLot.ExpirationDate,
-                NewExpirationDate: Blank(),
-                ChangedAt: Now(),
-                ChangedByName: User().FullName,
-                ChangedByEmail: User().Email,
-                Reason: txtDeleteReason.Text,
-                Source: Coalesce(varSource, "Manual")
+                Title: varCurrentMaterial.PN;
+                PN: varCurrentMaterial.PN;
+                LotNumber: varSelectedLot.LotNumber;
+                LotKey: varSelectedLot.LotKey;
+                ActionType: "Delete";
+                OldQty: varSelectedLot.Qty;
+                NewQty: Blank();
+                OldExpirationDate: varSelectedLot.ExpirationDate;
+                NewExpirationDate: Blank();
+                ChangedAt: Now();
+                ChangedByName: User().FullName;
+                ChangedByEmail: User().Email;
+                Reason: txtDeleteReason.Text;
+                Source: Coalesce(varSource; "Manual")
             }
         );
         Refresh(CM_Lots);
-        Set(varSelectedLot, Blank());
+        Set(varSelectedLot; Blank());
         Reset(txtDeleteReason);
         UpdateContext({ ctxShowDelete: false });
-        Notify("Lot deleted.", NotificationType.Success),
-        Notify("Could not delete the lot.", NotificationType.Error)
+        Notify("Lot deleted."; NotificationType.Success);
+        Notify("Could not delete the lot."; NotificationType.Error)
     )
 )
 
 
 ⸻
 
-Varför jag byter den
+2) Byt btnSaveLot.OnSelect till exakt detta
 
-Den här versionen är bättre eftersom:
-	•	den stoppar direkt om ingen lot är vald
-	•	den är enklare att läsa
-	•	den tar bort lite onödig komplexitet
+With(
+    {
+        _pn: varCurrentMaterial.PN;
+        _lot: Upper(Trim(txtLotNumber.Text));
+        _qty: Value(txtQty.Text);
+        _exp: dpExpirationDate.SelectedDate;
+        _lotKey: varCurrentMaterial.PN & "|" & Upper(Trim(txtLotNumber.Text));
+        _source: Coalesce(varSource; "Manual")
+    };
+    If(
+        IsBlank(_lot) || IsBlank(_exp) || !IsNumeric(txtQty.Text) || _qty <= 0;
+        Notify("Enter Lot Number, Expiration Date, and Qty greater than 0."; NotificationType.Error);
+
+        If(
+            ctxEditMode = "Add";
+
+            If(
+                !IsBlank(LookUp(CM_Lots; LotKey = _lotKey && IsActive = true));
+                Notify("This Lot Number already exists for this PN."; NotificationType.Error);
+
+                IfError(
+                    Set(
+                        varSelectedLot;
+                        Patch(
+                            CM_Lots;
+                            Defaults(CM_Lots);
+                            {
+                                Title: _pn;
+                                PN: _pn;
+                                LotNumber: _lot;
+                                LotKey: _lotKey;
+                                ExpirationDate: _exp;
+                                Qty: _qty;
+                                IsActive: true;
+                                ChangedAt: Now();
+                                ChangedByName: User().FullName;
+                                ChangedByEmail: User().Email
+                            }
+                        )
+                    );
+                    Patch(
+                        CM_Transactions;
+                        Defaults(CM_Transactions);
+                        {
+                            Title: _pn;
+                            PN: _pn;
+                            LotNumber: _lot;
+                            LotKey: _lotKey;
+                            ActionType: "Add";
+                            OldQty: Blank();
+                            NewQty: _qty;
+                            OldExpirationDate: Blank();
+                            NewExpirationDate: _exp;
+                            ChangedAt: Now();
+                            ChangedByName: User().FullName;
+                            ChangedByEmail: User().Email;
+                            Reason: Blank();
+                            Source: _source
+                        }
+                    );
+                    Refresh(CM_Lots);
+                    Reset(txtLotNumber);
+                    Reset(dpExpirationDate);
+                    Reset(txtQty);
+                    UpdateContext(
+                        {
+                            ctxShowEdit: false;
+                            ctxEditMode: Blank()
+                        }
+                    );
+                    Notify("Lot added."; NotificationType.Success);
+                    Notify("Could not add the lot."; NotificationType.Error)
+                )
+            );
+
+            If(
+                _lotKey <> varSelectedLot.LotKey &&
+                !IsBlank(LookUp(CM_Lots; LotKey = _lotKey && IsActive = true));
+                Notify("This Lot Number already exists for this PN."; NotificationType.Error);
+
+                IfError(
+                    Set(
+                        varSelectedLot;
+                        Patch(
+                            CM_Lots;
+                            varSelectedLot;
+                            {
+                                Title: _pn;
+                                PN: _pn;
+                                LotNumber: _lot;
+                                LotKey: _lotKey;
+                                ExpirationDate: _exp;
+                                Qty: _qty;
+                                ChangedAt: Now();
+                                ChangedByName: User().FullName;
+                                ChangedByEmail: User().Email
+                            }
+                        )
+                    );
+                    Patch(
+                        CM_Transactions;
+                        Defaults(CM_Transactions);
+                        {
+                            Title: _pn;
+                            PN: _pn;
+                            LotNumber: _lot;
+                            LotKey: _lotKey;
+                            ActionType: "Change";
+                            OldQty: varSelectedLot.Qty;
+                            NewQty: _qty;
+                            OldExpirationDate: varSelectedLot.ExpirationDate;
+                            NewExpirationDate: _exp;
+                            ChangedAt: Now();
+                            ChangedByName: User().FullName;
+                            ChangedByEmail: User().Email;
+                            Reason: Blank();
+                            Source: _source
+                        }
+                    );
+                    Refresh(CM_Lots);
+                    Reset(txtLotNumber);
+                    Reset(dpExpirationDate);
+                    Reset(txtQty);
+                    UpdateContext(
+                        {
+                            ctxShowEdit: false;
+                            ctxEditMode: Blank()
+                        }
+                    );
+                    Notify("Lot updated."; NotificationType.Success);
+                    Notify("Could not update the lot."; NotificationType.Error)
+                )
+            )
+        )
+    )
+)
+
 
 ⸻
 
-Om du fortfarande får error på btnConfirmDelete
+3) Varför detta ska hjälpa
 
-Då är det nästan säkert ett kolumnnamn i CM_Transactions som inte matchar exakt.
+I din Studio verkar det vara så här:
+	•	YAML / code view visar gärna kommatecken
+	•	formula bar i din miljö vill ha semikolon
 
-Testa detta i en tillfällig label:
+Så när du klistrar in kommateckens-versioner i formelfältet får du röda streck över hela record-blocket.
+
+⸻
+
+4) Om det fortfarande är rött efter detta
+
+Då är det inte separatorerna längre. Då är det nästan säkert ett kolumnnamn i CM_Transactions.
+
+Testa då dessa en och en i en tillfällig label:
 
 First(CM_Transactions).OldExpirationDate
 
-och sedan:
-
 First(CM_Transactions).NewExpirationDate
-
-och:
 
 First(CM_Transactions).Reason
 
-och:
-
 First(CM_Transactions).Source
 
-Om någon av dem ger fel, då är det just det kolumnnamnet som måste rättas i delete-formeln.
+Den första som blir röd är den verkliga boven.
 
 ⸻
 
-2. Z-order / lagerordning på scrLots
+5) Z-order på scrLots
 
-Ja — detta är jätteviktigt.
-
-Du ska tänka så här:
-
-Längst bak
-
-Vanliga skärmen:
-	•	btnBackLots
-	•	btnNewSearch
-	•	lblLotsTitle
-	•	lblPNValue
-	•	lblMaterialNameValue
-	•	lblUnitValue
-	•	lblStorageLocationValue
-	•	lblLotsSectionTitle
-	•	galLots
-	•	lblNoLots
-	•	btnAddLot
-	•	btnChangeLot
-	•	btnDeleteLot
-
-Sedan ovanpå det
-
-Edit overlay
-	•	recEditOverlay
-	•	recEditPanel
-	•	alla edit-kontroller
-
-Sedan allra högst
-
-Delete overlay
-	•	recDeleteOverlay
-	•	recDeletePanel
-	•	alla delete-kontroller
-
-⸻
-
-Praktisk regel
-
-Bakifrån till fram:
-	1.	vanliga kontroller
-	2.	edit overlay + edit panel + edit controls
-	3.	delete overlay + delete panel + delete controls
-
-Delete ska alltså ligga överst.
-
-⸻
-
-Exakt ordning jag rekommenderar i scrLots
-
-Det här är den ordning jag vill att du har i tree view / code:
+Ja — nu när vi ändå är här, detta är rätt ordning i tree view:
 
 scrLots
   btnBackLots
@@ -189,238 +292,12 @@ scrLots
   btnConfirmDelete
   btnCancelDelete
 
+Delete-blocket ska ligga allra sist, alltså högst upp visuellt.
 
 ⸻
 
-Hur du gör i Studio
+Gör bara detta först:
+	1.	byt btnConfirmDelete.OnSelect till semikolon-versionen
+	2.	byt btnSaveLot.OnSelect till semikolon-versionen
 
-Om något ligger “fel ovanpå”:
-	1.	markera kontrollen
-	2.	högerklicka
-	3.	välj Reorder
-	4.	använd:
-	•	Bring to front
-	•	Send to back
-
-⸻
-
-Viktiga regler för ordningen
-
-lblNoLots
-
-ska ligga utanför galLots
-
-recEditOverlay
-
-ska ligga över vanliga skärmen men under edit-panelens innehåll
-
-recDeleteOverlay
-
-ska ligga över edit-panelen om delete-popup kan visas
-
-Delete-dialogens labels och buttons
-
-ska ligga över recDeletePanel
-
-⸻
-
-Min rekommendation nu
-
-Gör exakt detta i ordning:
-	1.	byt btnConfirmDelete.OnSelect till formeln ovan
-	2.	kontrollera att lblNoLots ligger utanför galLots
-	3.	ordna z-order enligt listan ovan
-	4.	testa bara delete-flödet
-
-⸻
-
-Om delete fortfarande ger fel
-
-Skicka då bara exakt feltexten på btnConfirmDelete eller vilka ord som är rödmarkerade i formeln.
-
-Då kan jag säga exakt vilken rad i formeln som är problemet, utan att vi behöver röra resten.
-
-
-
-
-
-
-
-Ja — byt ut hela btnSaveLot.OnSelect. Den nuvarande är för kompakt och därför lätt att få fel i.
-
-Klistra in exakt detta:
-
-With(
-    {
-        _pn: varCurrentMaterial.PN,
-        _lot: Upper(Trim(txtLotNumber.Text)),
-        _qty: Value(txtQty.Text),
-        _exp: dpExpirationDate.SelectedDate,
-        _lotKey: varCurrentMaterial.PN & "|" & Upper(Trim(txtLotNumber.Text)),
-        _source: Coalesce(varSource, "Manual")
-    },
-    If(
-        IsBlank(_lot) || IsBlank(_exp) || !IsNumeric(txtQty.Text) || _qty <= 0,
-        Notify("Enter Lot Number, Expiration Date, and Qty greater than 0.", NotificationType.Error),
-
-        If(
-            ctxEditMode = "Add",
-
-            If(
-                !IsBlank(LookUp(CM_Lots, LotKey = _lotKey && IsActive = true)),
-                Notify("This Lot Number already exists for this PN.", NotificationType.Error),
-
-                IfError(
-                    Set(
-                        varSelectedLot,
-                        Patch(
-                            CM_Lots,
-                            Defaults(CM_Lots),
-                            {
-                                Title: _pn,
-                                PN: _pn,
-                                LotNumber: _lot,
-                                LotKey: _lotKey,
-                                ExpirationDate: _exp,
-                                Qty: _qty,
-                                IsActive: true,
-                                ChangedAt: Now(),
-                                ChangedByName: User().FullName,
-                                ChangedByEmail: User().Email
-                            }
-                        )
-                    );
-                    Patch(
-                        CM_Transactions,
-                        Defaults(CM_Transactions),
-                        {
-                            Title: _pn,
-                            PN: _pn,
-                            LotNumber: _lot,
-                            LotKey: _lotKey,
-                            ActionType: "Add",
-                            OldQty: Blank(),
-                            NewQty: _qty,
-                            OldExpirationDate: Blank(),
-                            NewExpirationDate: _exp,
-                            ChangedAt: Now(),
-                            ChangedByName: User().FullName,
-                            ChangedByEmail: User().Email,
-                            Reason: Blank(),
-                            Source: _source
-                        }
-                    );
-                    Refresh(CM_Lots);
-                    Reset(txtLotNumber);
-                    Reset(dpExpirationDate);
-                    Reset(txtQty);
-                    UpdateContext(
-                        {
-                            ctxShowEdit: false,
-                            ctxEditMode: Blank()
-                        }
-                    );
-                    Notify("Lot added.", NotificationType.Success),
-                    Notify("Could not add the lot.", NotificationType.Error)
-                )
-            ),
-
-            If(
-                _lotKey <> varSelectedLot.LotKey &&
-                !IsBlank(LookUp(CM_Lots, LotKey = _lotKey && IsActive = true)),
-                Notify("This Lot Number already exists for this PN.", NotificationType.Error),
-
-                IfError(
-                    Set(
-                        varSelectedLot,
-                        Patch(
-                            CM_Lots,
-                            varSelectedLot,
-                            {
-                                Title: _pn,
-                                PN: _pn,
-                                LotNumber: _lot,
-                                LotKey: _lotKey,
-                                ExpirationDate: _exp,
-                                Qty: _qty,
-                                ChangedAt: Now(),
-                                ChangedByName: User().FullName,
-                                ChangedByEmail: User().Email
-                            }
-                        )
-                    );
-                    Patch(
-                        CM_Transactions,
-                        Defaults(CM_Transactions),
-                        {
-                            Title: _pn,
-                            PN: _pn,
-                            LotNumber: _lot,
-                            LotKey: _lotKey,
-                            ActionType: "Change",
-                            OldQty: varSelectedLot.Qty,
-                            NewQty: _qty,
-                            OldExpirationDate: varSelectedLot.ExpirationDate,
-                            NewExpirationDate: _exp,
-                            ChangedAt: Now(),
-                            ChangedByName: User().FullName,
-                            ChangedByEmail: User().Email,
-                            Reason: Blank(),
-                            Source: _source
-                        }
-                    );
-                    Refresh(CM_Lots);
-                    Reset(txtLotNumber);
-                    Reset(dpExpirationDate);
-                    Reset(txtQty);
-                    UpdateContext(
-                        {
-                            ctxShowEdit: false,
-                            ctxEditMode: Blank()
-                        }
-                    );
-                    Notify("Lot updated.", NotificationType.Success),
-                    Notify("Could not update the lot.", NotificationType.Error)
-                )
-            )
-        )
-    )
-)
-
-Varför den här är bättre
-
-Den här versionen:
-	•	använder inte ID <> _currentID
-	•	använder enklare duplicate-check i Change-läget
-	•	är mycket lättare för Power Apps att tolka
-	•	brukar ge färre fel än den komprimerade enradiga varianten
-
-Viktigt
-
-Om något fortfarande blir rött efter att du klistrat in detta, så är det nästan säkert ett kolumnnamn i CM_Transactions som inte heter exakt som vi tror.
-
-De vanligaste misstänkta är:
-	•	OldExpirationDate
-	•	NewExpirationDate
-	•	Reason
-	•	Source
-
-Då testar du i en label:
-
-First(CM_Transactions).OldExpirationDate
-
-och samma för de andra.
-
-En sak till
-
-I Change-delen är det bättre att spara gamla värden innan Patch egentligen, men den här versionen brukar ändå fungera tillräckligt bra för att få appen levande nu.
-
-När btnSaveLot fungerar kan vi göra en sista städning av:
-	•	z-order
-	•	layout
-	•	labels
-	•	padding
-	•	färger
-
-Skicka gärna exakt vad som fortfarande blir rött i btnSaveLot efter att du bytt till denna version.
-
+Skicka sedan en enda sak: om det fortfarande är rött, exakt vilket ord/rad som fortfarande är röd. Då kan vi pinpointa det direkt.
