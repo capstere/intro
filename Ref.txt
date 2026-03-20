@@ -1,1 +1,210 @@
 
+Bra — då vet vi att kolumnnamnen i listorna är rätt.
+
+Nu gör vi detta så enkelt som möjligt:
+	•	ingen IfError
+	•	ingen With
+	•	inga hjälpbegrepp
+	•	bara raka formler med ;;
+
+Det här brukar vara det som faktiskt går igenom i Studio när allt annat bråkar.
+
+btnConfirmDelete.OnSelect
+
+Byt till exakt detta:
+
+If(
+    IsBlank(varSelectedLot);
+    Notify("Select a lot first."; NotificationType.Error);
+    Patch(
+        CM_Lots;
+        varSelectedLot;
+        {
+            IsActive: false;
+            ChangedAt: Now();
+            ChangedByName: User().FullName;
+            ChangedByEmail: User().Email
+        }
+    );;
+    Patch(
+        CM_Transactions;
+        Defaults(CM_Transactions);
+        {
+            Title: varCurrentMaterial.PN;
+            PN: varCurrentMaterial.PN;
+            LotNumber: varSelectedLot.LotNumber;
+            LotKey: varSelectedLot.LotKey;
+            ActionType: "Delete";
+            OldQty: varSelectedLot.Qty;
+            NewQty: Blank();
+            OldExpirationDate: varSelectedLot.ExpirationDate;
+            NewExpirationDate: Blank();
+            ChangedAt: Now();
+            ChangedByName: User().FullName;
+            ChangedByEmail: User().Email;
+            Reason: txtDeleteReason.Text;
+            Source: Coalesce(varSource; "Manual")
+        }
+    );;
+    Refresh(CM_Lots);;
+    Set(varSelectedLot; Blank());;
+    Reset(txtDeleteReason);;
+    UpdateContext({ ctxShowDelete: false });;
+    Notify("Lot deleted."; NotificationType.Success)
+)
+
+
+⸻
+
+btnSaveLot.OnSelect
+
+Byt till exakt detta:
+
+If(
+    IsBlank(Trim(txtLotNumber.Text)) || IsBlank(dpExpirationDate.SelectedDate) || !IsNumeric(txtQty.Text) || Value(txtQty.Text) <= 0;
+    Notify("Enter Lot Number, Expiration Date, and Qty greater than 0."; NotificationType.Error);
+
+    If(
+        ctxEditMode = "Add";
+
+        If(
+            !IsBlank(
+                LookUp(
+                    CM_Lots;
+                    LotKey = varCurrentMaterial.PN & "|" & Upper(Trim(txtLotNumber.Text)) && IsActive = true
+                )
+            );
+            Notify("This Lot Number already exists for this PN."; NotificationType.Error);
+
+            Patch(
+                CM_Lots;
+                Defaults(CM_Lots);
+                {
+                    Title: varCurrentMaterial.PN;
+                    PN: varCurrentMaterial.PN;
+                    LotNumber: Upper(Trim(txtLotNumber.Text));
+                    LotKey: varCurrentMaterial.PN & "|" & Upper(Trim(txtLotNumber.Text));
+                    ExpirationDate: dpExpirationDate.SelectedDate;
+                    Qty: Value(txtQty.Text);
+                    IsActive: true;
+                    ChangedAt: Now();
+                    ChangedByName: User().FullName;
+                    ChangedByEmail: User().Email
+                }
+            );;
+            Patch(
+                CM_Transactions;
+                Defaults(CM_Transactions);
+                {
+                    Title: varCurrentMaterial.PN;
+                    PN: varCurrentMaterial.PN;
+                    LotNumber: Upper(Trim(txtLotNumber.Text));
+                    LotKey: varCurrentMaterial.PN & "|" & Upper(Trim(txtLotNumber.Text));
+                    ActionType: "Add";
+                    OldQty: Blank();
+                    NewQty: Value(txtQty.Text);
+                    OldExpirationDate: Blank();
+                    NewExpirationDate: dpExpirationDate.SelectedDate;
+                    ChangedAt: Now();
+                    ChangedByName: User().FullName;
+                    ChangedByEmail: User().Email;
+                    Reason: Blank();
+                    Source: Coalesce(varSource; "Manual")
+                }
+            );;
+            Refresh(CM_Lots);;
+            Set(
+                varSelectedLot;
+                LookUp(
+                    CM_Lots;
+                    LotKey = varCurrentMaterial.PN & "|" & Upper(Trim(txtLotNumber.Text)) && IsActive = true
+                )
+            );;
+            Reset(txtLotNumber);;
+            Reset(dpExpirationDate);;
+            Reset(txtQty);;
+            UpdateContext(
+                {
+                    ctxShowEdit: false;
+                    ctxEditMode: Blank()
+                }
+            );;
+            Notify("Lot added."; NotificationType.Success)
+        );
+
+        If(
+            varSelectedLot.LotKey <> varCurrentMaterial.PN & "|" & Upper(Trim(txtLotNumber.Text)) &&
+            !IsBlank(
+                LookUp(
+                    CM_Lots;
+                    LotKey = varCurrentMaterial.PN & "|" & Upper(Trim(txtLotNumber.Text)) && IsActive = true
+                )
+            );
+            Notify("This Lot Number already exists for this PN."; NotificationType.Error);
+
+            Patch(
+                CM_Lots;
+                varSelectedLot;
+                {
+                    Title: varCurrentMaterial.PN;
+                    PN: varCurrentMaterial.PN;
+                    LotNumber: Upper(Trim(txtLotNumber.Text));
+                    LotKey: varCurrentMaterial.PN & "|" & Upper(Trim(txtLotNumber.Text));
+                    ExpirationDate: dpExpirationDate.SelectedDate;
+                    Qty: Value(txtQty.Text);
+                    ChangedAt: Now();
+                    ChangedByName: User().FullName;
+                    ChangedByEmail: User().Email
+                }
+            );;
+            Patch(
+                CM_Transactions;
+                Defaults(CM_Transactions);
+                {
+                    Title: varCurrentMaterial.PN;
+                    PN: varCurrentMaterial.PN;
+                    LotNumber: Upper(Trim(txtLotNumber.Text));
+                    LotKey: varCurrentMaterial.PN & "|" & Upper(Trim(txtLotNumber.Text));
+                    ActionType: "Change";
+                    OldQty: varSelectedLot.Qty;
+                    NewQty: Value(txtQty.Text);
+                    OldExpirationDate: varSelectedLot.ExpirationDate;
+                    NewExpirationDate: dpExpirationDate.SelectedDate;
+                    ChangedAt: Now();
+                    ChangedByName: User().FullName;
+                    ChangedByEmail: User().Email;
+                    Reason: Blank();
+                    Source: Coalesce(varSource; "Manual")
+                }
+            );;
+            Refresh(CM_Lots);;
+            Set(
+                varSelectedLot;
+                LookUp(
+                    CM_Lots;
+                    LotKey = varCurrentMaterial.PN & "|" & Upper(Trim(txtLotNumber.Text)) && IsActive = true
+                )
+            );;
+            Reset(txtLotNumber);;
+            Reset(dpExpirationDate);;
+            Reset(txtQty);;
+            UpdateContext(
+                {
+                    ctxShowEdit: false;
+                    ctxEditMode: Blank()
+                }
+            );;
+            Notify("Lot updated."; NotificationType.Success)
+        )
+    )
+)
+
+Om det fortfarande blir rött
+
+Då är det nästan säkert CM_Transactions.ChangedAt som fortfarande inte känns igen i just den datakällan.
+
+Testa då bara detta i en label:
+
+First(CM_Transactions).ChangedAt
+
+Om den är röd, säg till direkt. Då tar vi bort just ChangedAt från transaction-patchen tillfälligt och får appen att fungera först.
