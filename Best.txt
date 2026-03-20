@@ -1,70 +1,25 @@
-Ja — vi gör ett sista rent försök, men nu helt enligt ditt bekräftade schema och English Power Fx syntax.
+Ja — nu ser jag felet.
 
-Viktigt: klistra in detta i formula bar för OnSelect, inte i YAML/code view.
-Och för din miljö gäller nu:
-	•	komma , i funktioner
-	•	komma , i { ... } records
-	•	semikolon ; mellan flera actions
+btnSaveLot använder fortfarande fel separatorer i funktionerna.
+I din miljö gäller nu detta:
+	•	komma , i funktioner: If(...), LookUp(...), Patch(...), Notify(...)
+	•	komma , i record-blocket: { Field: Value, Field2: Value2 }
+	•	semikolon ; bara mellan flera actions i rad
 
-Alltså:
+Det är därför du får:
+	•	If = Invalid number of arguments
+	•	LookUp = Invalid number of arguments
+	•	och att LotKey ser “okänd” ut, fast det egentligen är parsern som tappat bort sig
 
-Patch(
-    CM_Lots,
-    varSelectedLot,
-    {
-        IsActive: false,
-        ChangedAt: Now()
-    }
-);
-Refresh(CM_Lots)
+Gör detta först
 
-btnConfirmDelete.OnSelect
+Eftersom du döpte om Isactive till IsActive:
+	1.	Go to Data
+	2.	Find CM_Lots
+	3.	Click …
+	4.	Click Refresh
 
-Klistra in exakt detta:
-
-If(
-    IsBlank(varSelectedLot),
-    Notify("Select a lot first.", NotificationType.Error),
-    Patch(
-        CM_Lots,
-        varSelectedLot,
-        {
-            IsActive: false,
-            ChangedAt: Now(),
-            ChangedByName: User().FullName,
-            ChangedByEmail: User().Email
-        }
-    );
-    Patch(
-        CM_Transactions,
-        Defaults(CM_Transactions),
-        {
-            Title: varCurrentMaterial.PN,
-            PN: varCurrentMaterial.PN,
-            LotNumber: varSelectedLot.LotNumber,
-            LotKey: varSelectedLot.LotKey,
-            ActionType: "Delete",
-            OldQty: varSelectedLot.Qty,
-            NewQty: Blank(),
-            OldExpirationDate: varSelectedLot.ExpirationDate,
-            NewExpirationDate: Blank(),
-            ChangedAt: Now(),
-            ChangedByName: User().FullName,
-            ChangedByEmail: User().Email,
-            Reason: txtDeleteReason.Text,
-            Source: Coalesce(varSource, "Manual")
-        }
-    );
-    Refresh(CM_Lots);
-    Set(varSelectedLot, Blank());
-    Reset(txtDeleteReason);
-    UpdateContext({ ctxShowDelete: false });
-    Notify("Lot deleted.", NotificationType.Success)
-)
-
-btnSaveLot.OnSelect
-
-Klistra in exakt detta:
+Sedan byter du hela btnSaveLot.OnSelect till detta:
 
 If(
     IsBlank(Trim(txtLotNumber.Text)) || IsBlank(dpExpirationDate.SelectedDate) || !IsNumeric(txtQty.Text) || Value(txtQty.Text) <= 0,
@@ -191,4 +146,24 @@ If(
     )
 )
 
-Om det fortfarande failar nu, då vill jag att du skickar det första exakta ordet som blir rött i respektive formel. Inte hela formeln — bara första röda token. Det räcker för att pinpointa sista problemet.
+Var felet låg
+
+Den här raden i din gamla formel var ett bra exempel:
+
+LookUp(CM_Lots; LotKey = ... )
+
+Den ska vara:
+
+LookUp(CM_Lots, LotKey = ... )
+
+Alltså komma i LookUp, inte semikolon.
+
+Om LotKey fortfarande blir rött efter detta
+
+Testa i en tillfällig label:
+
+First(CM_Lots).LotKey
+
+Om den också är röd måste CM_Lots refreshas igen eller tas bort/läggas till på nytt.
+
+Om du vill, skicka en ny bild på just btnSaveLot efter att du klistrat in detta, så pinpointar jag första röda raden direkt.
