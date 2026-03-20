@@ -1,0 +1,655 @@
+Screens:
+  scrLots:
+    Properties:
+      Fill: =RGBA(248, 249, 250, 1)
+      LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
+      OnVisible: |-
+        =Refresh(CM_Lots);
+        Set(varSelectedLot, Blank());
+        UpdateContext(
+        {
+        ctxShowEdit: false,
+        ctxShowDelete: false,
+        ctxEditMode: Blank()
+        }
+        )
+    Children:
+      - btnConfirmDelete:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: |-
+              =IfError(
+              Patch(
+              CM_Lots,
+              varSelectedLot,
+              {
+              IsActive: "No",
+              ChangedAt: Now(),
+              ChangedByName: User().FullName,
+              ChangedByEmail: User().Email
+              }
+              );
+              Patch(
+              CM_Transactions,
+              Defaults(CM_Transactions),
+              {
+              Title: varCurrentMaterial.PN,
+              PN: varCurrentMaterial.PN,
+              LotNumber: varSelectedLot.LotNumber,
+              LotKey: varSelectedLot.LotKey,
+              ActionType: "Delete",
+              OldQty: varSelectedLot.Qty,
+              NewQty: Blank(),
+              OldExpirationDate: varSelectedLot.ExpirationDate,
+              NewExpirationDate: Blank(),
+              ChangedAt: Now(),
+              ChangedByName: User().FullName,
+              ChangedByEmail: User().Email,
+              Reason: Trim(txtDeleteReason.Text),
+              Source: Coalesce(varSource, "Manual")
+              }
+              );
+              Refresh(CM_Lots);
+              Set(varSelectedLot, Blank());
+              Reset(txtDeleteReason);
+              UpdateContext({ ctxShowDelete: false });
+              Notify("Lot deleted.", NotificationType.Success),
+              Notify("Could not delete the lot.", NotificationType.Error)
+              )
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Text: ="Confirm Delete"
+            Visible: =ctxShowDelete
+            Width: =120
+            X: =Parent.Width - 172
+            Y: =448
+      - btnCancelDelete:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: |-
+              =Reset(txtDeleteReason);
+              UpdateContext({ ctxShowDelete: false })
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Text: ="Cancel"
+            Visible: =ctxShowDelete
+            Width: =100
+            X: =52
+            Y: =448
+      - txtDeleteReason:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =60
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Visible: =ctxShowDelete
+            Width: =Parent.Width - 104
+            X: =52
+            Y: =376
+      - lblDeleteReasonCaption:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Text: ="Reason (optional)"
+            Visible: =ctxShowDelete
+            X: =52
+            Y: =352
+      - lblDeleteExp:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Text: |-
+              ="Expiration: " & Text(varSelectedLot.ExpirationDate, "yyyy-mm-dd")
+            Visible: =ctxShowDelete
+            X: =52
+            Y: =320
+      - lblDeleteQty:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Text: |-
+              ="Qty: " & Text(varSelectedLot.Qty)
+            Visible: =ctxShowDelete
+            X: =52
+            Y: =292
+      - lblDeleteLot:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Text: |-
+              ="Lot: " & varSelectedLot.LotNumber
+            Visible: =ctxShowDelete
+            X: =52
+            Y: =264
+      - lblDeletePN:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Text: |-
+              ="PN: " & varCurrentMaterial.PN
+            Visible: =ctxShowDelete
+            X: =52
+            Y: =236
+      - lblDeleteTitle:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Text: ="Delete lot"
+            Visible: =ctxShowDelete
+            X: =52
+            Y: =200
+      - recDeletePanel:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =300
+            Visible: =ctxShowDelete
+            Width: =Parent.Width - 64
+            X: =32
+            Y: =180
+      - recDeleteOverlay:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 0, 0, 0.25)
+            Height: =Parent.Height
+            Visible: =ctxShowDelete
+            Width: =Parent.Width
+      - btnSaveLot:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: |-
+              =With({_pn:varCurrentMaterial.PN,_lot:Upper(Trim(txtLotNumber.Text)),_qty:Value(txtQty.Text),_exp:dpExpirationDate.SelectedDate,_lotKey:varCurrentMaterial.PN&"|"&Upper(Trim(txtLotNumber.Text)),_source:Coalesce(varSource,"Manual"),_currentID:Coalesce(varSelectedLot.ID,-1)},If(IsBlank(_lot)||IsBlank(_exp)||!IsNumeric(txtQty.Text)||_qty<=0,Notify("Enter Lot Number, Expiration Date, and Qty greater than 0.",NotificationType.Error),If(ctxEditMode="Add",
+              // === ADD MODE ===
+              If(!IsBlank(LookUp(CM_Lots,LotKey=_lotKey&&IsActive="Yes")),Notify("This Lot Number already exists for this PN.",NotificationType.Error),IfError(Patch(CM_Lots,Defaults(CM_Lots),{Title:_pn,PN:_pn,LotNumber:_lot,LotKey:_lotKey,ExpirationDate:_exp,Qty:_qty,IsActive:"Yes",ChangedAt:Now(),ChangedByName:User().FullName,ChangedByEmail:User().Email});Patch(CM_Transactions,Defaults(CM_Transactions),{Title:_pn,PN:_pn,LotNumber:_lot,LotKey:_lotKey,ActionType:"Add",OldQty:Blank(),NewQty:_qty,OldExpirationDate:Blank(),NewExpirationDate:_exp,ChangedAt:Now(),ChangedByName:User().FullName,ChangedByEmail:User().Email,Reason:Blank(),Source:_source});Refresh(CM_Lots);Set(varSelectedLot,LookUp(CM_Lots,LotKey=_lotKey&&IsActive="Yes"));Reset(txtLotNumber);Reset(dpExpirationDate);Reset(txtQty);UpdateContext({ctxShowEdit: false ,ctxEditMode:Blank()});Notify("Lot added.",NotificationType.Success),Notify("Could not add the lot.",NotificationType.Error))),
+              // === CHANGE MODE ===
+              If(!IsBlank(LookUp(CM_Lots,LotKey=_lotKey&&IsActive="Yes"&&ID<>_currentID)),Notify("This Lot Number already exists for this PN.",NotificationType.Error),IfError(Patch(CM_Lots,varSelectedLot,{Title:_pn,PN:_pn,LotNumber:_lot,LotKey:_lotKey,ExpirationDate:_exp,Qty:_qty,ChangedAt:Now(),ChangedByName:User().FullName,ChangedByEmail:User().Email});Patch(CM_Transactions,Defaults(CM_Transactions),{Title:_pn,PN:_pn,LotNumber:_lot,LotKey:_lotKey,ActionType:"Change",OldQty:varSelectedLot.Qty,NewQty:_qty,OldExpirationDate:varSelectedLot.ExpirationDate,NewExpirationDate:_exp,ChangedAt:Now(),ChangedByName:User().FullName,ChangedByEmail:User().Email,Reason:Blank(),Source:_source});Refresh(CM_Lots);Set(varSelectedLot,LookUp(CM_Lots,LotKey=_lotKey&&IsActive="Yes"));Reset(txtLotNumber);Reset(dpExpirationDate);Reset(txtQty);UpdateContext({ctxShowEdit: false ,ctxEditMode:Blank()});Notify("Lot updated.",NotificationType.Success),Notify("Could not update the lot.",NotificationType.Error))))))
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Text: ="Save"
+            Visible: =ctxShowEdit
+            Width: =100
+            X: =Parent.Width - 144
+            Y: =528
+      - btnCancelEdit:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: |-
+              =Reset(txtLotNumber);
+              Reset(dpExpirationDate);
+              Reset(txtQty);
+              UpdateContext(
+              {
+              ctxShowEdit: false,
+              ctxEditMode: Blank()
+              }
+              )
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Text: ="Cancel"
+            Visible: =ctxShowEdit
+            Width: =100
+            X: =44
+            Y: =528
+      - txtQty:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: =If(ctxEditMode = "Add", "", Text(varSelectedLot.Qty))
+            Font: =Font.'Open Sans'
+            Height: =40
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Visible: =ctxShowEdit
+            Width: =120
+            X: =44
+            Y: =470
+      - lblQtyCaption:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Text: ="Qty"
+            X: =44
+            Y: =446
+      - dpExpirationDate:
+          Control: Classic/DatePicker@2.6.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            DefaultDate: =If(ctxEditMode = "Add", Today(), varSelectedLot.ExpirationDate)
+            Font: =Font.'Open Sans'
+            IconBackground: =RGBA(56, 96, 178, 1)
+            IconFill: =RGBA(255, 255, 255, 1)
+            Visible: =ctxShowEdit
+            Width: =Parent.Width - 88
+            X: =44
+            Y: =398
+      - lblExpirationCaption:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Text: ="Expiration Date"
+            Visible: =ctxShowEdit
+            X: =44
+            Y: =374
+      - txtLotNumber:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: =If(ctxEditMode = "Add", "", varSelectedLot.LotNumber)
+            Font: =Font.'Open Sans'
+            Height: =40
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Visible: =ctxShowEdit
+            Width: =Parent.Width - 88
+            X: =44
+            Y: =326
+      - lblLotNumberCaption:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Text: ="Lot Number"
+            Visible: =ctxShowEdit
+            X: =44
+            Y: =302
+      - lblEditStorageLocation:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Text: |-
+              ="Location: " & varCurrentMaterial.StorageLocation
+            Visible: =ctxShowEdit
+            X: =44
+            Y: =264
+      - lblEditUnit:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Text: |-
+              ="Unit: " & varCurrentMaterial.Unit
+            Visible: =ctxShowEdit
+            X: =44
+            Y: =236
+      - lblEditMaterialName:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Text: |-
+              ="Material: " & varCurrentMaterial.MaterialName
+            Visible: =ctxShowEdit
+            X: =44
+            Y: =208
+      - lblEditPN:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Text: |-
+              ="PN: " & varCurrentMaterial.PN
+            Visible: =ctxShowEdit
+            X: =44
+            Y: =180
+      - lblEditTitle:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Text: =If(ctxEditMode = "Add", "Add new lot", "Change lot")
+            Visible: =ctxShowEdit
+            X: =44
+            Y: =100
+      - recEditPanel:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(210, 210, 210, 1)
+            BorderThickness: =1
+            Fill: =RGBA(255, 255, 255, 1)
+            Height: =420
+            Visible: =ctxShowEdit
+            Width: =Parent.Width - 48
+            X: =24
+            Y: =120
+      - recEditOverlay:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 0, 0, 0.25)
+            Height: =Parent.Height
+            Visible: =ctxShowEdit
+            Width: =Parent.Width
+      - btnAddLot:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            Height: =44
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: |+
+              =Set(varSelectedLot, Blank());
+              UpdateContext(
+              {
+              ctxEditMode: "Add",
+              ctxShowEdit: true,
+              ctxShowDelete: false
+              }
+              );
+              Reset(txtLotNumber);
+              Reset(dpExpirationDate);
+              Reset(txtQty)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Text: ="Add"
+            Width: =100
+            X: =16
+            Y: =Parent.Height - 84
+      - lblStorageLocationValue:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Text: |-
+              ="Location: " & varCurrentMaterial.StorageLocation
+            Width: =Parent.Width - 32
+            X: =16
+            Y: =200
+      - lblUnitValue:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Text: |-
+              ="Unit: " & varCurrentMaterial.Unit
+            Width: =Parent.Width - 32
+            X: =16
+            Y: =170
+      - lblMaterialNameValue:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Text: |-
+              ="Material: " & varCurrentMaterial.MaterialName
+            Width: =Parent.Width - 32
+            X: =16
+            Y: =140
+      - lblPNValue:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Text: |-
+              ="PN: " & varCurrentMaterial.PN
+            Width: =Parent.Width - 32
+            X: =16
+            Y: =110
+      - lblLotsTitle:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Size: =22
+            Text: ="Material details"
+            Width: =Parent.Width - 32
+            X: =16
+            Y: =72
+      - btnNewSearch:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            Height: =40
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: |-
+              =Set(varCurrentMaterial, Blank());
+              Set(varSelectedLot, Blank());
+              Set(varSearchText, Blank());
+              Navigate(scrHome, ScreenTransition.Fade)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =12
+            Text: ="New Search"
+            Width: =120
+            X: =Parent.Width - Self.Width - 16
+            Y: =16
+      - btnBackLots:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            Height: =40
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: =Navigate(scrHome, ScreenTransition.Fade)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =12
+            Text: ="Back"
+            Width: =90
+            X: =16
+            Y: =16
+      - galLots:
+          Control: Gallery@2.15.0
+          Variant: BrowseLayout_Vertical_OneTextVariant_ver5.0
+          Properties:
+            BorderColor: =RGBA(220, 220, 220, 1)
+            BorderThickness: =1
+            Height: =Parent.Height - 380
+            Items: |+
+              =SortByColumns(
+                                Filter(
+                                    CM_Lots,
+                                    PN = varCurrentMaterial.PN &&
+                                    IsActive = "Yes"
+                                ),
+                                "ExpirationDate",
+                                SortOrder.Ascending
+                            )
+            OnSelect: =Set(varSelectedLot, ThisItem)
+            TemplateFill: |-
+              =If(
+              !IsBlank(varSelectedLot) && ThisItem.ID = varSelectedLot.ID,
+              RGBA(230, 240, 255, 1),
+              RGBA(255, 255, 255, 1)
+              )
+            Width: =Parent.Width - 32
+            X: =16
+            Y: =272
+          Children:
+            - lblLotQtyRow:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  Text: |-
+                    ="Qty: " & Text(ThisItem.Qty)
+                  Width: =100
+                  X: =220
+                  Y: =22
+            - lblLotExpirationRow:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  Text: |-
+                    ="Exp: " & Text(ThisItem.ExpirationDate, "yyyy-mm-dd")
+                  Width: =180
+                  X: =12
+                  Y: =36
+            - lblLotNumberRow:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 0, 0, 1)
+                  Color: =RGBA(50, 49, 48, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =Self.Size * 1.8
+                  OnSelect: =Select(Parent)
+                  PaddingBottom: =0
+                  PaddingLeft: =0
+                  PaddingRight: =0
+                  PaddingTop: =0
+                  Size: =14
+                  Text: =ThisItem.LotNumber
+                  VerticalAlign: =VerticalAlign.Top
+                  Width: =180
+                  X: =12
+                  Y: =8
+            - lblNoLots:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  Text: ="No lots found for this material. Use Add."
+                  Visible: =IsEmpty(galLots.Items)
+                  Width: =Parent.Width - 32
+                  X: =16
+                  Y: =8
+      - btnDeleteLot:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisplayMode: |-
+              =If(
+              IsBlank(varSelectedLot),
+              DisplayMode.Disabled,
+              DisplayMode.Edit
+              )
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            Height: =44
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: |-
+              =UpdateContext(
+              {
+              ctxShowDelete: true,
+              ctxShowEdit: false
+              }
+              );
+              Reset(txtDeleteReason)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Text: ="Delete"
+            Width: =100
+            X: =256
+            Y: =Parent.Height - 84
+      - btnChangeLot:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            DisplayMode: |-
+              =If(
+              IsBlank(varSelectedLot),
+              DisplayMode.Disabled,
+              DisplayMode.Edit
+              )
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            Height: =44
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: |-
+              =UpdateContext(
+              {
+              ctxEditMode: "Change",
+              ctxShowEdit: true,
+              ctxShowDelete: false
+              }
+              );
+              Reset(txtLotNumber);
+              Reset(dpExpirationDate);
+              Reset(txtQty)
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Text: ="Change"
+            Width: =100
+            X: =136
+            Y: =Parent.Height - 84
+      - lblLotsSectionTitle:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Size: =18
+            Text: ="Existing lots"
+            Width: =Parent.Width - 32
+            X: =16
+            Y: =240
