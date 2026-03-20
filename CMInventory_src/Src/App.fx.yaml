@@ -1,0 +1,19 @@
+App As appinfo:
+    BackEnabled: =true
+    OnError: =Notify(FirstError.Message, NotificationType.Error)
+    OnStart: |
+        =Set(varSource, Blank());
+        Set(varSearchText, Blank());
+        Set(varCurrentMaterial, Blank());
+        Set(varSelectedLot, Blank());
+        Set(varMode, Blank())
+    StartScreen: =
+    Theme: =PowerAppsTheme
+
+    Host As hostControl.DefaultHostControlVariant:
+        OnCancel: =false
+        OnEdit: =false
+        OnNew: =false
+        OnSave: =false
+        OnView: =false
+

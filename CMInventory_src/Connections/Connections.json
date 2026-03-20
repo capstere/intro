@@ -1,0 +1,39 @@
+{
+  "bbd014f5-6d1c-4bd9-b94f-30eb987cb716": {
+    "appActions": [
+      "providers/PowerPlatform.Governance/Operations/Read",
+      "providers/PowerPlatform.Governance/Operations/Write"
+    ],
+    "connectionRef": {
+      "apiTier": "Standard",
+      "displayName": "SharePoint",
+      "iconUri": "https://conn-afd-prod-endpoint-bmc9bqahasf3grgk.b01.azurefd.net/releases/v1.0.1769/1.0.1769.4361/sharepointonline/icon.png",
+      "id": "/providers/microsoft.powerapps/apis/shared_sharepointonline",
+      "parameterHints": {},
+      "parameterHintsV2": {}
+    },
+    "datasets": {
+      "https://danaher-my.sharepoint.com/personal/jesper_fredriksson_cepheid_com": {
+        "dataSources": {
+          "CM_Lots": {
+            "tableName": "9fe87c04-386a-456c-8c06-349c2bfb2ab5"
+          },
+          "CM_PN_Master": {
+            "tableName": "2909aa93-5f97-436a-8364-58096223d282"
+          },
+          "CM_Transactions": {
+            "tableName": "2c0e319b-b068-4d9a-b2fc-82b37d8082b4"
+          }
+        }
+      }
+    },
+    "dataSources": [
+      "CM_Lots",
+      "CM_PN_Master",
+      "CM_Transactions"
+    ],
+    "dependencies": {},
+    "dependents": [],
+    "id": "bbd014f5-6d1c-4bd9-b94f-30eb987cb716"
+  }
+}
