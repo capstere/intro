@@ -1,3 +1,372 @@
+Ja — nu är det inte logikproblem längre, utan layout/z-order.
+
+Bild 2 visar två saker tydligt:
+	1.	modal-overlayn visas
+	2.	galleryn ligger fortfarande ovanpå edit-panelen
+
+Det är därför det ser trasigt ut trots att formlerna nu fungerar.
+
+Gör exakt detta på scrLots
+
+1. Gör edit/delete till riktiga modaler
+
+Sätt dessa ZIndex om egenskapen finns. Om du inte ser ZIndex, använd samma ordning i Tree view.
+
+Vanliga kontroller på skärmen
+Sätt ungefär:
+
+ZIndex = 1
+
+Det gäller:
+	•	btnBackLots
+	•	btnNewSearch
+	•	lblLotsTitle
+	•	lblPNValue
+	•	lblMaterialNameValue
+	•	lblUnitValue
+	•	lblStorageLocationValue
+	•	lblLotsSectionTitle
+	•	galLots
+	•	lblNoLots
+	•	btnAddLot
+	•	btnChangeLot
+	•	btnDeleteLot
+
+⸻
+
+2. Edit overlay
+
+recEditOverlay
+
+Visible = ctxShowEdit
+Fill = RGBA(0, 0, 0, 0.25)
+X = 0
+Y = 0
+Width = Parent.Width
+Height = Parent.Height
+ZIndex = 100
+
+recEditPanel
+Byt till detta:
+
+Visible = ctxShowEdit
+X = 20
+Y = 80
+Width = Parent.Width - 40
+Height = Parent.Height - 160
+Fill = RGBA(255, 255, 255, 1)
+BorderThickness = 1
+BorderColor = RGBA(210, 210, 210, 1)
+ZIndex = 110
+
+
+⸻
+
+3. Alla edit-kontroller ska ligga ovanpå panelen
+
+Sätt på alla dessa:
+	•	lblEditTitle
+	•	lblEditPN
+	•	lblEditMaterialName
+	•	lblEditUnit
+	•	lblEditStorageLocation
+	•	lblLotNumberCaption
+	•	txtLotNumber
+	•	lblExpirationCaption
+	•	dpExpirationDate
+	•	lblQtyCaption
+	•	txtQty
+	•	btnSaveLot
+	•	btnCancelEdit
+
+Gemensamt
+
+Visible = ctxShowEdit
+ZIndex = 120
+
+
+⸻
+
+4. Flytta edit-kontrollerna så de faktiskt ligger inne i panelen
+
+Sätt dessa positioner:
+
+lblEditTitle
+
+X = 40
+Y = 100
+
+lblEditPN
+
+X = 40
+Y = 145
+
+lblEditMaterialName
+
+X = 40
+Y = 175
+
+lblEditUnit
+
+X = 40
+Y = 205
+
+lblEditStorageLocation
+
+X = 40
+Y = 235
+
+lblLotNumberCaption
+
+X = 40
+Y = 280
+
+txtLotNumber
+
+X = 40
+Y = 305
+Width = Parent.Width - 80
+Height = 40
+
+lblExpirationCaption
+
+X = 40
+Y = 355
+
+dpExpirationDate
+
+X = 40
+Y = 380
+Width = Parent.Width - 80
+
+lblQtyCaption
+
+X = 40
+Y = 430
+
+txtQty
+
+X = 40
+Y = 455
+Width = 140
+Height = 40
+
+btnCancelEdit
+
+X = 40
+Y = Parent.Height - 120
+Width = 100
+Height = 44
+
+btnSaveLot
+
+X = Parent.Width - 140
+Y = Parent.Height - 120
+Width = 100
+Height = 44
+
+
+⸻
+
+5. Delete overlay ska ligga högst av allt
+
+recDeleteOverlay
+
+Visible = ctxShowDelete
+Fill = RGBA(0, 0, 0, 0.25)
+X = 0
+Y = 0
+Width = Parent.Width
+Height = Parent.Height
+ZIndex = 200
+
+recDeletePanel
+
+Visible = ctxShowDelete
+X = 28
+Y = 160
+Width = Parent.Width - 56
+Height = 290
+Fill = RGBA(255, 255, 255, 1)
+BorderThickness = 1
+BorderColor = RGBA(210, 210, 210, 1)
+ZIndex = 210
+
+Alla delete-kontroller
+För:
+	•	lblDeleteTitle
+	•	lblDeletePN
+	•	lblDeleteLot
+	•	lblDeleteQty
+	•	lblDeleteExp
+	•	lblDeleteReasonCaption
+	•	txtDeleteReason
+	•	btnConfirmDelete
+	•	btnCancelDelete
+
+sätt:
+
+Visible = ctxShowDelete
+ZIndex = 220
+
+
+⸻
+
+6. Flytta delete-kontrollerna
+
+lblDeleteTitle
+
+X = 48
+Y = 180
+
+lblDeletePN
+
+X = 48
+Y = 215
+
+lblDeleteLot
+
+X = 48
+Y = 245
+
+lblDeleteQty
+
+X = 48
+Y = 275
+
+lblDeleteExp
+
+X = 48
+Y = 305
+
+lblDeleteReasonCaption
+
+X = 48
+Y = 340
+
+txtDeleteReason
+
+X = 48
+Y = 365
+Width = Parent.Width - 96
+Height = 60
+
+btnCancelDelete
+
+X = 48
+Y = 440
+Width = 100
+Height = 44
+
+btnConfirmDelete
+
+X = Parent.Width - 168
+Y = 440
+Width = 120
+Height = 44
+
+
+⸻
+
+7. Lås knapparna när modal är öppen
+
+Detta gör appen mycket mer “gold standard”.
+
+btnAddLot.DisplayMode
+
+If(ctxShowEdit || ctxShowDelete, DisplayMode.Disabled, DisplayMode.Edit)
+
+btnChangeLot.DisplayMode
+
+If(
+    ctxShowEdit || ctxShowDelete || IsBlank(varSelectedLot),
+    DisplayMode.Disabled,
+    DisplayMode.Edit
+)
+
+btnDeleteLot.DisplayMode
+
+If(
+    ctxShowEdit || ctxShowDelete || IsBlank(varSelectedLot),
+    DisplayMode.Disabled,
+    DisplayMode.Edit
+)
+
+btnBackLots.DisplayMode
+
+If(ctxShowEdit || ctxShowDelete, DisplayMode.Disabled, DisplayMode.Edit)
+
+btnNewSearch.DisplayMode
+
+If(ctxShowEdit || ctxShowDelete, DisplayMode.Disabled, DisplayMode.Edit)
+
+
+⸻
+
+8. Viktig Tree view-ordning om du inte använder ZIndex
+
+Om du inte ser ZIndex, ska ordningen längst ner i scrLots vara exakt:
+
+galLots
+lblNoLots
+btnAddLot
+btnChangeLot
+btnDeleteLot
+
+recEditOverlay
+recEditPanel
+lblEditTitle
+lblEditPN
+lblEditMaterialName
+lblEditUnit
+lblEditStorageLocation
+lblLotNumberCaption
+txtLotNumber
+lblExpirationCaption
+dpExpirationDate
+lblQtyCaption
+txtQty
+btnSaveLot
+btnCancelEdit
+
+recDeleteOverlay
+recDeletePanel
+lblDeleteTitle
+lblDeletePN
+lblDeleteLot
+lblDeleteQty
+lblDeleteExp
+lblDeleteReasonCaption
+txtDeleteReason
+btnConfirmDelete
+btnCancelDelete
+
+Delete-blocket ska ligga sist.
+
+⸻
+
+9. Det här kommer ändra direkt
+
+När du trycker Add eller Change ska du då få:
+	•	grå bakgrund
+	•	vit panel mitt på skärmen
+	•	fälten synliga ovanpå panelen
+	•	inga lots ovanpå panelen
+	•	knappar i bakgrunden låsta
+
+Det är exakt det som saknas nu.
+
+Börja med bara detta: fixa recEditOverlay, recEditPanel, edit-kontrollernas ZIndex/ordning och deras Y-positioner. Skicka sedan en ny bild på scrLots i edit-läge.
+
+
+
+
+
+
+
+
+
+
 Ja — de där är mest accessibility/App Checker-fixar, inte funktionsfel.
 
 Power Apps flaggar Missing accessible label när ett interaktivt kontrollobjekt saknar text i AccessibleLabel. Den flaggar Missing tab stop när kontrollen inte deltar i tangentbordsnavigering, styrt av TabIndex för classic controls. Den flaggar Focus isn’t showing när fokusramen inte syns, typiskt när FocusedBorderThickness är 0. Microsoft rekommenderar också att man normalt använder TabIndex = 0 eller -1 för enkelhet.  ￼
