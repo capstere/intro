@@ -433,6 +433,446 @@ Och skicka en ny bild på scrLots i normalvy och edit-vy.
 
 
 
+
+
+
+
+
+Bra. Nu gör vi en kirurgisk ombyggnad av bara scrLots.
+
+Vi rör inte det som redan fungerar:
+	•	datakällor
+	•	galLots.Items
+	•	btnSaveLot.OnSelect
+	•	btnConfirmDelete.OnSelect
+	•	btnAddLot.OnSelect
+	•	btnChangeLot.OnSelect
+	•	btnDeleteLot.OnSelect
+
+Vi gör bara detta:
+	•	tar bort overlay-tänket
+	•	gör edit/delete till inline-sektioner längst ner
+	•	gör flödet tydligt och robust
+
+Målbild för scrLots
+
+scrLots ska ha 5 tydliga delar uppifrån och ner:
+	1.	Header
+	2.	Material details
+	3.	Existing lots
+	4.	Action buttons
+	5.	Edit area eller Delete area
+
+Det betyder:
+	•	normalt ser man header + material + lots + action buttons
+	•	när man trycker Add eller Change visas edit area längst ner
+	•	när man trycker Delete visas delete area längst ner
+	•	inget lägger sig ovanpå något annat
+
+⸻
+
+Del 1 — ta bort overlay-tänket
+
+På scrLots, gör detta:
+
+Ta bort eller dölj permanent
+
+Sätt:
+
+recEditOverlay.Visible
+
+false
+
+recDeleteOverlay.Visible
+
+false
+
+De ska inte längre användas.
+
+⸻
+
+Del 2 — gör panelerna till vanliga sektioner
+
+Vi återanvänder:
+	•	recEditPanel
+	•	recDeletePanel
+
+men de ska nu vara vanliga boxar längst ner på skärmen.
+
+recEditPanel
+
+Sätt:
+
+Visible = ctxShowEdit
+X = 16
+Y = Parent.Height - 250
+Width = Parent.Width - 32
+Height = 210
+Fill = RGBA(255, 255, 255, 1)
+BorderThickness = 1
+BorderColor = RGBA(210, 210, 210, 1)
+
+recDeletePanel
+
+Sätt:
+
+Visible = ctxShowDelete
+X = 16
+Y = Parent.Height - 220
+Width = Parent.Width - 32
+Height = 180
+Fill = RGBA(255, 255, 255, 1)
+BorderThickness = 1
+BorderColor = RGBA(210, 210, 210, 1)
+
+
+⸻
+
+Del 3 — lås header och materialinfo
+
+Dessa ska alltid vara synliga:
+	•	btnBackLots
+	•	btnNewSearch
+	•	lblLotsTitle
+	•	lblPNValue
+	•	lblMaterialNameValue
+	•	lblUnitValue
+	•	lblStorageLocationValue
+	•	lblLotsSectionTitle
+
+Låt deras Visible vara standard eller:
+
+true
+
+
+⸻
+
+Del 4 — gör galleryn robust
+
+Det som ska hända är:
+	•	när edit/delete öppnas ska galleryn bli kortare
+	•	inget ska överlappa
+
+galLots.Y
+
+Behåll ungefär:
+
+272
+
+galLots.Height
+
+Byt till:
+
+If(
+    ctxShowEdit,
+    Parent.Height - 550,
+    If(
+        ctxShowDelete,
+        Parent.Height - 520,
+        Parent.Height - 380
+    )
+)
+
+Det här gör:
+	•	normal vy → större gallery
+	•	edit öppen → galleryn krymper
+	•	delete öppen → galleryn krymper lite
+
+lblNoLots.Visible
+
+Sätt till:
+
+CountRows(galLots.AllItems) = 0
+
+Och låt den ligga utanför galleryn.
+
+⸻
+
+Del 5 — action buttons bara i normalläge
+
+Det här gör flödet tydligt.
+
+När användaren redigerar eller deletar ska inte Add/Change/Delete ligga kvar som distraktion.
+
+btnAddLot.Visible
+
+!ctxShowEdit && !ctxShowDelete
+
+btnChangeLot.Visible
+
+!ctxShowEdit && !ctxShowDelete
+
+btnDeleteLot.Visible
+
+!ctxShowEdit && !ctxShowDelete
+
+Det betyder:
+	•	normalt syns de
+	•	i edit/delete-läge försvinner de
+	•	efter Save/Cancel/Delete kommer de tillbaka
+
+Det är mycket mer logiskt.
+
+⸻
+
+Del 6 — placera edit area längst ner
+
+Nu flyttar vi befintliga edit-kontroller så att de ligger inne i recEditPanel visuellt.
+
+Alla dessa ska ha:
+
+Visible = ctxShowEdit
+
+lblEditTitle
+
+X = 28
+Y = Parent.Height - 240
+Text = If(ctxEditMode = "Add", "Add lot", "Change lot")
+
+lblLotNumberCaption
+
+X = 28
+Y = Parent.Height - 208
+Text = "Lot Number"
+
+txtLotNumber
+
+X = 28
+Y = Parent.Height - 186
+Width = Parent.Width - 56
+Height = 36
+
+lblExpirationCaption
+
+X = 28
+Y = Parent.Height - 146
+Text = "Expiration Date"
+
+dpExpirationDate
+
+X = 28
+Y = Parent.Height - 124
+Width = 160
+Height = 36
+
+lblQtyCaption
+
+X = 208
+Y = Parent.Height - 146
+Text = "Qty"
+
+txtQty
+
+X = 208
+Y = Parent.Height - 124
+Width = 80
+Height = 36
+
+btnCancelEdit
+
+X = 28
+Y = Parent.Height - 72
+Width = 100
+Height = 40
+Text = "Cancel"
+
+btnSaveLot
+
+X = Parent.Width - 128
+Y = Parent.Height - 72
+Width = 100
+Height = 40
+Text = "Save"
+
+
+⸻
+
+Del 7 — göm onödiga edit-labels
+
+Dessa ska inte längre användas i edit-läget, eftersom materialinfo redan visas ovanför:
+	•	lblEditPN
+	•	lblEditMaterialName
+	•	lblEditUnit
+	•	lblEditStorageLocation
+
+Sätt:
+
+Visible = false
+
+Det gör edit-delen mycket renare.
+
+Användaren ser redan:
+	•	PN
+	•	Material
+	•	Unit
+	•	Location
+
+ovanför.
+
+⸻
+
+Del 8 — placera delete area längst ner
+
+Alla dessa ska ha:
+
+Visible = ctxShowDelete
+
+lblDeleteTitle
+
+X = 28
+Y = Parent.Height - 210
+Text = "Delete selected lot"
+
+lblDeleteLot
+
+X = 28
+Y = Parent.Height - 176
+Text = "Lot: " & varSelectedLot.LotNumber
+
+lblDeleteQty
+
+X = 28
+Y = Parent.Height - 148
+Text = "Qty: " & Text(varSelectedLot.Qty)
+
+lblDeleteExp
+
+X = 28
+Y = Parent.Height - 120
+Text = "Expiration: " & Text(varSelectedLot.ExpirationDate, "yyyy-mm-dd")
+
+lblDeleteReasonCaption
+
+X = 28
+Y = Parent.Height - 92
+Text = "Reason (optional)"
+
+txtDeleteReason
+
+X = 28
+Y = Parent.Height - 68
+Width = Parent.Width - 56
+Height = 36
+
+btnCancelDelete
+
+X = 28
+Y = Parent.Height - 28
+Width = 100
+Height = 40
+Text = "Cancel"
+
+btnConfirmDelete
+
+X = Parent.Width - 148
+Y = Parent.Height - 28
+Width = 120
+Height = 40
+Text = "Delete"
+
+
+⸻
+
+Del 9 — knapplogik som redan finns får vara kvar
+
+Det viktiga är att dessa redan funkar och ska fortsätta användas:
+
+btnAddLot.OnSelect
+
+Behåll.
+
+btnChangeLot.OnSelect
+
+Behåll.
+
+btnDeleteLot.OnSelect
+
+Behåll.
+
+btnCancelEdit.OnSelect
+
+Behåll, eller använd:
+
+Reset(txtLotNumber);
+Reset(dpExpirationDate);
+Reset(txtQty);
+UpdateContext({ ctxShowEdit: false, ctxEditMode: Blank() })
+
+btnCancelDelete.OnSelect
+
+Behåll, eller använd:
+
+Reset(txtDeleteReason);
+UpdateContext({ ctxShowDelete: false })
+
+
+⸻
+
+Del 10 — varför detta blir robust
+
+Det här flödet blir logiskt eftersom:
+
+Add
+	•	användaren trycker Add
+	•	edit area öppnas längst ner
+	•	efter Save stängs den
+	•	lots-listan uppdateras direkt
+
+Change
+	•	användaren väljer lot
+	•	trycker Change
+	•	samma edit area öppnas med värden
+	•	efter Save stängs den
+	•	samma PN ligger kvar
+
+Delete
+	•	användaren väljer lot
+	•	trycker Delete
+	•	enkel delete area öppnas
+	•	efter Delete stängs den
+	•	loten försvinner direkt
+
+Cancel
+	•	användaren stannar på samma PN
+	•	inga konstiga overlay-effekter
+	•	ingen känsla av att “hamna någon annanstans”
+
+Det är exakt det robusta flöde du vill ha.
+
+⸻
+
+Del 11 — exakt vad du ska göra nu
+
+Gör bara detta, i ordning:
+	1.	sätt recEditOverlay.Visible = false
+	2.	sätt recDeleteOverlay.Visible = false
+	3.	gör recEditPanel till nedre sektion
+	4.	gör recDeletePanel till nedre sektion
+	5.	sätt galLots.Height enligt formeln ovan
+	6.	sätt btnAddLot.Visible, btnChangeLot.Visible, btnDeleteLot.Visible till
+!ctxShowEdit && !ctxShowDelete
+	7.	flytta edit-kontrollerna till nedre sektionen
+	8.	sätt lblEditPN, lblEditMaterialName, lblEditUnit, lblEditStorageLocation till Visible = false
+	9.	flytta delete-kontrollerna till nedre sektionen
+
+När det är gjort, testa bara detta:
+	•	öppna PN
+	•	Add
+	•	Cancel
+	•	Add
+	•	Save
+	•	Change
+	•	Delete
+
+Och skicka en ny bild på scrLots i normalvy och edit-vy.
+
+
+
+
+
+
+
+
 Ja — nu är det inte logikproblem längre, utan layout/z-order.
 
 Bild 2 visar två saker tydligt:
