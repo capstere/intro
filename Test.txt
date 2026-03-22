@@ -1,0 +1,341 @@
+Det är inte logiken längre. Det är tre visuella problem:
+
+galLots innehåller gamla/extra kontroller, därför ser du PN upprepat i listan
+edit/delete-kontrollerna är placerade med fel X/Y, därför hamnar de utanför panelen
+panelerna ska ta över samma yta som galleryn, inte ligga ovanpå eller längst ner
+Det här fixar vi utan att riva appen.
+Gör exakt detta på scrLots
+1) Sluta använda overlays
+Sätt båda till:
+recEditOverlay.Visible
+
+false
+recDeleteOverlay.Visible
+false
+2) Gör galleryn till “huvudyta”
+Låt edit/delete använda samma område som galLots.
+lblLotsSectionTitle
+Behåll den ungefär där den är.
+galLots
+Sätt detta:
+X
+
+16
+Y
+lblLotsSectionTitle.Y + 34
+Width
+Parent.Width - 32
+Height
+Parent.Height - Self.Y - 90
+Visible
+!ctxShowEdit && !ctxShowDelete
+TemplateSize
+64
+Items
+Sort(
+    Filter(
+        CM_Lots,
+        PN = varCurrentMaterial.PN && IsActive = true
+    ),
+    ExpirationDate,
+    SortOrder.Ascending
+)
+3) Rensa galLots invändigt
+Inne i galLots ska du bara ha 3 labels.
+Ta bort allt annat som ligger inne i galleryn.
+Behåll bara:
+
+lblLotNumberRow
+lblLotExpirationRow
+lblLotQtyRow
+lblLotNumberRow
+Text
+ThisItem.LotNumber
+X
+12
+Y
+10
+Width
+130
+lblLotExpirationRow
+Text
+Text(ThisItem.ExpirationDate, "yyyy-mm-dd")
+X
+150
+Y
+10
+Width
+120
+lblLotQtyRow
+Text
+Text(ThisItem.Qty)
+X
+280
+Y
+10
+Width
+40
+Det här kommer få bort allt “001-1923”-skräp i listan.
+4) lblNoLots
+Den ska ligga utanför galleryn.
+Visible
+
+!ctxShowEdit && !ctxShowDelete && CountRows(galLots.AllItems) = 0
+X
+16
+Y
+galLots.Y + 8
+5) Action-knapparna
+De ska bara synas i normalläge.
+btnAddLot.Visible
+!ctxShowEdit && !ctxShowDelete
+btnChangeLot.Visible
+!ctxShowEdit && !ctxShowDelete
+btnDeleteLot.Visible
+!ctxShowEdit && !ctxShowDelete
+Placera dem längst ner som du redan har.
+Edit-läge: använd samma yta som galleryn
+6) recEditPanel
+Sätt detta:
+Visible
+
+ctxShowEdit
+X
+galLots.X
+Y
+galLots.Y
+Width
+galLots.Width
+Height
+galLots.Height
+Fill
+RGBA(255, 255, 255, 1)
+BorderThickness
+1
+BorderColor
+RGBA(210, 210, 210, 1)
+7) Göm dessa helt
+Du behöver inte visa materialinfo igen i edit-panelen.
+Sätt:
+
+lblEditPN.Visible
+
+false
+lblEditMaterialName.Visible
+false
+lblEditUnit.Visible
+false
+lblEditStorageLocation.Visible
+false
+8) Placera edit-kontrollerna relativt till recEditPanel
+Alla dessa ska ha:
+Visible = ctxShowEdit
+lblEditTitle
+Text
+If(ctxEditMode = "Add", "Add lot", "Change lot")
+X
+recEditPanel.X + 16
+Y
+recEditPanel.Y + 16
+lblLotNumberCaption
+X
+recEditPanel.X + 16
+Y
+recEditPanel.Y + 52
+txtLotNumber
+X
+recEditPanel.X + 16
+Y
+recEditPanel.Y + 76
+Width
+recEditPanel.Width - 32
+Height
+36
+lblExpirationCaption
+X
+recEditPanel.X + 16
+Y
+recEditPanel.Y + 124
+dpExpirationDate
+X
+recEditPanel.X + 16
+Y
+recEditPanel.Y + 148
+Width
+160
+Height
+36
+lblQtyCaption
+X
+recEditPanel.X + 196
+Y
+recEditPanel.Y + 124
+txtQty
+X
+recEditPanel.X + 196
+Y
+recEditPanel.Y + 148
+Width
+80
+Height
+36
+btnCancelEdit
+X
+recEditPanel.X + 16
+Y
+recEditPanel.Y + recEditPanel.Height - 52
+Width
+100
+Height
+40
+btnSaveLot
+X
+recEditPanel.X + recEditPanel.Width - 116
+Y
+recEditPanel.Y + recEditPanel.Height - 52
+Width
+100
+Height
+40
+Delete-läge: använd samma yta som galleryn
+9) recDeletePanel
+Sätt detta:
+Visible
+
+ctxShowDelete
+X
+galLots.X
+Y
+galLots.Y
+Width
+galLots.Width
+Height
+galLots.Height
+Fill
+RGBA(255, 255, 255, 1)
+BorderThickness
+1
+BorderColor
+RGBA(210, 210, 210, 1)
+10) Placera delete-kontrollerna relativt till recDeletePanel
+Alla dessa ska ha:
+Visible = ctxShowDelete
+lblDeleteTitle
+X
+recDeletePanel.X + 16
+Y
+recDeletePanel.Y + 16
+lblDeletePN
+Visible
+false
+Du behöver inte visa PN här igen.
+lblDeleteLot
+X
+recDeletePanel.X + 16
+Y
+recDeletePanel.Y + 52
+lblDeleteQty
+X
+recDeletePanel.X + 16
+Y
+recDeletePanel.Y + 82
+lblDeleteExp
+X
+recDeletePanel.X + 16
+Y
+recDeletePanel.Y + 112
+lblDeleteReasonCaption
+X
+recDeletePanel.X + 16
+Y
+recDeletePanel.Y + 150
+txtDeleteReason
+X
+recDeletePanel.X + 16
+Y
+recDeletePanel.Y + 174
+Width
+recDeletePanel.Width - 32
+Height
+36
+btnCancelDelete
+X
+recDeletePanel.X + 16
+Y
+recDeletePanel.Y + recDeletePanel.Height - 52
+Width
+100
+Height
+40
+btnConfirmDelete
+X
+recDeletePanel.X + recDeletePanel.Width - 136
+Y
+recDeletePanel.Y + recDeletePanel.Height - 52
+Width
+120
+Height
+40
+11) Tree view
+Ordningen ska vara:
+scrLots
+  btnBackLots
+  btnNewSearch
+  lblLotsTitle
+  lblPNValue
+  lblMaterialNameValue
+  lblUnitValue
+  lblStorageLocationValue
+  lblLotsSectionTitle
+  galLots
+    lblLotNumberRow
+    lblLotExpirationRow
+    lblLotQtyRow
+  lblNoLots
+  btnAddLot
+  btnChangeLot
+  btnDeleteLot
+  recEditPanel
+  lblEditTitle
+  lblEditPN
+  lblEditMaterialName
+  lblEditUnit
+  lblEditStorageLocation
+  lblLotNumberCaption
+  txtLotNumber
+  lblExpirationCaption
+  dpExpirationDate
+  lblQtyCaption
+  txtQty
+  btnCancelEdit
+  btnSaveLot
+  recDeletePanel
+  lblDeleteTitle
+  lblDeletePN
+  lblDeleteLot
+  lblDeleteQty
+  lblDeleteExp
+  lblDeleteReasonCaption
+  txtDeleteReason
+  btnCancelDelete
+  btnConfirmDelete
+12) Resultatet du ska få
+Normalvy:
+snygg materialinfo
+ren lots-lista med 3 kolumner: Lot / Exp / Qty
+Add/Change/Delete längst ner
+Edit:
+listan försvinner
+en ren vit edit-panel visas i samma område
+bara LotNumber, ExpirationDate, Qty + Cancel/Save
+Delete:
+listan försvinner
+en ren vit delete-panel visas i samma område
+tydlig info + reason + Cancel/Delete
+Det här är den robusta versionen av det du redan byggt.
+Börja med bara detta:
+
+rensa galLots till exakt 3 labels
+sätt recEditPanel till samma X/Y/Width/Height som galLots
+placera edit-kontrollerna relativt till recEditPanel
+Skicka sedan en ny bild på scrLots i edit-läge.
