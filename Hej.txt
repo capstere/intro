@@ -1,0 +1,762 @@
+Tack. Nu gör vi det här ordentligt.
+
+Jag kommer inte försöka rädda den havererade scrLots. Det är där problemen började.
+Vi bygger en ny, ren och robust struktur ovanpå dina redan fungerande Lists.
+
+Låsta förutsättningar
+
+Jag utgår nu från det du har bekräftat:
+
+Syntax i din miljö
+	•	funktioner: ,
+	•	records { ... }: ,
+	•	flera actions i rad: ;
+
+Lists
+
+CM_PN_Master
+	•	PN = text
+	•	BarcodePN = text
+	•	MaterialName = text
+	•	Unit = text
+	•	StorageLocation = text
+	•	IsActive = boolean
+
+CM_Lots
+	•	PN = text
+	•	LotNumber = text
+	•	LotKey = text
+	•	ExpirationDate = date
+	•	Qty = number
+	•	IsActive = boolean
+	•	ChangedAt = date/time
+	•	ChangedByName = text
+	•	ChangedByEmail = text
+	•	Comments = multiline text
+
+CM_Transactions
+	•	PN = text
+	•	LotNumber = text
+	•	LotKey = text
+	•	ActionType = text
+	•	OldQty = number
+	•	NewQty = number
+	•	OldExpirationDate = date
+	•	NewExpirationDate = date
+	•	ChangedAt = date/time
+	•	ChangedByName = text
+	•	ChangedByEmail = text
+	•	Reason = multiline text
+	•	Source = text
+
+Best-practice beslut
+
+Vi gör appen med 5 screens:
+	1.	scrHome
+	2.	scrSearchResults
+	3.	scrLots
+	4.	scrEditLot
+	5.	scrDeleteLot
+
+Och vi använder inte Back() i huvudflödet. Back() följer historiken, medan Navigate() ger ett kontrollerat flöde. Det är viktigare här, eftersom vi vill att användaren alltid ska hamna på rätt ställe efter Add/Change/Delete. Microsoft beskriver också att Back följer den faktiska navigeringshistoriken, medan Navigate skickar användaren till en bestämd screen och kan bära med sig state via context variables.  ￼
+
+Vi använder också:
+	•	Barcode reader på scrHome, eftersom den använder native scanner på iOS/Android/Windows och läser ut värdet via Barcodes/Value. Den stöds inte i vanlig webbläsare, så telefon är rätt målplattform.  ￼
+	•	Patch för create/update/delete-logik, eftersom vi skriver till både CM_Lots och CM_Transactions.  ￼
+	•	IfError runt submit/delete-blocket för robust felhantering.  ￼
+	•	Reset för att nollställa inputs när man går in i eller lämnar edit/delete-flöden.  ￼
+
+⸻
+
+Del 0 — gör detta först
+
+1. Behåll scrHome och scrSearchResults
+
+De kan du återanvända.
+
+2. Den trasiga scrLots
+
+Byt namn på den nuvarande till:
+
+scrLots_OLD
+
+Om du redan har gamla scrEditLot/scrDeleteLot, byt namn på dem också:
+
+scrEditLot_OLD
+scrDeleteLot_OLD
+
+3. Skapa tre nya blank screens
+
+Skapa exakt dessa tre nya screens:
+
+scrLots
+scrEditLot
+scrDeleteLot
+
+Detta är viktigt. Vi återanvänder inte de gamla förstörda skärmarna.
+
+⸻
+
+Del 1 — App-nivå
+
+Gå till App.
+
+App.StartScreen
+
+Sätt till:
+
+scrHome
+
+App.OnStart
+
+Sätt till exakt detta:
+
+Set(varSource, Blank());
+Set(varSearchText, Blank());
+Set(varCurrentMaterial, Blank());
+Set(varSelectedLot, Blank());
+Set(varMode, Blank());
+Set(varBusy, false);
+Set(varSavedLot, Blank());
+Set(varOldQty, Blank());
+Set(varOldExp, Blank());
+
+Kör sedan Run OnStart en gång.
+
+⸻
+
+Del 2 — scrHome
+
+Jag utgår från att din nuvarande scrHome i princip fungerar, men här är den version jag vill att du låser.
+
+Kontroller
+	•	lblTitle
+	•	brPN
+	•	txtSearchPN
+	•	btnSearch
+	•	btnClear
+
+btnSearch.OnSelect
+
+Set(varSource, "Manual");
+Set(varSearchText, Trim(txtSearchPN.Text));
+
+If(
+    IsBlank(varSearchText),
+    Notify("Enter a PN, barcode, or material name.", NotificationType.Warning),
+    Set(
+        varCurrentMaterial,
+        LookUp(
+            CM_PN_Master,
+            (PN = varSearchText || BarcodePN = varSearchText) && IsActive = true
+        )
+    );
+    If(
+        !IsBlank(varCurrentMaterial),
+        Set(varSelectedLot, Blank());
+        Navigate(scrLots, ScreenTransition.Fade),
+        Navigate(scrSearchResults, ScreenTransition.Fade)
+    )
+)
+
+btnClear.OnSelect
+
+Reset(txtSearchPN);
+Set(varSearchText, Blank());
+Set(varCurrentMaterial, Blank());
+Set(varSelectedLot, Blank());
+Set(varMode, Blank());
+
+brPN.OnScan
+
+Använd barcode readerns Barcodes-tabell och första Value. Det är det dokumenterade mönstret.  ￼
+
+Set(varSource, "Barcode");
+Set(varSearchText, Trim(First(brPN.Barcodes).Value));
+Set(
+    varCurrentMaterial,
+    LookUp(
+        CM_PN_Master,
+        (PN = varSearchText || BarcodePN = varSearchText) && IsActive = true
+    )
+);
+If(
+    IsBlank(varCurrentMaterial),
+    Notify("PN not found in master list.", NotificationType.Error),
+    Set(varSelectedLot, Blank());
+    Navigate(scrLots, ScreenTransition.Fade)
+)
+
+
+⸻
+
+Del 3 — scrSearchResults
+
+Kontroller
+	•	lblSearchResults
+	•	galMaterials
+	•	btnBackFromSearch
+	•	lblNoMaterials (valfri men bra)
+
+galMaterials.Items
+
+Filter(
+    CM_PN_Master,
+    IsActive = true &&
+    (
+        StartsWith(PN, varSearchText) ||
+        StartsWith(BarcodePN, varSearchText) ||
+        StartsWith(MaterialName, varSearchText)
+    )
+)
+
+Labels inne i galMaterials
+	•	lblMaterialPN.Text
+
+ThisItem.PN
+
+	•	lblMaterialName.Text
+
+ThisItem.MaterialName
+
+	•	lblMaterialLocation.Text
+
+ThisItem.StorageLocation
+
+galMaterials.OnSelect
+
+Set(varCurrentMaterial, ThisItem);
+Set(varSelectedLot, Blank());
+Navigate(scrLots, ScreenTransition.Fade)
+
+btnBackFromSearch.OnSelect
+
+Navigate(scrHome, ScreenTransition.Fade)
+
+lblNoMaterials.Visible
+
+CountRows(galMaterials.AllItems) = 0
+
+
+⸻
+
+Del 4 — nya scrLots (ren overview-screen)
+
+Den här screenen ska vara enkel:
+	•	materialinfo
+	•	lots list
+	•	tre knappar
+
+Ingen edit, ingen delete-dialog här.
+
+Kontroller
+	•	btnBackLots
+	•	btnNewSearch
+	•	lblLotsTitle
+	•	lblPNValue
+	•	lblMaterialNameValue
+	•	lblUnitValue
+	•	lblStorageLocationValue
+	•	lblLotsSectionTitle
+	•	galLots
+	•	lblNoLots
+	•	btnAddLot
+	•	btnChangeLot
+	•	btnDeleteLot
+
+scrLots.OnVisible
+
+Refresh(CM_Lots);
+Set(varBusy, false);
+
+lblPNValue.Text
+
+"PN: " & varCurrentMaterial.PN
+
+lblMaterialNameValue.Text
+
+"Material: " & varCurrentMaterial.MaterialName
+
+lblUnitValue.Text
+
+"Unit: " & varCurrentMaterial.Unit
+
+lblStorageLocationValue.Text
+
+"Location: " & varCurrentMaterial.StorageLocation
+
+galLots.Items
+
+Sort(
+    Filter(
+        CM_Lots,
+        PN = varCurrentMaterial.PN && IsActive = true
+    ),
+    ExpirationDate,
+    SortOrder.Ascending
+)
+
+Inne i galLots ska du bara ha 3 labels
+	•	lblLotNumberRow.Text
+
+ThisItem.LotNumber
+
+	•	lblLotExpirationRow.Text
+
+Text(ThisItem.ExpirationDate, "yyyy-mm-dd")
+
+	•	lblLotQtyRow.Text
+
+Text(ThisItem.Qty)
+
+galLots.OnSelect
+
+Set(varSelectedLot, ThisItem)
+
+lblNoLots.Visible
+
+CountRows(galLots.AllItems) = 0
+
+btnBackLots.OnSelect
+
+Navigate(scrHome, ScreenTransition.Fade)
+
+btnNewSearch.OnSelect
+
+Set(varCurrentMaterial, Blank());
+Set(varSelectedLot, Blank());
+Set(varSearchText, Blank());
+Navigate(scrHome, ScreenTransition.Fade)
+
+btnAddLot.DisplayMode
+
+If(varBusy, DisplayMode.Disabled, DisplayMode.Edit)
+
+btnAddLot.OnSelect
+
+Set(varMode, "Add");
+Set(varSelectedLot, Blank());
+Navigate(scrEditLot, ScreenTransition.Fade)
+
+btnChangeLot.DisplayMode
+
+If(
+    IsBlank(varSelectedLot) || varBusy,
+    DisplayMode.Disabled,
+    DisplayMode.Edit
+)
+
+btnChangeLot.OnSelect
+
+Set(varMode, "Change");
+Navigate(scrEditLot, ScreenTransition.Fade)
+
+btnDeleteLot.DisplayMode
+
+If(
+    IsBlank(varSelectedLot) || varBusy,
+    DisplayMode.Disabled,
+    DisplayMode.Edit
+)
+
+btnDeleteLot.OnSelect
+
+Navigate(scrDeleteLot, ScreenTransition.Fade)
+
+Viktig flödeslogik på scrLots
+	•	Add → scrEditLot
+	•	Change → scrEditLot
+	•	Delete → scrDeleteLot
+	•	Save/Delete/Cancel → alltid tillbaka till scrLots
+	•	varSelectedLot behålls efter Add/Change, nollställs efter Delete
+
+Det är den logiska “bakåt”-modellen du efterfrågade.
+
+⸻
+
+Del 5 — nya scrEditLot
+
+Det här är enda screenen för både Add och Change.
+
+Kontroller
+	•	btnBackEdit
+	•	lblEditTitle
+	•	lblEditPN
+	•	lblEditMaterialName
+	•	lblEditUnit
+	•	lblEditStorageLocation
+	•	lblLotNumberCaption
+	•	txtLotNumber
+	•	lblExpirationCaption
+	•	dpExpirationDate
+	•	lblQtyCaption
+	•	txtQty
+	•	btnCancelEdit
+	•	btnSaveLot
+
+scrEditLot.OnVisible
+
+Reset används för att återställa inputs till deras Default-värden.  ￼
+
+Set(varBusy, false);
+Reset(txtLotNumber);
+Reset(dpExpirationDate);
+Reset(txtQty);
+
+Read-only labels
+
+lblEditTitle.Text
+
+If(varMode = "Add", "Add lot", "Change lot")
+
+lblEditPN.Text
+
+"PN: " & varCurrentMaterial.PN
+
+lblEditMaterialName.Text
+
+"Material: " & varCurrentMaterial.MaterialName
+
+lblEditUnit.Text
+
+"Unit: " & varCurrentMaterial.Unit
+
+lblEditStorageLocation.Text
+
+"Location: " & varCurrentMaterial.StorageLocation
+
+Inputs
+
+txtLotNumber.Default
+
+If(varMode = "Add", "", varSelectedLot.LotNumber)
+
+dpExpirationDate.DefaultDate
+
+If(varMode = "Add", Today(), varSelectedLot.ExpirationDate)
+
+txtQty.Default
+
+If(varMode = "Add", "", Text(varSelectedLot.Qty))
+
+Cancel/back
+
+btnBackEdit.OnSelect
+
+Navigate(scrLots, ScreenTransition.Fade)
+
+btnCancelEdit.OnSelect
+
+Navigate(scrLots, ScreenTransition.Fade)
+
+Anti-double-submit
+
+btnSaveLot.DisplayMode
+
+If(varBusy, DisplayMode.Disabled, DisplayMode.Edit)
+
+btnSaveLot.OnSelect
+
+Det här är den robusta versionen:
+	•	validerar
+	•	sätter varBusy = true
+	•	Add eller Change
+	•	loggar alltid till CM_Transactions
+	•	går tillbaka till scrLots
+	•	skyddar mot dubbel-submit
+	•	använder IfError för kontrollerad felhantering.  ￼
+
+If(
+    IsBlank(Trim(txtLotNumber.Text)) || IsBlank(dpExpirationDate.SelectedDate) || !IsNumeric(txtQty.Text) || Value(txtQty.Text) <= 0,
+    Notify("Enter Lot Number, Expiration Date, and Qty greater than 0.", NotificationType.Error),
+
+    Set(varBusy, true);
+
+    If(
+        varMode = "Add",
+
+        If(
+            !IsBlank(
+                LookUp(
+                    CM_Lots,
+                    LotKey = varCurrentMaterial.PN & "|" & Upper(Trim(txtLotNumber.Text)) && IsActive = true
+                )
+            ),
+            Notify("This Lot Number already exists for this PN.", NotificationType.Error);
+            Set(varBusy, false),
+
+            IfError(
+                Set(
+                    varSavedLot,
+                    Patch(
+                        CM_Lots,
+                        Defaults(CM_Lots),
+                        {
+                            Title: varCurrentMaterial.PN,
+                            PN: varCurrentMaterial.PN,
+                            LotNumber: Upper(Trim(txtLotNumber.Text)),
+                            LotKey: varCurrentMaterial.PN & "|" & Upper(Trim(txtLotNumber.Text)),
+                            ExpirationDate: dpExpirationDate.SelectedDate,
+                            Qty: Value(txtQty.Text),
+                            IsActive: true,
+                            ChangedAt: Now(),
+                            ChangedByName: User().FullName,
+                            ChangedByEmail: User().Email
+                        }
+                    )
+                );
+                Patch(
+                    CM_Transactions,
+                    Defaults(CM_Transactions),
+                    {
+                        Title: varCurrentMaterial.PN,
+                        PN: varCurrentMaterial.PN,
+                        LotNumber: Upper(Trim(txtLotNumber.Text)),
+                        LotKey: varCurrentMaterial.PN & "|" & Upper(Trim(txtLotNumber.Text)),
+                        ActionType: "Add",
+                        OldQty: Blank(),
+                        NewQty: Value(txtQty.Text),
+                        OldExpirationDate: Blank(),
+                        NewExpirationDate: dpExpirationDate.SelectedDate,
+                        ChangedAt: Now(),
+                        ChangedByName: User().FullName,
+                        ChangedByEmail: User().Email,
+                        Reason: Blank(),
+                        Source: Coalesce(varSource, "Manual")
+                    }
+                );
+                Refresh(CM_Lots);
+                Set(varSelectedLot, varSavedLot);
+                Set(varBusy, false);
+                Navigate(scrLots, ScreenTransition.Fade),
+
+                Set(varBusy, false);
+                Notify(FirstError.Message, NotificationType.Error)
+            )
+        ),
+
+        Set(varOldQty, varSelectedLot.Qty);
+        Set(varOldExp, varSelectedLot.ExpirationDate);
+
+        If(
+            Coalesce(varSelectedLot.LotKey, "") <> varCurrentMaterial.PN & "|" & Upper(Trim(txtLotNumber.Text)) &&
+            !IsBlank(
+                LookUp(
+                    CM_Lots,
+                    LotKey = varCurrentMaterial.PN & "|" & Upper(Trim(txtLotNumber.Text)) && IsActive = true
+                )
+            ),
+            Notify("This Lot Number already exists for this PN.", NotificationType.Error);
+            Set(varBusy, false),
+
+            IfError(
+                Set(
+                    varSavedLot,
+                    Patch(
+                        CM_Lots,
+                        varSelectedLot,
+                        {
+                            Title: varCurrentMaterial.PN,
+                            PN: varCurrentMaterial.PN,
+                            LotNumber: Upper(Trim(txtLotNumber.Text)),
+                            LotKey: varCurrentMaterial.PN & "|" & Upper(Trim(txtLotNumber.Text)),
+                            ExpirationDate: dpExpirationDate.SelectedDate,
+                            Qty: Value(txtQty.Text),
+                            ChangedAt: Now(),
+                            ChangedByName: User().FullName,
+                            ChangedByEmail: User().Email
+                        }
+                    )
+                );
+                Patch(
+                    CM_Transactions,
+                    Defaults(CM_Transactions),
+                    {
+                        Title: varCurrentMaterial.PN,
+                        PN: varCurrentMaterial.PN,
+                        LotNumber: Upper(Trim(txtLotNumber.Text)),
+                        LotKey: varCurrentMaterial.PN & "|" & Upper(Trim(txtLotNumber.Text)),
+                        ActionType: "Change",
+                        OldQty: varOldQty,
+                        NewQty: Value(txtQty.Text),
+                        OldExpirationDate: varOldExp,
+                        NewExpirationDate: dpExpirationDate.SelectedDate,
+                        ChangedAt: Now(),
+                        ChangedByName: User().FullName,
+                        ChangedByEmail: User().Email,
+                        Reason: Blank(),
+                        Source: Coalesce(varSource, "Manual")
+                    }
+                );
+                Refresh(CM_Lots);
+                Set(varSelectedLot, varSavedLot);
+                Set(varBusy, false);
+                Navigate(scrLots, ScreenTransition.Fade),
+
+                Set(varBusy, false);
+                Notify(FirstError.Message, NotificationType.Error)
+            )
+        )
+    )
+)
+
+Resultat efter Save
+	•	Add → tillbaka till scrLots, ny lot vald
+	•	Change → tillbaka till scrLots, uppdaterad lot vald
+	•	dubbel-submit blockeras av varBusy
+
+⸻
+
+Del 6 — nya scrDeleteLot
+
+Det här är en ren bekräftelseskärm.
+
+Kontroller
+	•	btnBackDelete
+	•	lblDeleteTitle
+	•	lblDeletePN
+	•	lblDeleteLot
+	•	lblDeleteQty
+	•	lblDeleteExp
+	•	lblDeleteReasonCaption
+	•	txtDeleteReason
+	•	btnCancelDelete
+	•	btnConfirmDelete
+
+scrDeleteLot.OnVisible
+
+Set(varBusy, false);
+Reset(txtDeleteReason);
+
+Labels
+
+lblDeleteTitle.Text
+
+"Delete selected lot"
+
+lblDeletePN.Text
+
+"PN: " & varCurrentMaterial.PN
+
+lblDeleteLot.Text
+
+"Lot: " & varSelectedLot.LotNumber
+
+lblDeleteQty.Text
+
+"Qty: " & Text(varSelectedLot.Qty)
+
+lblDeleteExp.Text
+
+"Expiration: " & Text(varSelectedLot.ExpirationDate, "yyyy-mm-dd")
+
+Navigation
+
+btnBackDelete.OnSelect
+
+Navigate(scrLots, ScreenTransition.Fade)
+
+btnCancelDelete.OnSelect
+
+Navigate(scrLots, ScreenTransition.Fade)
+
+Anti-double-submit
+
+btnConfirmDelete.DisplayMode
+
+If(varBusy || IsBlank(varSelectedLot), DisplayMode.Disabled, DisplayMode.Edit)
+
+btnConfirmDelete.OnSelect
+
+If(
+    IsBlank(varSelectedLot),
+    Notify("Select a lot first.", NotificationType.Error),
+
+    Set(varBusy, true);
+
+    IfError(
+        Patch(
+            CM_Lots,
+            varSelectedLot,
+            {
+                IsActive: false,
+                ChangedAt: Now(),
+                ChangedByName: User().FullName,
+                ChangedByEmail: User().Email
+            }
+        );
+        Patch(
+            CM_Transactions,
+            Defaults(CM_Transactions),
+            {
+                Title: varCurrentMaterial.PN,
+                PN: varCurrentMaterial.PN,
+                LotNumber: varSelectedLot.LotNumber,
+                LotKey: varSelectedLot.LotKey,
+                ActionType: "Delete",
+                OldQty: varSelectedLot.Qty,
+                NewQty: Blank(),
+                OldExpirationDate: varSelectedLot.ExpirationDate,
+                NewExpirationDate: Blank(),
+                ChangedAt: Now(),
+                ChangedByName: User().FullName,
+                ChangedByEmail: User().Email,
+                Reason: txtDeleteReason.Text,
+                Source: Coalesce(varSource, "Manual")
+            }
+        );
+        Refresh(CM_Lots);
+        Set(varSelectedLot, Blank());
+        Set(varBusy, false);
+        Navigate(scrLots, ScreenTransition.Fade),
+
+        Set(varBusy, false);
+        Notify(FirstError.Message, NotificationType.Error)
+    )
+)
+
+Resultat efter Delete
+	•	tillbaka till scrLots
+	•	samma material kvar
+	•	ingen lot vald
+	•	borttagen lot syns inte längre
+
+⸻
+
+Del 7 — hur det här flödet beter sig “bakåt”
+
+Det här är det du bad om särskilt.
+
+Om användaren trycker Cancel
+	•	från scrEditLot → tillbaka till scrLots
+	•	från scrDeleteLot → tillbaka till scrLots
+
+Om användaren sparar
+	•	Add → tillbaka till scrLots, ny lot vald
+	•	Change → tillbaka till scrLots, uppdaterad lot vald
+
+Om användaren tar bort
+	•	tillbaka till scrLots, lot-listan uppdaterad, ingen vald lot
+
+Om användaren vill lämna materialet
+	•	btnNewSearch → tillbaka till scrHome
+
+Det här är ett stängt, logiskt flöde. Ingen “mystisk back-stack”.
+
+⸻
+
+Del 8 — byggordning
+
+Gör detta i exakt ordning:
+	1.	Rename gamla trasiga screens till _OLD
+	2.	skapa nya scrLots, scrEditLot, scrDeleteLot
+	3.	koppla in formlerna ovan
+	4.	testa bara:
+	•	Search → scrLots
+	•	Add → Save → tillbaka till scrLots
+	•	Change → Save → tillbaka till scrLots
+	•	Delete → Confirm → tillbaka till scrLots
+
+Det här är den robusta vägen framåt.
+
+Nästa gång du återkommer kan vi ta bara scrLots först, en kontroll i taget, utan att röra de andra skärmarna.
