@@ -1,3 +1,283 @@
+Ja — nu är rotorsaken tydlig.
+
+Det som faktiskt är fel
+
+Både AutoMapp.ps1 och IPTCompile/Main.ps1 utgår idag från att det finns en gemensam nyckel för vacuum oven calibration due date:
+	•	CAL_D_OVENS
+
+Det syns här i AutoMapp.ps1:
+	•	POS använder OVENSPOS men ändå CAL_D_OVENS
+	•	NEG använder OVENSNEG men ändå CAL_D_OVENS
+
+Och i IPTCompile/Main.ps1:
+
+'Vacuum Oven Cal Due Date' = @{ NegKey='CAL_D_OVENS'; PosKey='CAL_D_OVENS'; Mode='MONTH' }
+
+Så med nuvarande modell går det inte att uttrycka:
+	•	NEG Oven Cal = Jun-26, Mar-27
+	•	POS Oven Cal = Jun-26
+
+utan att få felaktigt autoifyllda Seal Test-filer och därmed mismatch i output.
+
+⸻
+
+Min rekommenderade snabba och säkra lösning
+
+1. Ändra equipment.xml
+
+Lägg till två nya nycklar:
+	•	CAL_D_OVENSNEG
+	•	CAL_D_OVENSPOS
+
+För ditt exempel:
+
+<En>
+  <S N="Key">CAL_D_OVENSNEG</S>
+  <S N="Value">Jun-26, Mar-27</S>
+</En>
+<En>
+  <S N="Key">CAL_D_OVENSPOS</S>
+  <S N="Value">Jun-26</S>
+</En>
+
+Du kan gärna behålla gamla CAL_D_OVENS tillfälligt för bakåtkompatibilitet, men efter patchen nedan kommer båda skripten att föredra de nya nycklarna.
+
+⸻
+
+2. Patcha AutoMapp.ps1
+
+Det här gör att mapparna/Seal Test-filerna fylls korrekt redan från början.
+
+Diff-patch
+
+--- a/AutoMapp.ps1
++++ b/AutoMapp.ps1
+@@
+ function create-folder ($returnmat, $robalnr, $ordernr, $batchnr, $lsp, $samplereagent, $prodtime, $version, $robalitem) {
+ 
+     $equipment = Import-Clixml -LiteralPath "\\SE.CEPHEID.PRI\Cepheid Sweden\QC\QC-1\IPT\Skiftspecifika dokument\Skift 1\Mahdi\powerpoint\AutoMappscript\equipment.xml"
++
++    # Bakåtkompatibel lookup för oven cal due date:
++    # föredra separata NEG/POS-nycklar, fall tillbaka till äldre CAL_D_OVENS.
++    $calD_OvensNeg = $null
++    $calD_OvensPos = $null
++    try {
++        if ($equipment.ContainsKey('CAL_D_OVENSNEG') -and ('' + $equipment.CAL_D_OVENSNEG).Trim()) {
++            $calD_OvensNeg = ('' + $equipment.CAL_D_OVENSNEG).Trim()
++        } else {
++            $calD_OvensNeg = ('' + $equipment.CAL_D_OVENS).Trim()
++        }
++    } catch {
++        $calD_OvensNeg = ('' + $equipment.CAL_D_OVENS).Trim()
++    }
++    try {
++        if ($equipment.ContainsKey('CAL_D_OVENSPOS') -and ('' + $equipment.CAL_D_OVENSPOS).Trim()) {
++            $calD_OvensPos = ('' + $equipment.CAL_D_OVENSPOS).Trim()
++        } else {
++            $calD_OvensPos = ('' + $equipment.CAL_D_OVENS).Trim()
++        }
++    } catch {
++        $calD_OvensPos = ('' + $equipment.CAL_D_OVENS).Trim()
++    }
+@@
+                 "Vacuum Oven ID Number"{
+ 
+                     $sheet.cells[($cellrow + 1), $cellcolumn].value = $equipment.OVENSpos
+-                    $sheet.cells[($cellrow + 1), ($cellcolumn + 2)].value = $equipment.CAL_D_OVENS                     
++                    $sheet.cells[($cellrow + 1), ($cellcolumn + 2)].value = $calD_OvensPos
+                         
+                 }
+@@
+                     "Vacuum Oven ID Number"{
+ 
+                         $sheet.cells[($cellrow + 1), $cellcolumn].value = $equipment.OVENSpos
+-                        $sheet.cells[($cellrow + 1), ($cellcolumn + 2)].value = $equipment.CAL_D_OVENS                        
++                        $sheet.cells[($cellrow + 1), ($cellcolumn + 2)].value = $calD_OvensPos
+                         
+                     }
+@@
+                 "Vacuum Oven ID Number"{
+ 
+                     $sheet.cells[($cellrow + 1), $cellcolumn].value = $equipment.OVENSNEG
+-                    $sheet.cells[($cellrow + 1), ($cellcolumn + 2)].value = $equipment.CAL_D_OVENS                     
++                    $sheet.cells[($cellrow + 1), ($cellcolumn + 2)].value = $calD_OvensNeg
+                         
+                 }
+@@
+                     "Vacuum Oven ID Number"{
+ 
+                         $sheet.cells[($cellrow + 1), $cellcolumn].value = $equipment.OVENSNEG
+-                        $sheet.cells[($cellrow + 1), ($cellcolumn + 2)].value = $equipment.CAL_D_OVENS
++                        $sheet.cells[($cellrow + 1), ($cellcolumn + 2)].value = $calD_OvensNeg
+                         
+                     }
+
+
+⸻
+
+3. Patcha IPTCompile/Main.ps1
+
+Det här gör att Seal Test Info jämför mot rätt förväntade värden.
+
+Diff-patch
+
+--- a/IPTCompile/Main.ps1
++++ b/IPTCompile/Main.ps1
+@@
+         function _FixMonthText([string]$s) {
+             if ([string]::IsNullOrWhiteSpace($s)) { return '' }
+             $t = (Normalize-HeaderText $s).Trim()
+             # Byt ut kyrillisk A (А/а) mot latin A – vanligt i "Аpr-26"
+             $t = $t -replace '[Аа]', 'A'
+             $t = ($t -replace '\s+', ' ').Trim()
+             return $t
+         }
++
++        function _EquipGetExpected([object]$equipObj, [string[]]$keys) {
++            foreach ($k in @($keys)) {
++                try {
++                    if ($equipObj -and $equipObj.ContainsKey($k)) {
++                        $v = ("" + $equipObj[$k]).Trim()
++                        if ($v) { return $v }
++                    }
++                } catch {}
++            }
++            return $null
++        }
+@@
+         function _EquipEvalMonth([string]$actual, [string]$expected) {
+             if ([string]::IsNullOrWhiteSpace($expected)) { return 'NoRef' }
+             if ([string]::IsNullOrWhiteSpace($actual))   { return 'Saknas' }
+-            $a = (_FixMonthText $actual).ToUpper()
+-            $e = (_FixMonthText $expected).ToUpper()
+-            if ($a -eq $e) { return 'Match' }
+-            return 'Mismatch'
++
++            $aVals = @(
++                (_FixMonthText $actual) -split '[,;]' |
++                ForEach-Object { ($_ + '').Trim().ToUpperInvariant() } |
++                Where-Object { $_ }
++            )
++            $eVals = @(
++                (_FixMonthText $expected) -split '[,;]' |
++                ForEach-Object { ($_ + '').Trim().ToUpperInvariant() } |
++                Where-Object { $_ }
++            )
++
++            if ($aVals.Count -eq 0) { return 'Saknas' }
++            if ($eVals.Count -eq 0) { return 'NoRef' }
++
++            foreach ($a in $aVals) {
++                if (-not ($eVals -contains $a)) { return 'Mismatch' }
++            }
++            return 'Match'
+         }
+@@
+         $equipMap = @{
+             'Balance ID Number'        = @{ NegKey='SCALESNEG';       PosKey='SCALESPOS';       Mode='LIST'  }
+             'Balance Cal Due Date'     = @{ NegKey='CAL_D_SCALES';    PosKey='CAL_D_SCALES';    Mode='MONTH' }
+             'Vacuum Oven ID Number'    = @{ NegKey='OVENSNEG';        PosKey='OVENSPOS';        Mode='LIST'  }
+-            'Vacuum Oven Cal Due Date' = @{ NegKey='CAL_D_OVENS';     PosKey='CAL_D_OVENS';     Mode='MONTH' }
++            'Vacuum Oven Cal Due Date' = @{ NegKeys=@('CAL_D_OVENSNEG','CAL_D_OVENS'); PosKeys=@('CAL_D_OVENSPOS','CAL_D_OVENS'); Mode='MONTH' }
+             'Timer ID Number'          = @{ NegKey='TIMERSNEG';       PosKey='TIMERSPOS';       Mode='LIST'  }
+             'Timer Cal Due Date'       = @{ NegKey='CAL_D_TIMERSNEG'; PosKey='CAL_D_TIMERSPOS'; Mode='MONTH' }
+         }
+@@
+                 $map = $equipMap[$f.Label]
+                 $expNeg = $null; $expPos = $null
+-                try { if ($equip.Contains($map.NegKey)) { $expNeg = (""+$equip[$map.NegKey]).Trim() } } catch {}
+-                try { if ($equip.Contains($map.PosKey)) { $expPos = (""+$equip[$map.PosKey]).Trim() } } catch {}
++                try {
++                    if ($map.ContainsKey('NegKeys')) {
++                        $expNeg = _EquipGetExpected $equip @($map.NegKeys)
++                    } elseif ($map.ContainsKey('NegKey')) {
++                        $expNeg = _EquipGetExpected $equip @($map.NegKey)
++                    }
++                } catch {}
++                try {
++                    if ($map.ContainsKey('PosKeys')) {
++                        $expPos = _EquipGetExpected $equip @($map.PosKeys)
++                    } elseif ($map.ContainsKey('PosKey')) {
++                        $expPos = _EquipGetExpected $equip @($map.PosKey)
++                    }
++                } catch {}
+
+
+⸻
+
+4. Så här bör equipment.xml se ut nu
+
+Minimalt tillägg, baserat på det du visade:
+
+<En>
+  <S N="Key">OVENSNEG</S>
+  <S N="Value">003478, 003298</S>
+</En>
+<En>
+  <S N="Key">CAL_D_OVENSNEG</S>
+  <S N="Value">Jun-26, Mar-27</S>
+</En>
+
+<En>
+  <S N="Key">OVENSPOS</S>
+  <S N="Value">003346, 003587</S>
+</En>
+<En>
+  <S N="Key">CAL_D_OVENSPOS</S>
+  <S N="Value">Jun-26</S>
+</En>
+
+Du kan låta denna gamla ligga kvar under övergången:
+
+<En>
+  <S N="Key">CAL_D_OVENS</S>
+  <S N="Value">Jun-26, Mar-27</S>
+</En>
+
+men när båda skripten är uppdaterade är den egentligen inte längre nödvändig för oven-cal.
+
+⸻
+
+Varför detta är rätt
+
+För att du idag har en datamodell som inte kan uttrycka verkligheten:
+	•	NEG har egna ovens + egna cal due
+	•	POS har egna ovens + egna cal due
+
+Men både AutoMapp och IPTCompile läser samma gemensamma key för oven-cal.
+
+Så mismatchen kommer inte av att IPTCompile tänker fel — den kommer av att källdatan är för grovt modellerad, och att båda skripten därför gör “rätt” utifrån fel struktur.
+
+⸻
+
+Om raden Print Full Name, Sign, and Date
+
+Det här fixas inte av oven-patchen.
+Om den fortfarande blir fel efter detta, då är det ett separat signaturnormaliseringsproblem i:
+	•	IPTCompile/Core/SignatureWorkflow.ps1
+	•	Normalize-Signature
+
+I så fall patchar vi den separat. Jag skulle hålla det åtskilt från equipment-fixen.
+
+⸻
+
+Min rekommendation
+
+Gör detta i ordning:
+	1.	lägg till CAL_D_OVENSNEG och CAL_D_OVENSPOS i equipment.xml
+	2.	patcha AutoMapp.ps1
+	3.	patcha IPTCompile/Main.ps1
+	4.	skapa en ny mapp via AutoMapp
+	5.	kör IPTCompile på de nygenererade Seal Test-filerna
+
+Om mismatch på oven-raderna då försvinner, har vi träffat rätt rotorsak.
+Om signaturraden fortfarande felar, tar vi den som nästa lilla patch.
+
+
+
+
+
+
 Det blir mismatch då mappar skapas felaktigt.
 
 NEG Oven: 003478, 003298
