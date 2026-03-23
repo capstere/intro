@@ -1,0 +1,239 @@
+# Equipment Oven/Scale Cal Due Date — Polaritetssplit
+
+## Sammanfattning
+
+`equipment.xml` har idag **delade** kalibreringsdatum för ugnar (`CAL_D_OVENS`) och vågar (`CAL_D_SCALES`).
+Det innebär att POS och NEG inte kan ha olika kalibreringsdatum.
+
+### Ändringar per fil
+
+| Fil | Ändringar | Status |
+|-----|-----------|--------|
+| `equipment.xml` | Ta bort 2 delade nycklar, lägg till 2 nya | **Du gör manuellt** |
+| `AutoMapp.ps1` | 4 rader: `CAL_D_OVENS` → `CAL_D_OVENSPOS` / `CAL_D_OVENSNEG` | **Patchad i zip** |
+| `IPTCompile/Main.ps1` | 2 rader: Oven + Scale equipMap-nycklar | **Patchad i zip** |
+
+---
+
+## 1. equipment.xml
+
+### Ta bort (2 nycklar)
+
+```xml
+<!-- TA BORT: Delad oven cal — ersätts av CAL_D_OVENSNEG + CAL_D_OVENSPOS -->
+      <En>
+        <S N="Key">CAL_D_OVENS</S>
+        <S N="Value">Jun-26, Mar-27</S>
+      </En>
+
+<!-- TA BORT: Delad scale cal — CAL_D_SCALES_POS och CAL_D_SCALES_NEG finns redan -->
+      <En>
+        <S N="Key">CAL_D_SCALES</S>
+        <S N="Value">Feb-27</S>
+      </En>
+```
+
+### Lägg till (2 nycklar)
+
+```xml
+      <En>
+        <S N="Key">CAL_D_OVENSNEG</S>
+        <S N="Value">Jun-26, Mar-27</S>
+      </En>
+      <En>
+        <S N="Key">CAL_D_OVENSPOS</S>
+        <S N="Value">Jun-26</S>
+      </En>
+```
+
+### Komplett equipment.xml efter ändring
+
+```xml
+<Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04">
+  <Obj RefId="0">
+    <TN RefId="0">
+      <T>Deserialized.System.Collections.Hashtable</T>
+      <T>Deserialized.System.Object</T>
+    </TN>
+    <DCT>
+      <En>
+        <S N="Key">CAL_D_TIMERSPOS</S>
+        <S N="Value">Sep-27</S>
+      </En>
+      <En>
+        <S N="Key">SCALESPOS</S>
+        <S N="Value">SCLSYS03, SCLSYS05</S>
+      </En>
+      <En>
+        <S N="Key">SCALESNEG</S>
+        <S N="Value">003070, SCLSYS04</S>
+      </En>
+      <En>
+        <S N="Key">OVENSNEG</S>
+        <S N="Value">003478, 003298</S>
+      </En>
+      <En>
+        <S N="Key">CAL_D_TIMERSNEG</S>
+        <S N="Value">Sep-27</S>
+      </En>
+      <En>
+        <S N="Key">CAL_D_SCALES_NEG</S>
+        <S N="Value">Feb-27</S>
+      </En>
+      <En>
+        <S N="Key">TIMERSNEG</S>
+        <S N="Value">Nr. 24,  Nr. 25</S>
+      </En>
+      <En>
+        <S N="Key">CAL_D_OVENSNEG</S>
+        <S N="Value">Jun-26, Mar-27</S>
+      </En>
+      <En>
+        <S N="Key">CAL_D_OVENSPOS</S>
+        <S N="Value">Jun-26</S>
+      </En>
+      <En>
+        <S N="Key">OVENSPOS</S>
+        <S N="Value">003346, 003587</S>
+      </En>
+      <En>
+        <S N="Key">CAL_D_SCALES_POS</S>
+        <S N="Value">Feb-27</S>
+      </En>
+      <En>
+        <S N="Key">TIMERSPOS</S>
+        <S N="Value">Nr. 26, Nr. 27</S>
+      </En>
+    </DCT>
+  </Obj>
+</Objs>
+```
+
+---
+
+## 2. AutoMapp.ps1
+
+Fyra ändringar — alla i equipment-nyckelreferenser.
+
+### Ändring 2a — Rad 1171 (funktion `sealtestdatapos`, Datasheet 1)
+
+```diff
+  "Vacuum Oven ID Number"{
+      $sheet.cells[($cellrow + 1), $cellcolumn].value = $equipment.OVENSpos
+-     $sheet.cells[($cellrow + 1), ($cellcolumn + 2)].value = $equipment.CAL_D_OVENS
++     $sheet.cells[($cellrow + 1), ($cellcolumn + 2)].value = $equipment.CAL_D_OVENSPOS
+  }
+```
+
+### Ändring 2b — Rad 1208 (funktion `sealtestdatapos`, övriga blad)
+
+```diff
+  "Vacuum Oven ID Number"{
+      $sheet.cells[($cellrow + 1), $cellcolumn].value = $equipment.OVENSpos
+-     $sheet.cells[($cellrow + 1), ($cellcolumn + 2)].value = $equipment.CAL_D_OVENS
++     $sheet.cells[($cellrow + 1), ($cellcolumn + 2)].value = $equipment.CAL_D_OVENSPOS
+  }
+```
+
+### Ändring 2c — Rad 1682 (funktion `sealtestdataneg`, Datasheet 1)
+
+```diff
+  "Vacuum Oven ID Number"{
+      $sheet.cells[($cellrow + 1), $cellcolumn].value = $equipment.OVENSNEG
+-     $sheet.cells[($cellrow + 1), ($cellcolumn + 2)].value = $equipment.CAL_D_OVENS
++     $sheet.cells[($cellrow + 1), ($cellcolumn + 2)].value = $equipment.CAL_D_OVENSNEG
+  }
+```
+
+### Ändring 2d — Rad 1720 (funktion `sealtestdataneg`, övriga blad)
+
+```diff
+  "Vacuum Oven ID Number"{
+      $sheet.cells[($cellrow + 1), $cellcolumn].value = $equipment.OVENSNEG
+-     $sheet.cells[($cellrow + 1), ($cellcolumn + 2)].value = $equipment.CAL_D_OVENS
++     $sheet.cells[($cellrow + 1), ($cellcolumn + 2)].value = $equipment.CAL_D_OVENSNEG
+  }
+```
+
+---
+
+## 3. IPTCompile/Main.ps1
+
+Två ändringar i `$equipMap` (Seal Test Info-jämförelselogiken).
+
+### Ändring 3a — Rad 2576 (Balance Cal Due Date)
+
+```diff
+- 'Balance Cal Due Date'     = @{ NegKey='CAL_D_SCALES';    PosKey='CAL_D_SCALES';    Mode='MONTH' }
++ 'Balance Cal Due Date'     = @{ NegKey='CAL_D_SCALES_NEG'; PosKey='CAL_D_SCALES_POS'; Mode='MONTH' }
+```
+
+### Ändring 3b — Rad 2578 (Vacuum Oven Cal Due Date)
+
+```diff
+- 'Vacuum Oven Cal Due Date' = @{ NegKey='CAL_D_OVENS';     PosKey='CAL_D_OVENS';     Mode='MONTH' }
++ 'Vacuum Oven Cal Due Date' = @{ NegKey='CAL_D_OVENSNEG';  PosKey='CAL_D_OVENSPOS';  Mode='MONTH' }
+```
+
+### Ändring 3c — Rad 2565–2572 (funktion `_EquipEvalMonth` — BUG FIX)
+
+Före: exakt strängmatchning — om equipment.xml har `"Jun-26, Mar-27"` och
+ett Seal Test-blad har `"Jun-26"` → falskt Mismatch.
+
+```diff
+  function _EquipEvalMonth([string]$actual, [string]$expected) {
+      if ([string]::IsNullOrWhiteSpace($expected)) { return 'NoRef' }
+      if ([string]::IsNullOrWhiteSpace($actual))   { return 'Saknas' }
+-     $a = (_FixMonthText $actual).ToUpper()
+-     $e = (_FixMonthText $expected).ToUpper()
+-     if ($a -eq $e) { return 'Match' }
++     $a = (_FixMonthText $actual).ToUpper().Trim()
++     # Splitta expected i individuella månader (equipment.xml kan ha "Jun-26, Mar-27")
++     $eParts = @($expected -split '[,;]' | ForEach-Object {
++         (_FixMonthText $_).ToUpper().Trim()
++     } | Where-Object { $_ })
++     if ($eParts.Count -eq 0) { return 'NoRef' }
++     # Bladet har EN månad — kontrollera om den finns bland de tillåtna
++     if ($eParts -contains $a) { return 'Match' }
+      return 'Mismatch'
+  }
+```
+
+**Före:** `"JUN-26" -eq "JUN-26, MAR-27"` → Mismatch (fel!)
+**Efter:** `@("JUN-26","MAR-27") -contains "JUN-26"` → Match (rätt!)
+
+---
+
+## Nyckelinventering — före och efter
+
+### equipment.xml nycklar
+
+| Nyckel | Före | Efter |
+|--------|------|-------|
+| `SCALESPOS` | ✅ | ✅ (oförändrad) |
+| `SCALESNEG` | ✅ | ✅ (oförändrad) |
+| `CAL_D_SCALES` | ✅ delad | ❌ **borttagen** (redundant) |
+| `CAL_D_SCALES_POS` | ✅ | ✅ (oförändrad) |
+| `CAL_D_SCALES_NEG` | ✅ | ✅ (oförändrad) |
+| `OVENSPOS` | ✅ | ✅ (oförändrad) |
+| `OVENSNEG` | ✅ | ✅ (oförändrad) |
+| `CAL_D_OVENS` | ✅ delad | ❌ **borttagen** |
+| `CAL_D_OVENSPOS` | ❌ | ✅ **ny** |
+| `CAL_D_OVENSNEG` | ❌ | ✅ **ny** |
+| `TIMERSPOS` | ✅ | ✅ (oförändrad) |
+| `TIMERSNEG` | ✅ | ✅ (oförändrad) |
+| `CAL_D_TIMERSPOS` | ✅ | ✅ (oförändrad) |
+| `CAL_D_TIMERSNEG` | ✅ | ✅ (oförändrad) |
+
+### Vem läser vilken nyckel
+
+| Nyckel | AutoMapp POS | AutoMapp NEG | IPTCompile |
+|--------|:---:|:---:|:---:|
+| `CAL_D_SCALES_POS` | ✅ | — | ✅ (PosKey) |
+| `CAL_D_SCALES_NEG` | — | ✅ | ✅ (NegKey) |
+| `CAL_D_OVENSPOS` | ✅ | — | ✅ (PosKey) |
+| `CAL_D_OVENSNEG` | — | ✅ | ✅ (NegKey) |
+| `CAL_D_TIMERSPOS` | ✅ | — | ✅ (PosKey) |
+| `CAL_D_TIMERSNEG` | — | ✅ | ✅ (NegKey) |
+
+Alla tre utrustningstyper följer nu samma mönster: `CAL_D_{TYP}{POLARITET}`.
