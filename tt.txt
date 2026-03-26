@@ -1,9 +1,0 @@
-App.txt
-scrHome.txt
-scrSearchResults.txt
-scrCategoryResults.txt
-scrEditEquipment.txt
-scrEquipmentDetail.txt
-
-IPTEquipment.xlsx
-IPTEquipmentLookup.xlsx
