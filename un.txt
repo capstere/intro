@@ -1,0 +1,80 @@
+Varför fungerar detta i galLots.items?
+
+Switch(
+    varListMode,
+
+    //-------------------------------------
+    // 1. SEARCH MODE
+    //-------------------------------------
+    "Search",
+    SortByColumns(
+        AddColumns(
+            Filter(
+                colMaster,
+                IsActive = true &&
+                (
+                    StartsWith(PN, varSearchText) ||
+                    StartsWith(BarcodePN, varSearchText) ||
+                    StartsWith(MaterialName, varSearchText)
+                )
+            ),
+            RowType, "Material",
+            RowPN, PN,
+            RowLot, Blank(),
+            RowLotKey, Blank(),
+            RowName, MaterialName,
+            RowMeta, StorageLocation,
+            RowBadge, Blank()
+        ),
+        "RowPN",
+        SortOrder.Ascending
+    ),
+
+    //-------------------------------------
+    // 2. EXPIRED MODE
+    //-------------------------------------
+    "Expired",
+    SortByColumns(
+        AddColumns(
+            Filter(
+                colLots,
+                IsActive = true &&
+                ExpirationDate < Today()
+            ),
+            RowType, "Lot",
+            RowPN, PN,
+            RowLot, LotNumber,
+            RowLotKey, LotKey,
+            RowName, LookUp(colMaster, PN = ThisRecord.PN, MaterialName),
+            RowMeta, "Exp: " & Text(ExpirationDate, "yyyy-MM-dd") & " · Qty: " & Text(Qty),
+            RowBadge, "Expired",
+            RowExpDate, ExpirationDate
+        ),
+        "RowExpDate",
+        SortOrder.Ascending
+    ),
+
+    //-------------------------------------
+    // 3. EXPIRING SOON (DEFAULT)
+    //-------------------------------------
+    SortByColumns(
+        AddColumns(
+            Filter(
+                colLots,
+                IsActive = true &&
+                ExpirationDate >= Today() &&
+                ExpirationDate <= DateAdd(Today(), 30, TimeUnit.Days)
+            ),
+            RowType, "Lot",
+            RowPN, PN,
+            RowLot, LotNumber,
+            RowLotKey, LotKey,
+            RowName, LookUp(colMaster, PN = ThisRecord.PN, MaterialName),
+            RowMeta, "Exp: " & Text(ExpirationDate, "yyyy-MM-dd") & " · Qty: " & Text(Qty),
+            RowBadge, Text(DateDiff(Today(), ExpirationDate, TimeUnit.Days)) & " days",
+            RowExpDate, ExpirationDate
+        ),
+        "RowExpDate",
+        SortOrder.Ascending
+    )
+)
