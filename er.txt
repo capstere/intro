@@ -1,30 +1,57 @@
-QDIP:n har som sagt tre huvuddelar:
-EHS
-Q (Quality)
-D (Delivery)
 
-Man presenterar olika metrics varje dag enligt:
-Leading (Dagens resultat)
-Lagging (Gårdagens resultat)
+EXEMPEL DELIVERY LAGGING:
 
-Vår QDIP hålls varje varddag mån-fre 09:25.
-På måndagar blir det således naturligt att presentera lagging från fredag, lördag och söndag.
+Date
+is on or after 4/6/2026 12:00:00 AM and is before 4/7/2026 12:00:00 AM
+Excluded (1)
+6008661 (Order#) + 6/30/2023 6:15:00 PM (IPT - Testing finalized) + 6/30/2023 6:15:00 PM (IPT - Document review) + 1000992124 (SAP Batch#) + 73702 (LSP) + GXHIV-VL-CN-10 (Material) + 6/30/2023 6:15:00 PM (IPT - Compiling of data) + 4/10/2023 11:40:00 PM (ROBAL - Actual end date/ time)
+Lead time
+is not blank
+Order#
+starts with '10' or starts with '11'
 
-(Mer om det per kategori)
 
-EHS - Enivorment health safety
-EHS-runda - detta är en leading metrics. Utförs varje vardag för att säkerställa korrekt arbetsmiljö. Vi kollar exempelvis om det är oordning i slussen, skor på golvet, personal har inte korrekt PPE etcetera. Då kan man få avdrag med ≥4 poäng så blir vi röda. Detta är en Leading metrics.
+Filter Datum:
 
-Incidents - detta är en lagging metrics. Om det rapporterats någon incident från gårdagen som blir vi röda.
+Lead time
+is not blank
+Order#
+starts with '10' or starts with '11'
+is Today or earlier
+is True
 
-Amplicon - detta är en lagging metrics. Detta presenteras 1 gång i veckan (i regel på onsdagar). Har swab tester från Lab Support kommit tillbaka positiva från labbet så blir vi röda och måste vi städa labbet.
 
-Q - Quality
-NRFT (Not right first time) - detta är en lagging metrics. Om vi utfört ≥1 dokumentationsfel vid sammanställning eller granskning så blir vi röda.
-LFI (laboratory failure investigation) - detta är en lagging metrics. Om vi utfört ≥1 LFI blir vi röda.
+Share of tested within 20h:
 
-D - Delivery (Idag har vi en Power Bi som hämtar data från SharePoint och räknar ut olika värden "CEP PBI QSC Quality-Sweden" = Semantic model
-Solna Quality report. (se bifogad bild för Leading och lagging samt excel-tabell hur det hanteras)
+Date
+is on or after 4/6/2026 12:00:00 AM and is before 4/7/2026 12:00:00 AM
+Lead time
+is not blank
+Order#
+starts with '10' or starts with '11'
+Order#
+starts with '10' or starts with '11'
 
-Lead times - detta är en lagging metrics. >1 batch över 20h = röda
-Orders in progress - detta är en leading metrics. >3 batcher över 10h = röda
+
+Finished IPT orders:
+Date
+is on or after 4/6/2026 12:00:00 AM and is before 4/7/2026 12:00:00 AM
+Lead time
+is not blank
+Order#
+starts with '10' or starts with '11'
+
+
+
+EXEMPEL DELIVERY LEADING:
+
+Filter IPT/FQC
+is 1
+IPT/FQC week
+is 44
+Lead time
+is not blank
+Order#
+starts with '10' or starts with '11'
+System
+is GX1, GX2, GX3, GX4, GX5, GX6, Infinity II, Infinity III, Infinity V, Infinity VI, or Infinity VIII
