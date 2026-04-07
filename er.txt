@@ -1,0 +1,30 @@
+QDIP:n har som sagt tre huvuddelar:
+EHS
+Q (Quality)
+D (Delivery)
+
+Man presenterar olika metrics varje dag enligt:
+Leading (Dagens resultat)
+Lagging (Gårdagens resultat)
+
+Vår QDIP hålls varje varddag mån-fre 09:25.
+På måndagar blir det således naturligt att presentera lagging från fredag, lördag och söndag.
+
+(Mer om det per kategori)
+
+EHS - Enivorment health safety
+EHS-runda - detta är en leading metrics. Utförs varje vardag för att säkerställa korrekt arbetsmiljö. Vi kollar exempelvis om det är oordning i slussen, skor på golvet, personal har inte korrekt PPE etcetera. Då kan man få avdrag med ≥4 poäng så blir vi röda. Detta är en Leading metrics.
+
+Incidents - detta är en lagging metrics. Om det rapporterats någon incident från gårdagen som blir vi röda.
+
+Amplicon - detta är en lagging metrics. Detta presenteras 1 gång i veckan (i regel på onsdagar). Har swab tester från Lab Support kommit tillbaka positiva från labbet så blir vi röda och måste vi städa labbet.
+
+Q - Quality
+NRFT (Not right first time) - detta är en lagging metrics. Om vi utfört ≥1 dokumentationsfel vid sammanställning eller granskning så blir vi röda.
+LFI (laboratory failure investigation) - detta är en lagging metrics. Om vi utfört ≥1 LFI blir vi röda.
+
+D - Delivery (Idag har vi en Power Bi som hämtar data från SharePoint och räknar ut olika värden "CEP PBI QSC Quality-Sweden" = Semantic model
+Solna Quality report. (se bifogad bild för Leading och lagging samt excel-tabell hur det hanteras)
+
+Lead times - detta är en lagging metrics. >1 batch över 20h = röda
+Orders in progress - detta är en leading metrics. >3 batcher över 10h = röda
