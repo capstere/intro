@@ -1,3 +1,21 @@
+EN GÅNG FÖR ALLA:
+
+SharePoint List = Cepheid | Production orders
+
+'Order' = 'Title' (Text) : Sortera så endast det som börjar med "10" eller "11" dyker upp.
+'SAP Batch#' = Batch_x0023_ (Text)
+'LSP' = LSP (Text)
+'Material' = Material = Display value = Value (Choice)
+'ROBAL - Actual End Date' = Actual_x0020_end_x0020_date_x002 (Date and Time)
+'IPT - Testing finalized' = IPT_x0020__x002d__x0020_Testing_0 (Date and Time)
+'IPT - Compiling of data'  = IPT_x002d__x0020_compiling_x0020 (Date and Time)
+'IPT - Document Review' = IPT_x0020__x002d__x0020_Document (Date and Time)
+'IPT - Error Free text' = IPT_x0020__x002d__x0020_Error_x0 (Note)
+
+LEAD TIME LAGGING = TID MELLAN 'ROBAL - Actual End Date' TILL 'IPT - Document Review'.
+
+
+
 Screens:
   scrDeliveryLagging:
     Properties:
