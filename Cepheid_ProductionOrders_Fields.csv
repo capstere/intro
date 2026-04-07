@@ -1,0 +1,27 @@
+﻿Title,InternalName,TypeAsString
+IPT - Compiling of data,IPT_x002d__x0020_compiling_x0020,DateTime
+IPT - Document review,IPT_x0020__x002d__x0020_Document,DateTime
+IPT - Error Free text,IPT_x0020__x002d__x0020_Error_x0,Note
+IPT - LFI,IPT_x0020__x002d__x0020_LFI,Text
+IPT - Resampling,IPT_x0020__x002d__x0020_Resampli,Boolean
+IPT - Test results,ITP_x0020_Test_x0020_results,Choice
+IPT - Testing finalized,IPT_x0020__x002d__x0020_Testing_0,DateTime
+IPT testing in progress,Resampling_x0020_and_x0020_Extra,Calculated
+Is Current Version,_IsCurrentVersion,Boolean
+IsArchive,IsArchive,DateTime
+Item Child Count,ItemChildCount,Lookup
+Item is a Record,_IsRecord,Computed
+Item Type,FSObjType,Lookup
+LSP,LSP,Text
+Material,Material,Choice
+NC (QA) – NCR Number,NCR_x0020__x002d__x0020_Process,Text
+Order,Order,Number
+Packing info,IPT_x0020__x002d__x0020_Packing_,Choice
+ROBAL - Actual end date/ time,Actual_x0020_end_x0020_date_x002,DateTime
+ROBAL - Till packning,Total_x0020_good,Number
+ROBAL - Visual rejects Other,ROBAL_x0020__x002d__x0020_Visual0,Number
+Robal resampling/extra testing required,Robal_x0020_resampling_x0020_req,Calculated
+Sample Reagent P/N (MTB/RIF Only),Sample_x0020_Reagent_x0020_P_x00,Choice
+Sample Reagent used,PAL_x0020__x002d__x0020_Sample_x,Note
+SAP Batch#,Batch_x0023_,Text
+SAP Batch# 2,SAP_x0020_Batch_x0023__x0020_2,Text
