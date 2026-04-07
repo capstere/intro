@@ -1,0 +1,49 @@
+Med detta i galDeliveryLagging.items så får jag ut data:
+
+With(
+    { cutoff: DateAdd(Now(), -60) },
+    Filter(
+        Filter(
+            'Cepheid | Production orders',
+            'Created' >= cutoff
+        ),
+        StartsWith(Text('Order#'), "10") || StartsWith(Text('Order#'), "11")
+    )
+)
+
+Order.Text
+ThisItem.'Order#'
+
+SAP Batch#.Text
+ThisItem.Batch_x0023_
+
+LSP.Text
+ThisItem.LSP
+
+Material.Text
+ThisItem.Material.Value
+
+Leat time.text
+With(
+    {
+        startDT: ThisItem.Actual_x0020_end_x0020_date_x002,
+        endDT:   ThisItem.IPT_x0020__x002d__x0020_Document
+    },
+    If(
+        IsBlank(startDT) || IsBlank(endDT),
+        Blank(),
+        Text( DateDiff(startDT, endDT, TimeUnit.Minutes) / 60, "0.0" ) & " h"
+    )
+)
+
+ROBAL - Actual End Date.Text
+Text(ThisItem.Actual_x0020_end_x0020_date_x002, "[$-en-US]yyyy-mm-dd hh:mm")
+
+IPT - Testing finalized.Text
+Text(ThisItem.IPT_x0020__x002d__x0020_Testing_0, "[$-en-US]yyyy-mm-dd hh:mm")
+
+IPT - Compiling of data.Text
+Text(ThisItem.IPT_x002d__x0020_compiling_x0020, "[$-en-US]yyyy-mm-dd hh:mm")
+
+IPT - Document Review.Text
+Text(ThisItem.IPT_x0020__x002d__x0020_Document, "[$-en-US]yyyy-mm-dd hh:mm")
