@@ -1,0 +1,64 @@
+Jag fick till sorteringen med denna Items:
+
+SortByColumns(
+    Filter(
+        'Cepheid | Production orders',
+        StartsWith(Title, "10") || StartsWith(Title, "11"),
+        Created >= DateAdd(Today(), -60, TimeUnit.Days),
+        Actual_x0020_end_x0020_date_x002 <> Blank(),
+        IPT_x0020__x002d__x0020_Document <> Blank()
+    ),
+    "Created",
+    SortOrder.Descending
+)
+
+
+Din fungerade inte på grund av:
+Problem 1: !IsBlank() = Not() (inte stödd av SharePoint)
+
+Problem 2: DateAdd(Today(), -60, ...) är klientlogik
+
+Problem 3: Sort + ej‑delegationsbart filter = tyst fel
+
+Angående filtrering:
+
+Din app sorterar korrekt på datum –
+men du försöker filtrera på ett sätt som gör att SharePoint inte får vara med.
+
+Sortering ≠ filtrering
+Sortering fungerar alltid lokalt
+Filtrering avgör vilka rader du ens får att sortera.
+
+Man behöver Direkt filter mot en Date‑ eller DateTime‑kolumn
+Detta är stödd delegation i SharePoint:
+Filter(
+    MyList,
+    MyDateOnly >= dpFrom.SelectedDate &&
+    MyDateOnly <= dpTo.SelectedDate
+)
+
+Sedan DatePicker mot Date‑only‑kolumn (bäst praxis)
+DatePicker → Date
+SharePoint Date only‑kolumn → Date
+Detta är det mest tillförlitliga sättet:
+Filter(
+    MyList,
+    MyDateOnly >= dpFrom.SelectedDate &&
+    MyDateOnly <= dpTo.SelectedDate
+)
+
+
+Vad som INTE fungerar bra (det du råkat ut för)
+Datumuttryck inuti Filter
+Detta bryter delegation:
+Created >= DateAdd(Today(), -60, TimeUnit.Days)
+
+IsBlank() / Not()
+!IsBlank(DateColumn) → internt Not() → stöds inte i SharePoint
+
+Microsoft beskriver detta rakt ut i sin dokumentation: [learn.microsoft.com]
+If any part of a query expression is nondelegable, Power Apps doesn't delegate any part of the query.
+
+KORT SAGT: Filtrera på Date‑only, sortera på DateTime
+
+
