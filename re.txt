@@ -1,0 +1,26 @@
+Pass 1 byggt men endast med denna på galDeliveryLagging.Items så visas rader:
+
+Filter(
+    'Cepheid | Production orders',
+    StartsWith(Title, "10") || StartsWith(Title, "11")
+)
+
+
+Exempel på hur en post skrevs ut:
+
+Order: 1086263
+Batch: 1001383690
+LSP: 37906
+Material: XPRSARS-COV2-10
+Lead Time: 21.92 h
+Robal Actual end/date: 2023-11-29 00:30
+IPT Finalized Testing: 2023-11-29 06:21
+IPT Compiled: 2023-11-29 17:48
+IPT Doc Review: 2023-11-29 22:25
+IPT Error free text: <div class="ExternalClass632459F074FD46A19A94EF634BED23DB">
+Lot UK med 1x minor och 12x major errors</div>
+
+
+Notera att "IPT Error free text" skrivs ut hela html.
+
+Vad ska vi göra åt allt detta?
