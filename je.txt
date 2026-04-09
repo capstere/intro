@@ -1,0 +1,29 @@
+Skriptet skriver ut konstiga värden istället för vad som är korrekt.
+
+Såhär kan det se ut vid saknad header:
+HEADER INFO	
+Worksheet	2026 03 12 GXMTB RIF ULTRA 95210 Worksheet D25862.xlsx
+Part No.	Batch
+Batch No(s)	
+Cartridge No. (LSP)	25862
+
+Och det säger ändå "Alla flikar matchar".
+Men egentligen ska det stå såhär exempelvis:
+HEADER INFO	
+Worksheet	2026 03 12 GXMTB RIF ULTRA 95210 Worksheet D25862.xlsx
+Part No.	700-5207
+Batch No(s)	1234567890
+Cartridge No. (LSP)	12345
+
+Det gäller för Worksheet med: "Part No.:", "Batch No(s).:" och "Cartridge No. (LSP):"
+Seal Test POS och NEG har inte detta på samma sätt.
+
+Förstår du vad jag menar? Kan du skriva en noggrann diff som jag enkelt kan kopiera och klistra in på rätt ställe!
+
+
+Kan du även skriva en patch för hur QC Summary ska skriva "INVALID" i "Error Code" listan för "Invalid w/o error (SPC Ct=0)"?
+Kan du även skriva en patch för hur QC Summary ska skriva "Indeterminate" i "Error Code" listan för "Unexpected MTB Ultra result"?
+
+Kan du även skriva en patch så att bakgrundfärgen för "Instrument Error" inte är samma gula som "Minor Functional"?
+
+Tack!
