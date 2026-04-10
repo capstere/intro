@@ -1,0 +1,209 @@
+Jag skickar allt som står i _Measures för alla Measure:
+
+EHS_Lagging_CalendarColor = 
+VAR _status = [EHS_Lagging_DayStatus]
+VAR _isPrevMonth = SELECTEDVALUE(Dim_Date[IsPreviousCalendarMonth])
+RETURN
+    SWITCH(
+        TRUE(),
+        _isPrevMonth = TRUE(), -0.5,
+        _status = "Green", 1,
+        _status = "Red", -1,
+        0
+    )
+
+
+EHS_Lagging_DayStatus = 
+VAR _amp = SUM(QDIP_EHS_Daily[Amplicon_Positive_Points])
+VAR _inc = SUM(QDIP_EHS_Daily[Incident_Count])
+VAR _hasData = NOT(ISBLANK(_amp)) || NOT(ISBLANK(_inc))
+RETURN
+    IF(_hasData, IF(_amp + _inc = 0, "Green", "Red"), BLANK())
+
+EHS_Lagging_Month_Amplicons = 
+SUM(QDIP_EHS_Daily[Amplicon_Positive_Points])
+
+
+EHS_Lagging_Month_Incidents = 
+SUM(QDIP_EHS_Daily[Incident_Count])
+
+
+EHS_Leading_CalendarColor = 
+VAR _status = [EHS_Leading_DayStatus]
+VAR _isPrevMonth = SELECTEDVALUE(Dim_Date[IsPreviousCalendarMonth])
+RETURN
+    SWITCH(
+        TRUE(),
+        _isPrevMonth = TRUE(), -0.5,
+        _status = "Green", 1,
+        _status = "Red", -1,
+        0
+    )
+
+
+
+EHS_Leading_DayStatus = 
+VAR _score = SUM(QDIP_EHS_Daily[EHS_Checklist_Score])
+VAR _hasData = NOT(ISBLANK(_score))
+RETURN
+    IF(_hasData, IF(_score >= 25, "Green", "Red"), BLANK())
+
+
+
+EHS_Leading_MonthAvg = 
+AVERAGEX(
+    FILTER(QDIP_EHS_Daily, NOT(ISBLANK(QDIP_EHS_Daily[EHS_Checklist_Score]))),
+    QDIP_EHS_Daily[EHS_Checklist_Score]
+)
+
+
+Q_Lagging_CalendarColor = 
+VAR _status = [Q_Lagging_LFI_DayStatus]
+VAR _isPrevMonth = SELECTEDVALUE(Dim_Date[IsPreviousCalendarMonth])
+RETURN
+    SWITCH(
+        TRUE(),
+        _isPrevMonth = TRUE(), -0.5,
+        _status = "Green", 1,
+        _status = "Red", -1,
+        0
+    )
+
+
+
+Q_Lagging_LFI_DayStatus = 
+VAR _lfi = SUM(QDIP_Quality_Daily[LFI_Count])
+VAR _hasData = NOT(ISBLANK(_lfi))
+RETURN
+    IF(_hasData, IF(_lfi = 0, "Green", "Red"), BLANK())
+
+
+Q_Leading_CalendarColor = 
+VAR _status = [Q_Leading_NRFT_DayStatus]
+VAR _isPrevMonth = SELECTEDVALUE(Dim_Date[IsPreviousCalendarMonth])
+RETURN
+    SWITCH(
+        TRUE(),
+        _isPrevMonth = TRUE(), -0.5,
+        _status = "Green", 1,
+        _status = "Red", -1,
+        0
+    )
+
+
+Q_Leading_NRFT_DayStatus = 
+VAR _nrft = SUM(QDIP_Quality_Daily[NRFT_Count])
+VAR _hasData = NOT(ISBLANK(_nrft))
+RETURN
+    IF(_hasData, IF(_nrft = 0, "Green", "Red"), BLANK())
+
+
+
+Q_LFI_MonthStatus = 
+IF([Q_LFI_MonthTotal] <= 3, "Green", "Red")
+
+Q_LFI_MonthTotal = 
+SUM(QDIP_Quality_Daily[LFI_Count])
+
+
+Q_NRFT_MonthStatus = 
+IF([Q_NRFT_MonthTotal] <= [Q_NRFT_Target_98pct], "Green", "Red")
+
+
+Q_NRFT_MonthTotal = 
+SUM(QDIP_Quality_Daily[NRFT_Count])
+
+
+Q_NRFT_Target_98pct = 
+[Q_TotalLots_Month] * 0.02
+
+
+Q_TotalLots_Month = 
+CALCULATE(
+    COUNTROWS('Cepheid | Production orders'),
+    NOT(ISBLANK('Cepheid | Production orders'[ROBAL - Actual end date/ time]))
+)
+
+
+
+Show_PrevMonth_Rollover = 
+VAR _meetingDate = SELECTEDVALUE(Dim_Date[Date], TODAY())
+VAR _dow = WEEKDAY(_meetingDate, 1)
+VAR _isMonday = (_dow = 2)
+VAR _prevFriday = _meetingDate - 3
+VAR _currentFM = LOOKUPVALUE(Dim_Date[FiscalMonthNum], Dim_Date[Date], _meetingDate)
+VAR _prevFridayFM = LOOKUPVALUE(Dim_Date[FiscalMonthNum], Dim_Date[Date], _prevFriday)
+RETURN
+    _isMonday && _currentFM <> _prevFridayFM
+
+D_Lagging_CalendarColor = 
+VAR _status = [D_Lagging_DayStatus]
+VAR _isPrevMonth = SELECTEDVALUE(Dim_Date[IsPreviousCalendarMonth])
+RETURN
+    SWITCH(
+        TRUE(),
+        _isPrevMonth = TRUE(), -0.5,
+        _status = "Green", 1,
+        _status = "Red", -1,
+        0
+    )
+
+
+D_Lagging_DayStatus = 
+VAR _over = [D_Lagging_LotsOver20h]
+RETURN
+    IF(NOT(ISBLANK(_over)), IF(_over = 0, "Green", "Red"), BLANK())
+
+
+D_Lagging_LotsOver20h = 
+CALCULATE(
+    COUNTROWS('Cepheid | Production orders'),
+    NOT(ISBLANK('Cepheid | Production orders'[ROBAL - Actual end date/ time])),
+    'Cepheid | Production orders'[Lead-time] >= 20
+)
+
+
+D_Lagging_LotsWithin20h = 
+[D_Lagging_TotalLots] - [D_Lagging_LotsOver20h]
+
+D_Lagging_MonthStatus = 
+IF([D_Lagging_LotsWithin20h] >= [D_Lagging_Target80], "Green", "Red")
+
+
+D_Lagging_Pct_Within20h = 
+DIVIDE([D_Lagging_LotsWithin20h], [D_Lagging_TotalLots], BLANK())
+
+D_Lagging_Target80 = 
+[D_Lagging_TotalLots] * 0.80
+
+D_Lagging_TotalLots = 
+CALCULATE(
+    COUNTROWS('Cepheid | Production orders'),
+    NOT(ISBLANK('Cepheid | Production orders'[ROBAL - Actual end date/ time]))
+)
+
+D_Leading_CalendarColor = 
+VAR _status = [D_Leading_DayStatus]
+VAR _isPrevMonth = SELECTEDVALUE(Dim_Date[IsPreviousCalendarMonth])
+RETURN
+    SWITCH(
+        TRUE(),
+        _isPrevMonth = TRUE(), -0.5,
+        _status = "Green", 1,
+        _status = "Red", -1,
+        0
+    )
+
+D_Leading_DayStatus = 
+VAR _count = [D_Leading_LotsWIP_10hPlus]
+RETURN
+    IF(NOT(ISBLANK(_count)), IF(_count <= 3, "Green", "Red"), BLANK())
+
+D_Leading_LotsWIP_10hPlus = 
+CALCULATE(
+    COUNTROWS('Cepheid | Production orders'),
+    NOT(ISBLANK('Cepheid | Production orders'[ROBAL - Actual start date/ time])),
+    ISBLANK('Cepheid | Production orders'[ROBAL - Actual end date/ time]),
+    ('Cepheid | Production orders'[ROBAL - Actual start date/ time] + (10/24)) <= NOW()
+)
+
