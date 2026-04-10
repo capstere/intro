@@ -1,0 +1,26 @@
+Behöver hjälp att se om jag är rätt ute.
+
+Mina nuvarande Queries just nu är:
+QDIP_EHS_Daily
+QDIP_Quality_Daily
+QDIP_Delivery_Daily
+QDIP_Actions
+Map_FiscalMonths
+Cepheid | Production orders
+Dim_Date
+
+Jag bifogar en zip-fil (QDIP_BI.zip) som innehåller:
+1x excelfil med alla mina Queries och data (trimmat bort så det endast är exempeldata för Dim_Date, och tagit bort all data för Cepheid | Production orders eftersom det är för mycket). Jag på flik 2 så har jag även mina "Measure":
+"Mina Queries.xlsx"
+
+1x bild på hur mitt första exempel på EHS kalendern blev (inte bra): 
+"First_EHS-Calendar.png"
+
+1x "QDIP-IPT.pbix" (om du kan öppna den!?)
+
+Övrigt:
+Cepheid | Production orders = Måste avgränsas så den inte hämtar ALL data HÖGST 3 månader bakåt! 
+Dim_Date = måste också avgränsas eller?
+
+Behöver du någon mer info från mig för att vi smidigt ska kunna bygga vidare på detta? Gissa elelr hallucinera inte.
+Kom ihåg att jag behöver varje steg väldigt detaljerat beskrivet för att förstå hur jag utför allt i Power Bi Desktop!
