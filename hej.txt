@@ -1,90 +1,88 @@
 
+Jag har gjort 4 nya HJÄLP-measures:
 
-Ändrat på Logiken i färger för kalendrar med Leading och lagging.
+1. Quality NRFT status för kort
+Skapat:
+Q_NRFT_MonthStatus_Num =
+IF([Q_NRFT_MonthTotal] <= [Q_NRFT_Target_98pct], 1, -1)
 
-A. Leading-kalendrar — helger blå när ingen status finns
-LEADING:
-
-EHS_Leading_CalendarColor
-EHS_Leading_CalendarColor =
-VAR _status = [EHS_Leading_DayStatus]
-VAR _isWeekend = SELECTEDVALUE(Dim_Date[IsWeekend])
-RETURN
-    SWITCH(
-        TRUE(),
-        NOT(ISBLANK(_status)) && _status = "Green", 1,
-        NOT(ISBLANK(_status)) && _status = "Red", -1,
-        _isWeekend = TRUE(), -0.5,
-        0
-    )
+2. Quality LFI status för kort
+Skapat:
+Q_LFI_MonthStatus_Num =
+IF([Q_LFI_MonthTotal] <= 3, 1, -1)
 
 
-Q_Leading_CalendarColor
-Q_Leading_CalendarColor =
-VAR _status = [Q_Leading_NRFT_DayStatus]
-VAR _isWeekend = SELECTEDVALUE(Dim_Date[IsWeekend])
-RETURN
-    SWITCH(
-        TRUE(),
-        NOT(ISBLANK(_status)) && _status = "Green", 1,
-        NOT(ISBLANK(_status)) && _status = "Red", -1,
-        _isWeekend = TRUE(), -0.5,
-        0
-    )
+3. Delivery % within 20h status för kort
+Skapat:
+D_PctWithin20h_Status_Num =
+IF([D_Lagging_Pct_Within20h] >= 0.8, 1, -1)
 
-D_Leading_CalendarColor
-Använt samma mönster senare när D Leading är modellmässigt klar:
-D_Leading_CalendarColor =
-VAR _status = [D_Leading_DayStatus]
-VAR _isWeekend = SELECTEDVALUE(Dim_Date[IsWeekend])
-RETURN
-    SWITCH(
-        TRUE(),
-        NOT(ISBLANK(_status)) && _status = "Green", 1,
-        NOT(ISBLANK(_status)) && _status = "Red", -1,
-        _isWeekend = TRUE(), -0.5,
-        0
-    )
+4. Delivery overdue lots status för kort
+Skapat:
+D_OverdueLots_Status_Num =
+IF([D_Lagging_LotsOver20h] = 0, 1, -1)
 
-Vad detta gör:
-vardagar utan data = vita
-lör/sön utan data = ljusblå
-riktiga statusar vinner alltid först
+KPI-KORT
 
-LAGGING:
-B. Lagging-kalendrar — data vinner, blått bara för prev-month-weekend
+EHS
+Klara.
 
-Detta är samma mönster som jag fungerar för D Lagging.
+Quality
+KPI 1:
+Value field:
+Q_NRFT_MonthTotal
 
-EHS_Lagging_CalendarColor
-EHS_Lagging_CalendarColor =
-VAR _status = [EHS_Lagging_DayStatus]
-VAR _isPrevMonth = SELECTEDVALUE(Dim_Date[IsPreviousCalendarMonth])
-VAR _isWeekend = SELECTEDVALUE(Dim_Date[IsWeekend])
-RETURN
-    SWITCH(
-        TRUE(),
-        NOT(ISBLANK(_status)) && _status = "Green", 1,
-        NOT(ISBLANK(_status)) && _status = "Red", -1,
-        _isPrevMonth = TRUE() && _isWeekend = TRUE(), -0.5,
-        0
-    )
+Conditional Format style = Rules
+What field should we base this on? = Q_NRFT_MonthStatus_Num
+Regler:
+= 1 → grön
+>= -1 och < 1 → röd
 
-Q_Lagging_CalendarColor
-Q_Lagging_CalendarColor =
-VAR _status = [Q_Lagging_LFI_DayStatus]
-VAR _isPrevMonth = SELECTEDVALUE(Dim_Date[IsPreviousCalendarMonth])
-VAR _isWeekend = SELECTEDVALUE(Dim_Date[IsWeekend])
-RETURN
-    SWITCH(
-        TRUE(),
-        NOT(ISBLANK(_status)) && _status = "Green", 1,
-        NOT(ISBLANK(_status)) && _status = "Red", -1,
-        _isPrevMonth = TRUE() && _isWeekend = TRUE(), -0.5,
-        0
-    )
+KPI 2:
+Value field:
+Q_LFI_MonthTotal
 
-Vad detta gör:
-fred, lör, sön kan bli grön/röd om lagging-data matas in på måndag
-previous-month lör/sön kan fortfarande vara ljusblå om de bara är layoutöverhäng
-du får samma beteende i EHS Lagging och Q Lagging som i D Lagging
+Conditional Format style = Rules
+What field should we base this on? = Q_LFI_MonthStatus_Num
+
+Regler:
+= 1 → grön 
+>= -1 och < 1 → röd
+
+KPI 3:
+Value field:
+Q_TotalLots_Month
+
+Ingen Conditional.
+Den är informationsbärande men inte en direkt fail/pass-KPI.
+
+Delivery:
+KPI 1:
+Value field:
+D_Lagging_Pct_Within20h
+Format:
+visa som percentage
+
+Conditional Format style = Rules
+What field should we base this on? = D_PctWithin20h_Status_Num
+= 1 → grön 
+>= -1 och < 1 → röd
+
+KPI 2:
+Value field:
+D_Lagging_TotalLots
+Neutral, ingen conditional formatting.
+
+KPI 3:
+Value field:
+D_Lagging_LotsOver20h
+
+Conditional Format style = Rules
+What field should we base this on? = D_OverdueLots_Status_Num
+= 1 → grön 
+>= -1 och < 1 → röd
+
+
+Bifogar även nuvarande 20 - QDIP Presentation som screen shot.
+
+Är jag på rätt väg? Är detta bra?
