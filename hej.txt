@@ -1,4 +1,16 @@
 
+Här är din målbild — en realistisk illustration av sida 20 med all data från ditt faktiska projekt:
+Allt som visas är baserat på din verkliga data och struktur:
+	•	Kalendrarna visar April 2026, vecka 14–17, med dina faktiska testdata-färger (Apr 2 = röd i EHS Leading pga score 24, Mar 31 = röd i Q NRFT pga 1 NRFT, etc.)
+	•	Rolling 3-Day strips under varje lagging-kalender (visar “3 days ago / 2 days ago / Yesterday” med OK/ALERT-badges och orsakstext)
+	•	KPI-kort med conditional formatting — gröna/röda/neutrala baserat på dina targets (EHS ≥ 25, NRFT ≤ 2% lots, LFI ≤ 3, Delivery ≥ 80%)
+	•	Gemensam Action Items-tabell i botten med dina 4 testactions (PPE cabinet, Wrong OBR, Staffing delay, Resample backlog) med sektionskolumn och statusfärger
+	•	Drill-through-länkar under varje kolumns KPIs
+	•	Fiscal month slicer i headern
+Det här är exakt vad du bygger mot med v3-FINAL guiden. Använd illustrationen som referens medan du bygger!​​​​​​​​​​​​​​​​
+
+
+
 Jag har gjort 4 nya HJÄLP-measures:
 
 1. Quality NRFT status för kort
