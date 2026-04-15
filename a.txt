@@ -1,22 +1,272 @@
-Jag läste din senaste:
-QDIP-Rolling3Day-InputPage-v3-FINAL.pdf
+Order#
+SAP Batch#
+LSP
+Lead-time_Num
+Material
+ROBAL - Actual end date/ time
+IPT - Testing finalized
+IPT - Compiling of data
+IPT - Document review
+IPT - Error Free text
 
-Du blandar "EHS_Recent_status_Test" och "EHS_Recent_status_Num".
 
-Dessutom har jag uppdaterat mina SharePoint Lists och refreshat datan.
-Om du jämför bifogade sharepoints Lists (excel-filerna) med print screens för Kalendrarna så kommer du upptäcka fel.
+Bifogar 3 print screens för hur det ser ut nu.
+Det blev pyttelite bättre.
 
-QDIP_EHS_Daily
-EHS Leading kalender stämmer med "Blåa bakgrundsfärger på helgerna", men den ska även fyllas för dagens datum (15/4).
-EHS Lagging kalender ska räkna alla dagar (Även lördag och söndag) så helgerna ska också vara GRÖN / RÖD.
+Vi måste verkligen felsöka, och fixa detta. Logiken bör vara enkel. Jag har ju redan "gratis" uträkningar med "Lead-time_Num" uträknat från: "Cepheid | Production orders".
+Det är ju tidsskillnaden mellan: ROBAL - Actual end date/ time och IPT - Document review
+
+Utförde dessa ändringar i DAX:
+
+EHS_Leading_DayStatus = 
+VAR _score = SUM(QDIP_EHS_Daily[EHS_Checklist_Score])
+RETURN
+    IF(
+        ISBLANK(_score),
+        BLANK(),
+        IF(_score >= 25, "Green", "Red")
+    )
+
+EHS Leading ska ju visa dagens datum också (15:e)
+
+Tog bort min gamla:
+EHS_Leading_CalendarColor = 
+VAR _status = [EHS_Leading_DayStatus]
+VAR _isWeekend = SELECTEDVALUE(Dim_Date[IsWeekend])
+RETURN
+    SWITCH(
+        TRUE(),
+        NOT(ISBLANK(_status)) && _status = "Green", 1,
+        NOT(ISBLANK(_status)) && _status = "Red", -1,
+        _isWeekend = TRUE(), -0.5,
+        0
+    )
+
+Bytte till:
+
+EHS_Leading_CalendarColor =
+VAR _status = [EHS_Leading_DayStatus]
+VAR _isWeekend = SELECTEDVALUE(Dim_Date[IsWeekend])
+RETURN
+    SWITCH(
+        TRUE(),
+        _status = "Green", 1,
+        _status = "Red", -1,
+        _isWeekend = TRUE(), -0.5,
+        0
+    )
 
 
-QDIP_Quality_Daily
-NRFT Lagging  kalendern ska ha "Blå bakgrundsfärg på alla helger", dessutom stämmer inte data med "GRÖN / RÖD-logiken".
-LFI Lagging kalender ska räkna alla dagar (Även lördag och söndag) så helgerna ska också vara GRÖN / RÖD. Stämmer inte med data.
+Tog bort min gamla:
+EHS_Lagging_DayStatus = 
+VAR _amp = SUM(QDIP_EHS_Daily[Amplicon_Positive_Points])
+VAR _inc = SUM(QDIP_EHS_Daily[Incident_Count])
+VAR _hasData = NOT(ISBLANK(_amp)) || NOT(ISBLANK(_inc))
+RETURN
+    IF(_hasData, IF(_amp + _inc = 0, "Green", "Red"), BLANK())
 
-QDIP_Delivery_Daily
-Delivery Leading stämmer inte.
-Delivery Lagging stämmer inte.
 
-Kan du analysera detta och se till att vi löser detta?
+Bytte till:
+EHS_Lagging_DayStatus =
+VAR _amp = SUM(QDIP_EHS_Daily[Amplicon_Positive_Points])
+VAR _inc = SUM(QDIP_EHS_Daily[Incident_Count])
+VAR _hasData = NOT(ISBLANK(_amp) && ISBLANK(_inc))
+RETURN
+    IF(
+        NOT(_hasData),
+        BLANK(),
+        IF(COALESCE(_amp, 0) + COALESCE(_inc, 0) = 0, "Green", "Red")
+    )
+
+
+
+Tog bort min:
+EHS_Lagging_CalendarColor = 
+VAR _status = [EHS_Lagging_DayStatus]
+VAR _isPrevMonth = SELECTEDVALUE(Dim_Date[IsPreviousCalendarMonth])
+VAR _isWeekend = SELECTEDVALUE(Dim_Date[IsWeekend])
+RETURN
+    SWITCH(
+        TRUE(),
+        NOT(ISBLANK(_status)) && _status = "Green", 1,
+        NOT(ISBLANK(_status)) && _status = "Red", -1,
+        _isPrevMonth = TRUE() && _isWeekend = TRUE(), -0.5,
+        0
+    )
+
+
+Bytte till:
+EHS_Lagging_CalendarColor =
+VAR _status = [EHS_Lagging_DayStatus]
+RETURN
+    SWITCH(
+        TRUE(),
+        _status = "Green", 1,
+        _status = "Red", -1,
+        0
+    )
+
+Tog bort min:
+Q_Leading_NRFT_DayStatus = 
+VAR _nrft = SUM(QDIP_Quality_Daily[NRFT_Count])
+VAR _hasData = NOT(ISBLANK(_nrft))
+RETURN
+    IF(_hasData, IF(_nrft = 0, "Green", "Red"), BLANK())
+
+Bytte till:
+Q_Leading_NRFT_DayStatus =
+VAR _nrft = SUM(QDIP_Quality_Daily[NRFT_Count])
+RETURN
+    IF(
+        ISBLANK(_nrft),
+        BLANK(),
+        IF(_nrft = 0, "Green", "Red")
+    )
+
+
+Tog bort min:
+Q_Leading_CalendarColor = 
+VAR _status = [Q_Leading_NRFT_DayStatus]
+VAR _isWeekend = SELECTEDVALUE(Dim_Date[IsWeekend])
+RETURN
+    SWITCH(
+        TRUE(),
+        NOT(ISBLANK(_status)) && _status = "Green", 1,
+        NOT(ISBLANK(_status)) && _status = "Red", -1,
+        _isWeekend = TRUE(), -0.5,
+        0
+    )
+
+
+Bytte till:
+Q_Leading_CalendarColor =
+VAR _status = [Q_Leading_NRFT_DayStatus]
+VAR _isWeekend = SELECTEDVALUE(Dim_Date[IsWeekend])
+RETURN
+    SWITCH(
+        TRUE(),
+        _status = "Green", 1,
+        _status = "Red", -1,
+        _isWeekend = TRUE(), -0.5,
+        0
+    )
+
+
+
+Tog bort min:
+Q_Lagging_LFI_DayStatus = 
+VAR _lfi = SUM(QDIP_Quality_Daily[LFI_Count])
+VAR _hasData = NOT(ISBLANK(_lfi))
+RETURN
+    IF(_hasData, IF(_lfi = 0, "Green", "Red"), BLANK())
+
+Bytte till:
+Q_Lagging_LFI_DayStatus =
+VAR _lfi = SUM(QDIP_Quality_Daily[LFI_Count])
+RETURN
+    IF(
+        ISBLANK(_lfi),
+        BLANK(),
+        IF(_lfi = 0, "Green", "Red")
+    )
+
+Tog bort min:
+Q_Lagging_CalendarColor = 
+VAR _status = [Q_Lagging_LFI_DayStatus]
+VAR _isPrevMonth = SELECTEDVALUE(Dim_Date[IsPreviousCalendarMonth])
+VAR _isWeekend = SELECTEDVALUE(Dim_Date[IsWeekend])
+RETURN
+    SWITCH(
+        TRUE(),
+        NOT(ISBLANK(_status)) && _status = "Green", 1,
+        NOT(ISBLANK(_status)) && _status = "Red", -1,
+        _isPrevMonth = TRUE() && _isWeekend = TRUE(), -0.5,
+        0
+    )
+
+Bytte till:
+Q_Lagging_CalendarColor =
+VAR _status = [Q_Lagging_LFI_DayStatus]
+RETURN
+    SWITCH(
+        TRUE(),
+        _status = "Green", 1,
+        _status = "Red", -1,
+        0
+    )
+
+Tog bort min:
+D_Leading_DayStatus = VAR _count = SUM(QDIP_Delivery_Daily[D_Leading_LotsWIP_10hPlus]) RETURN IF(ISBLANK(_count), BLANK(), IF(_count <= 3, "Green", "Red"))
+
+Bytte till:
+D_Leading_DayStatus =
+VAR _count = SUM(QDIP_Delivery_Daily[D_Leading_LotsWIP_10hPlus])
+RETURN
+    IF(
+        ISBLANK(_count),
+        BLANK(),
+        IF(_count <= 3, "Green", "Red")
+    )
+
+Tog bort min:
+D_Leading_CalendarColor = 
+VAR _status = [D_Leading_DayStatus]
+VAR _isWeekend = SELECTEDVALUE(Dim_Date[IsWeekend])
+RETURN
+    SWITCH(
+        TRUE(),
+        NOT(ISBLANK(_status)) && _status = "Green", 1,
+        NOT(ISBLANK(_status)) && _status = "Red", -1,
+        _isWeekend = TRUE(), -0.5,
+        0
+    )
+
+Bytte till:
+D_Leading_CalendarColor =
+VAR _status = [D_Leading_DayStatus]
+VAR _isWeekend = SELECTEDVALUE(Dim_Date[IsWeekend])
+RETURN
+    SWITCH(
+        TRUE(),
+        _status = "Green", 1,
+        _status = "Red", -1,
+        _isWeekend = TRUE(), -0.5,
+        0
+    )
+
+
+Tog bort min:
+D_Lagging_CalendarColor = 
+VAR _status = [D_Lagging_DayStatus]
+VAR _isPrevMonth = SELECTEDVALUE(Dim_Date[IsPreviousCalendarMonth])
+VAR _isWeekend = SELECTEDVALUE(Dim_Date[IsWeekend])
+RETURN
+    SWITCH(
+        TRUE(),
+        NOT(ISBLANK(_status)) && _status = "Green", 1,
+        NOT(ISBLANK(_status)) && _status = "Red", -1,
+        _isPrevMonth = TRUE() && _isWeekend = TRUE(), -0.5,
+        0
+    )
+
+
+Bytte till:
+D_Lagging_CalendarColor =
+VAR _status = [D_Lagging_DayStatus]
+RETURN
+    SWITCH(
+        TRUE(),
+        _status = "Green", 1,
+        _status = "Red", -1,
+        0
+    )
+
+Övriga för D-lagging var samma.
+
+
+
+Vad gör vi?
+
+
+
+
