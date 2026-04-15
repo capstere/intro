@@ -1,48 +1,55 @@
-Order#
-SAP Batch#
-LSP
-Lead-time_Num
-Material
-ROBAL - Actual end date/ time
-IPT - Testing finalized
-IPT - Compiling of data
-IPT - Document review
-IPT - Error Free text
+Det här är inte totalt haveri längre. Nu går det faktiskt att se vad som är fel.
 
+Den viktiga insikten är:
 
-Bifogar 3 print screens för hur det ser ut nu.
-Det blev pyttelite bättre.
+Rolling 3-Day-stripen har inget med kalenderfärgerna att göra.
+EHS_Recent_Status_Text och EHS_Recent_Status_Num hör bara till den lilla stripen under lagging-kalendern. Själva kalendrarna ska fortfarande styras av dina vanliga ...DayStatus och ...CalendarColor. Det ligger också i din låsta arkitektur: kalendrarna visar current fiscal month, medan Rolling 3-Day-stripen är en separat display-lösning.  ￼
 
-Vi måste verkligen felsöka, och fixa detta. Logiken bör vara enkel. Jag har ju redan "gratis" uträkningar med "Lead-time_Num" uträknat från: "Cepheid | Production orders".
-Det är ju tidsskillnaden mellan: ROBAL - Actual end date/ time och IPT - Document review
+Och en annan viktig sak:
 
-Utförde dessa ändringar i DAX:
+Du kan inte validera Delivery Lagging mot QDIP_Delivery_Daily.xlsx.
+Den listan innehåller din manuella D Leading-snapshot och delivery causes. Själva Delivery Lagging ska fortfarande räknas från Cepheid | Production orders via Lead-time_Num och Delivery_Date. Det är också ett låst beslut i modellen.  ￼
 
-EHS_Leading_DayStatus = 
-VAR _score = SUM(QDIP_EHS_Daily[EHS_Checklist_Score])
-RETURN
-    IF(
-        ISBLANK(_score),
-        BLANK(),
-        IF(_score >= 25, "Green", "Red")
-    )
+Min läsning av läget just nu
 
-EHS Leading ska ju visa dagens datum också (15:e)
+Utifrån dina nya screenshots och de två Excel-filerna du skickade är läget detta:
 
-Tog bort min gamla:
-EHS_Leading_CalendarColor = 
-VAR _status = [EHS_Leading_DayStatus]
-VAR _isWeekend = SELECTEDVALUE(Dim_Date[IsWeekend])
-RETURN
-    SWITCH(
-        TRUE(),
-        NOT(ISBLANK(_status)) && _status = "Green", 1,
-        NOT(ISBLANK(_status)) && _status = "Red", -1,
-        _isWeekend = TRUE(), -0.5,
-        0
-    )
+EHS
+	•	EHS Leading: helgerna ser rätt ut visuellt.
+	•	Felet är att 15/4 inte fylls, trots att du förväntar dig det.
+	•	EHS Lagging: formeln är nu bättre. Om helger fortfarande är vita där, betyder det nästan alltid att det saknas rad för de datumen i QDIP_EHS_Daily, eller att InputDate inte matchar Dim_Date[Date].
 
-Bytte till:
+Quality
+	•	NRFT: data-logiken ser nästan rätt ut nu. 30, 7 och 14 är röda, vilket matchar den uppladdade filen.
+Det som fortfarande är fel är att helgerna 11 och 12 blir gröna i stället för blå.
+	•	LFI: den ser nu i stort sett rätt ut mot din fil. 12 och 13 är röda, och det matchar datat du laddade upp.
+
+Delivery
+	•	Delivery Leading: datat i din fil säger att alla ifyllda dagar ska vara gröna, inklusive 15/4, eftersom D_Leading_LotsWIP_10hPlus aldrig är över 3.
+	•	Delivery Lagging: går inte att jämföra mot QDIP_Delivery_Daily.xlsx, eftersom den inte kommer därifrån.
+
+Så det stora återstående kalenderfelet är egentligen detta:
+
+Fel 1: Top-kalendrarna måste ha weekend override först
+
+Du har fortfarande logik som säger:
+	•	om status finns → färga grön/röd
+	•	annars om weekend → blå
+
+Men din nya requirement verkar nu vara:
+	•	EHS Leading = helger ska vara blå
+	•	NRFT-kalendern = helger ska vara blå
+	•	Delivery Leading = helger ska vara blå
+
+även om det finns en rad med 0 i listan för helgen.
+
+Det betyder att för top-kalendrarna ska helgerna vinna över status.
+
+Det är därför 11/4 och 12/4 blir gröna i NRFT-kalendern nu. Ditt measure ser 0 och gör dagen grön, men du vill att helgen ska vara blå ändå.
+
+Gör exakt denna ändring
+
+EHS Leading
 
 EHS_Leading_CalendarColor =
 VAR _status = [EHS_Leading_DayStatus]
@@ -50,157 +57,78 @@ VAR _isWeekend = SELECTEDVALUE(Dim_Date[IsWeekend])
 RETURN
     SWITCH(
         TRUE(),
-        _status = "Green", 1,
-        _status = "Red", -1,
         _isWeekend = TRUE(), -0.5,
-        0
-    )
-
-
-Tog bort min gamla:
-EHS_Lagging_DayStatus = 
-VAR _amp = SUM(QDIP_EHS_Daily[Amplicon_Positive_Points])
-VAR _inc = SUM(QDIP_EHS_Daily[Incident_Count])
-VAR _hasData = NOT(ISBLANK(_amp)) || NOT(ISBLANK(_inc))
-RETURN
-    IF(_hasData, IF(_amp + _inc = 0, "Green", "Red"), BLANK())
-
-
-Bytte till:
-EHS_Lagging_DayStatus =
-VAR _amp = SUM(QDIP_EHS_Daily[Amplicon_Positive_Points])
-VAR _inc = SUM(QDIP_EHS_Daily[Incident_Count])
-VAR _hasData = NOT(ISBLANK(_amp) && ISBLANK(_inc))
-RETURN
-    IF(
-        NOT(_hasData),
-        BLANK(),
-        IF(COALESCE(_amp, 0) + COALESCE(_inc, 0) = 0, "Green", "Red")
-    )
-
-
-
-Tog bort min:
-EHS_Lagging_CalendarColor = 
-VAR _status = [EHS_Lagging_DayStatus]
-VAR _isPrevMonth = SELECTEDVALUE(Dim_Date[IsPreviousCalendarMonth])
-VAR _isWeekend = SELECTEDVALUE(Dim_Date[IsWeekend])
-RETURN
-    SWITCH(
-        TRUE(),
-        NOT(ISBLANK(_status)) && _status = "Green", 1,
-        NOT(ISBLANK(_status)) && _status = "Red", -1,
-        _isPrevMonth = TRUE() && _isWeekend = TRUE(), -0.5,
-        0
-    )
-
-
-Bytte till:
-EHS_Lagging_CalendarColor =
-VAR _status = [EHS_Lagging_DayStatus]
-RETURN
-    SWITCH(
-        TRUE(),
         _status = "Green", 1,
         _status = "Red", -1,
         0
     )
 
-Tog bort min:
-Q_Leading_NRFT_DayStatus = 
-VAR _nrft = SUM(QDIP_Quality_Daily[NRFT_Count])
-VAR _hasData = NOT(ISBLANK(_nrft))
-RETURN
-    IF(_hasData, IF(_nrft = 0, "Green", "Red"), BLANK())
+Q NRFT
 
-Bytte till:
-Q_Leading_NRFT_DayStatus =
-VAR _nrft = SUM(QDIP_Quality_Daily[NRFT_Count])
-RETURN
-    IF(
-        ISBLANK(_nrft),
-        BLANK(),
-        IF(_nrft = 0, "Green", "Red")
-    )
-
-
-Tog bort min:
-Q_Leading_CalendarColor = 
-VAR _status = [Q_Leading_NRFT_DayStatus]
-VAR _isWeekend = SELECTEDVALUE(Dim_Date[IsWeekend])
-RETURN
-    SWITCH(
-        TRUE(),
-        NOT(ISBLANK(_status)) && _status = "Green", 1,
-        NOT(ISBLANK(_status)) && _status = "Red", -1,
-        _isWeekend = TRUE(), -0.5,
-        0
-    )
-
-
-Bytte till:
 Q_Leading_CalendarColor =
 VAR _status = [Q_Leading_NRFT_DayStatus]
 VAR _isWeekend = SELECTEDVALUE(Dim_Date[IsWeekend])
 RETURN
     SWITCH(
         TRUE(),
+        _isWeekend = TRUE(), -0.5,
         _status = "Green", 1,
         _status = "Red", -1,
-        _isWeekend = TRUE(), -0.5,
         0
     )
 
+D Leading
 
-
-Tog bort min:
-Q_Lagging_LFI_DayStatus = 
-VAR _lfi = SUM(QDIP_Quality_Daily[LFI_Count])
-VAR _hasData = NOT(ISBLANK(_lfi))
-RETURN
-    IF(_hasData, IF(_lfi = 0, "Green", "Red"), BLANK())
-
-Bytte till:
-Q_Lagging_LFI_DayStatus =
-VAR _lfi = SUM(QDIP_Quality_Daily[LFI_Count])
-RETURN
-    IF(
-        ISBLANK(_lfi),
-        BLANK(),
-        IF(_lfi = 0, "Green", "Red")
-    )
-
-Tog bort min:
-Q_Lagging_CalendarColor = 
-VAR _status = [Q_Lagging_LFI_DayStatus]
-VAR _isPrevMonth = SELECTEDVALUE(Dim_Date[IsPreviousCalendarMonth])
+D_Leading_CalendarColor =
+VAR _status = [D_Leading_DayStatus]
 VAR _isWeekend = SELECTEDVALUE(Dim_Date[IsWeekend])
 RETURN
     SWITCH(
         TRUE(),
-        NOT(ISBLANK(_status)) && _status = "Green", 1,
-        NOT(ISBLANK(_status)) && _status = "Red", -1,
-        _isPrevMonth = TRUE() && _isWeekend = TRUE(), -0.5,
-        0
-    )
-
-Bytte till:
-Q_Lagging_CalendarColor =
-VAR _status = [Q_Lagging_LFI_DayStatus]
-RETURN
-    SWITCH(
-        TRUE(),
+        _isWeekend = TRUE(), -0.5,
         _status = "Green", 1,
         _status = "Red", -1,
         0
     )
 
-Tog bort min:
-D_Leading_DayStatus = VAR _count = SUM(QDIP_Delivery_Daily[D_Leading_LotsWIP_10hPlus]) RETURN IF(ISBLANK(_count), BLANK(), IF(_count <= 3, "Green", "Red"))
+Det här ska direkt göra:
+	•	NRFT-helger blå
+	•	Delivery Leading-helger blå
+	•	EHS Leading fortsätter se rätt ut
 
-Bytte till:
+Fel 2: EHS 15/4 är blank
+
+Här tror jag inte att problemet är DAX längre.
+
+Din nya EHS_Leading_DayStatus är i sak rimlig. Om 15/4 fortfarande är vit efter refresh betyder det nästan alltid något av detta:
+	•	raden för 2026-04-15 finns inte i QDIP_EHS_Daily
+	•	InputDate är DateTime och inte Date
+	•	InputDate innehåller tid, medan Dim_Date[Date] är datum utan tid
+	•	relationen mellan QDIP_EHS_Daily[InputDate] och Dim_Date[Date] matchar inte
+
+Exakt kontroll
+
+Gör detta på en tillfällig felsökningssida:
+
+Lägg in en Table visual med:
+	•	Dim_Date[Date]
+	•	QDIP_EHS_Daily[EHS_Checklist_Score]
+	•	[EHS_Leading_DayStatus]
+	•	[EHS_Leading_CalendarColor]
+
+Filtrera visualen till:
+	•	Date mellan 2026-04-13 och 2026-04-16
+
+Om 2026-04-15 saknas eller visar blank score där, då är felet i datat/relationsmatchningen, inte i kalendermeasures.
+
+Fel 3: D Leading bör vara snapshot från QDIP_Delivery_Daily
+
+Det här measuret är rätt i princip, men jag skulle göra det lite mer robust eftersom listan ska vara en rad per dag.
+
+Byt till MAX i stället för SUM:
+
 D_Leading_DayStatus =
-VAR _count = SUM(QDIP_Delivery_Daily[D_Leading_LotsWIP_10hPlus])
+VAR _count = MAX(QDIP_Delivery_Daily[D_Leading_LotsWIP_10hPlus])
 RETURN
     IF(
         ISBLANK(_count),
@@ -208,49 +136,87 @@ RETURN
         IF(_count <= 3, "Green", "Red")
     )
 
-Tog bort min:
-D_Leading_CalendarColor = 
-VAR _status = [D_Leading_DayStatus]
-VAR _isWeekend = SELECTEDVALUE(Dim_Date[IsWeekend])
+Det gör ingen skillnad om du verkligen har en rad per dag, men det skyddar dig bättre mot eventuella dubletter.
+
+Jag skulle göra samma sak för de andra “single value per day”-measures:
+
+EHS Leading
+
+EHS_Leading_DayStatus =
+VAR _score = MAX(QDIP_EHS_Daily[EHS_Checklist_Score])
 RETURN
-    SWITCH(
-        TRUE(),
-        NOT(ISBLANK(_status)) && _status = "Green", 1,
-        NOT(ISBLANK(_status)) && _status = "Red", -1,
-        _isWeekend = TRUE(), -0.5,
-        0
+    IF(
+        ISBLANK(_score),
+        BLANK(),
+        IF(_score >= 25, "Green", "Red")
     )
 
-Bytte till:
-D_Leading_CalendarColor =
-VAR _status = [D_Leading_DayStatus]
-VAR _isWeekend = SELECTEDVALUE(Dim_Date[IsWeekend])
+Q NRFT
+
+Q_Leading_NRFT_DayStatus =
+VAR _nrft = MAX(QDIP_Quality_Daily[NRFT_Count])
 RETURN
-    SWITCH(
-        TRUE(),
-        _status = "Green", 1,
-        _status = "Red", -1,
-        _isWeekend = TRUE(), -0.5,
-        0
+    IF(
+        ISBLANK(_nrft),
+        BLANK(),
+        IF(_nrft = 0, "Green", "Red")
     )
 
+Q LFI
 
-Tog bort min:
-D_Lagging_CalendarColor = 
-VAR _status = [D_Lagging_DayStatus]
-VAR _isPrevMonth = SELECTEDVALUE(Dim_Date[IsPreviousCalendarMonth])
-VAR _isWeekend = SELECTEDVALUE(Dim_Date[IsWeekend])
+Q_Lagging_LFI_DayStatus =
+VAR _lfi = MAX(QDIP_Quality_Daily[LFI_Count])
 RETURN
-    SWITCH(
-        TRUE(),
-        NOT(ISBLANK(_status)) && _status = "Green", 1,
-        NOT(ISBLANK(_status)) && _status = "Red", -1,
-        _isPrevMonth = TRUE() && _isWeekend = TRUE(), -0.5,
-        0
+    IF(
+        ISBLANK(_lfi),
+        BLANK(),
+        IF(_lfi = 0, "Green", "Red")
     )
 
+Fel 4: D Lagging måste felsökas mot Production Orders, inte mot Delivery Daily
 
-Bytte till:
+Här ska vi vara väldigt tydliga:
+	•	QDIP_Delivery_Daily hjälper dig med:
+	•	D_Leading_LotsWIP_10hPlus
+	•	delivery causes
+	•	D Lagging kommer från:
+	•	Cepheid | Production orders
+	•	Lead-time_Num
+	•	Delivery_Date
+
+Så om D Lagging “inte stämmer” måste vi kontrollera:
+	•	Delivery_Date är korrekt calculated column
+	•	Lead-time_Num är korrekt decimal
+	•	relationen Cepheid | Production orders[Delivery_Date] -> Dim_Date[Date] är aktiv
+	•	measuret verkligen använder Lead-time_Num >= 20
+
+Jag skulle låta dessa stå kvar så här:
+
+D_Lagging_TotalLots =
+CALCULATE(
+    COUNTROWS('Cepheid | Production orders'),
+    NOT(ISBLANK('Cepheid | Production orders'[ROBAL - Actual end date/ time])),
+    NOT(ISBLANK('Cepheid | Production orders'[Lead-time_Num]))
+)
+
+D_Lagging_LotsOver20h =
+CALCULATE(
+    COUNTROWS('Cepheid | Production orders'),
+    NOT(ISBLANK('Cepheid | Production orders'[ROBAL - Actual end date/ time])),
+    NOT(ISBLANK('Cepheid | Production orders'[Lead-time_Num])),
+    'Cepheid | Production orders'[Lead-time_Num] >= 20
+)
+
+D_Lagging_DayStatus =
+VAR _total = [D_Lagging_TotalLots]
+VAR _over = [D_Lagging_LotsOver20h]
+RETURN
+    IF(
+        ISBLANK(_total),
+        BLANK(),
+        IF(_over = 0, "Green", "Red")
+    )
+
 D_Lagging_CalendarColor =
 VAR _status = [D_Lagging_DayStatus]
 RETURN
@@ -261,12 +227,61 @@ RETURN
         0
     )
 
-Övriga för D-lagging var samma.
+En sak till: din modellbild visar troligen ett annat problem
 
+I din modellbild ser det ut som att Hist_EHS_Checklist, Hist_Quality och Hist_Delivery har relationer mellan sig.
 
+De ska inte vara kopplade till varandra.
 
-Vad gör vi?
+De ska vara fristående historiktabeller.
 
+Det är inte huvudorsaken till kalendrarna, men jag tycker du ska ta bort relationerna mellan de tre historiktabellerna om de finns. Dina egna låsta beslut säger också att Hist-tabellerna ska vara fristående Enter Data-tabeller, inte filtera varandra.  ￼
 
+Min tydliga rekommendation nu
 
+Gör detta i exakt ordning:
 
+Steg 1
+
+Byt bara de tre top-kalender-measures för färg så att weekend override kommer först:
+	•	EHS_Leading_CalendarColor
+	•	Q_Leading_CalendarColor
+	•	D_Leading_CalendarColor
+
+Steg 2
+
+Byt dessa fyra till MAX(...):
+	•	EHS_Leading_DayStatus
+	•	Q_Leading_NRFT_DayStatus
+	•	Q_Lagging_LFI_DayStatus
+	•	D_Leading_DayStatus
+
+Steg 3
+
+Låt bottom-kalendrarna vara som de är nu:
+	•	EHS_Lagging_CalendarColor
+	•	Q_Lagging_CalendarColor
+	•	D_Lagging_CalendarColor
+
+Steg 4
+
+Gör en tillfällig debug-tabell för:
+	•	EHS datum 13–16 april
+	•	Q datum 30 mar–15 apr
+	•	D datum 30 mar–15 apr
+
+Steg 5
+
+Kontrollera om 2026-04-15 verkligen finns i QDIP_EHS_Daily som date only
+
+Steg 6
+
+Ta bort relationer mellan Hist_...-tabellerna om de finns
+
+Vad jag tror kommer hända efter detta
+	•	Q top blir rätt direkt: 11/12 blå, 30/7/14 röda
+	•	Q bottom förblir i princip rätt
+	•	D Leading blir rätt direkt: helger blå, vardagar gröna, 15/4 grön
+	•	EHS Leading får rätt weekend-logik, och 15/4 blir korrekt så fort dataraden verkligen matchar relationen
+
+Skicka gärna en skärmdump efter att du gjort just de sex stegen ovan. Då är det mycket lättare att pinpointa det som eventuellt återstår.
