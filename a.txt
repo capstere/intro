@@ -1,0 +1,22 @@
+Jag läste din senaste:
+QDIP-Rolling3Day-InputPage-v3-FINAL.pdf
+
+Du blandar "EHS_Recent_status_Test" och "EHS_Recent_status_Num".
+
+Dessutom har jag uppdaterat mina SharePoint Lists och refreshat datan.
+Om du jämför bifogade sharepoints Lists (excel-filerna) med print screens för Kalendrarna så kommer du upptäcka fel.
+
+QDIP_EHS_Daily
+EHS Leading kalender stämmer med "Blåa bakgrundsfärger på helgerna", men den ska även fyllas för dagens datum (15/4).
+EHS Lagging kalender ska räkna alla dagar (Även lördag och söndag) så helgerna ska också vara GRÖN / RÖD.
+
+
+QDIP_Quality_Daily
+NRFT Lagging  kalendern ska ha "Blå bakgrundsfärg på alla helger", dessutom stämmer inte data med "GRÖN / RÖD-logiken".
+LFI Lagging kalender ska räkna alla dagar (Även lördag och söndag) så helgerna ska också vara GRÖN / RÖD. Stämmer inte med data.
+
+QDIP_Delivery_Daily
+Delivery Leading stämmer inte.
+Delivery Lagging stämmer inte.
+
+Kan du analysera detta och se till att vi löser detta?
