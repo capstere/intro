@@ -1,92 +1,39 @@
+Jag gjorde en REN Table direkt från: Cepheid | Production orders
 
-LOGIK FÖR LAGGING:
+Jag skapade en Table.
 
-Jag gjorde detta:
-
-
-Fact_DeliveryLagging_Daily:
-
-let
-    Source = #"Cepheid | Production orders",
-    KeepCols = Table.SelectColumns(
-        Source,
-        {
-            "ROBAL - Actual end date/ time",
-            "IPT - Document review"
-        }
-    ),
-    Filtered = Table.SelectRows(
-        KeepCols,
-        each [#"ROBAL - Actual end date/ time"] <> null
-            and [#"IPT - Document review"] <> null
-    ),
-    AddedLaggingDate = Table.AddColumn(
-        Filtered,
-        "D_Lagging_Date",
-        each Date.From([#"IPT - Document review"]),
-        type date
-    ),
-    AddedLaggingHours = Table.AddColumn(
-        AddedLaggingDate,
-        "D_Lagging_Hours_Num",
-        each Duration.TotalHours([#"IPT - Document review"] - [#"ROBAL - Actual end date/ time"]),
-        type number
-    ),
-    FilteredValidHours = Table.SelectRows(
-        AddedLaggingHours,
-        each [D_Lagging_Hours_Num] <> null
-    ),
-    KeepFinalCols = Table.SelectColumns(
-        FilteredValidHours,
-        {"D_Lagging_Date", "D_Lagging_Hours_Num"}
-    ),
-    Grouped = Table.Group(
-        KeepFinalCols,
-        {"D_Lagging_Date"},
-        {
-            {"TotalLotsReviewed", each Table.RowCount(_), Int64.Type},
-            {"LotsOver20h", each Table.RowCount(Table.SelectRows(_, each [D_Lagging_Hours_Num] >= 20)), Int64.Type},
-            {"AvgLaggingHours", each List.Average([D_Lagging_Hours_Num]), type number}
-        }
-    ),
-    AddedWithin20h = Table.AddColumn(
-        Grouped,
-        "LotsWithin20h",
-        each [TotalLotsReviewed] - [LotsOver20h],
-        Int64.Type
-    ),
-    Sorted = Table.Sort(AddedWithin20h, {{"D_Lagging_Date", Order.Ascending}})
-in
-    Sorted
+Jag lade in:
 
 
-D_Lagging_TotalLots =
-MAX(Fact_DeliveryLagging_Daily[TotalLotsReviewed])
-
-D_Lagging_LotsOver20h =
-MAX(Fact_DeliveryLagging_Daily[LotsOver20h])
-
-D_Lagging_CalendarColor = 
-VAR _d = SELECTEDVALUE(Dim_Date[Date])
-VAR _total = [D_Lagging_TotalLots]
-VAR _over = [D_Lagging_LotsOver20h]
-RETURN
-    IF(
-        ISBLANK(_d) || _d >= [Presentation_Date],
-        0,
-        SWITCH(
-            TRUE(),
-            ISBLANK(_total), -2,
-            _over > 0, -1,
-            _total > 0, 1,
-            0
-        )
-    )
+'Cepheid | Production orders'[Work Center]
+'Cepheid | Production orders'[LSP]
+'Cepheid | Production orders'[Material]
+'Cepheid | Production orders'[ROBAL - Actual end date/ time]
+'Cepheid | Production orders'[Lead-time_Num]
+'Cepheid | Production orders'[Packing info]
+'Cepheid | Production orders'[IPT - Compiling of data]
+'Cepheid | Production orders'[IPT - Test results]
+'Cepheid | Production orders'[IPT - Document review]
+'Cepheid | Production orders'[Orders#]
 
 
-DENNA ANVÄNDE JAG INTE:
-D_Lagging_AvgHours =
-MAX(Fact_DeliveryLagging_Daily[AvgLaggingHours])
+Sedan sorterade jag på:
+'Cepheid | Production orders'[IPT - Document review]
+Avanced filtering
+Show items when the value: IS BLANK
+
+'Cepheid | Production orders'[Orders#]
+Avanced filtering
+Show items when the value: starts with 10 or starts with 11
 
 
-Men nu visar kalendern rätt!?
+Conditional rules för Lead Time
+If value >= 10 Number and <= 100 Max Number then "RED"
+If value >= Min Number and < 9.99 Number then "GREEN"
+
+
+Då visar den vilka Loter som körs just nu, samt ledtider.
+
+Jag skulle däremot vilja att table kolumnen med Lead-time_Num visas som blank tills data finns för 'Cepheid | Production orders'[ROBAL - Actual end date/ time].
+
+BIfogar bilden på min tabell också!
