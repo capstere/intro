@@ -1,3 +1,64 @@
+<Objs Version="1.1.0.1" xmlns="http://schemas.microsoft.com/powershell/2004/04">
+  <Obj RefId="0">
+    <TN RefId="0">
+      <T>Deserialized.System.Collections.Hashtable</T>
+      <T>Deserialized.System.Object</T>
+    </TN>
+    <DCT>
+      <En>
+        <S N="Key">CAL_D_TIMERSPOS</S>
+        <S N="Value">Sep-27</S>
+      </En>
+      <En>
+        <S N="Key">SCALESPOS</S>
+        <S N="Value">SCLSYS03, SCLSYS05</S>
+      </En>
+      <En>
+        <S N="Key">SCALESNEG</S>
+        <S N="Value">003070, SCLSYS04</S>
+      </En>
+      <En>
+        <S N="Key">OVENSNEG</S>
+        <S N="Value">003478, 003298</S>
+      </En>
+      <En>
+        <S N="Key">CAL_D_TIMERSNEG</S>
+        <S N="Value">Sep-27</S>
+      </En>
+      <En>
+        <S N="Key">CAL_D_SCALES_NEG</S>
+        <S N="Value">Feb-27</S>
+      </En>
+      <En>
+        <S N="Key">TIMERSNEG</S>
+        <S N="Value">Nr. 24,  Nr. 25</S>
+      </En>
+      <En>
+        <S N="Key">CAL_D_OVENSNEG</S>
+        <S N="Value">Jun-26, Mar-27</S>
+      </En>
+      <En>
+        <S N="Key">CAL_D_OVENSPOS</S>
+        <S N="Value">Jun-26</S>
+      </En>
+      <En>
+        <S N="Key">OVENSPOS</S>
+        <S N="Value">003346, 003587</S>
+      </En>
+      <En>
+        <S N="Key">CAL_D_SCALES_POS</S>
+        <S N="Value">Feb-27</S>
+      </En>
+      <En>
+        <S N="Key">TIMERSPOS</S>
+        <S N="Value">Nr. 26, Nr. 27</S>
+      </En>
+    </DCT>
+  </Obj>
+</Objs>
+
+
+
 Kan ju vara bra om du vet om mina SharePoint Lists namn och kolumner:
 
 LIST:
