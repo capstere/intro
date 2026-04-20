@@ -1,0 +1,2517 @@
+Screens:
+  DailyScreen:
+    Properties:
+      LoadingSpinnerColor: =RGBA(56, 96, 178, 1)
+      OnVisible: |-
+        =Set(varToday, Coalesce(varToday, Today()));
+        Set(varDayOfWeek, Weekday(varToday, StartOfWeek.Monday));
+        Set(varIsMonday, varDayOfWeek = 1);
+        Set(
+            varLaggingDate1,
+            If(
+                varIsMonday,
+                DateAdd(varToday, -3, TimeUnit.Days),
+                DateAdd(varToday, -1, TimeUnit.Days)
+            )
+        );
+        Set(varLaggingDate2, If(varIsMonday, DateAdd(varToday, -2, TimeUnit.Days), Blank()));
+        Set(varLaggingDate3, If(varIsMonday, DateAdd(varToday, -1, TimeUnit.Days), Blank()));
+        // Today / Leading lookups
+        Set(varEHS_Today, LookUp(QDIP_EHS_Daily, InputDate = varToday));
+        Set(varDelivery_Today, LookUp(QDIP_Delivery_Daily, InputDate = varToday));
+        // Lagging panel state
+        Set(varLaggingPanelOpen, false);
+        Set(varLaggingPanelDate, Blank());
+        Set(varLaggingPanelLabel, "");
+        Set(varLaggingPanelMode, "Full");
+        Set(varLaggingSaving, false);
+        Set(varShowNRFTCauses, false);
+        Set(varShowLFICauses, false);
+        Set(varShowDeliveryCauses, false);
+        Set(varEHS_LagCurrent, Blank());
+        Set(varQ_LagCurrent, Blank());
+        Set(varDelivery_LagCurrent, Blank());
+    Children:
+      - Rectangle1_1:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Height: =80
+            Width: =Parent.Width
+      - lblTitle_1:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =30
+            Size: =20
+            Text: ="Daily QDIP Input — " & Text(varToday, "dddd dd mmm")
+            Width: =600
+            X: =80
+            Y: =20
+      - lblSectionA_Header:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =30
+            Size: =16
+            Text: ="A. TODAY / LEADING — " & Text(varToday, "yyyy-mm-dd")
+            Width: =800
+            X: =30
+            Y: =86
+      - Icon1:
+          Control: Classic/Icon@2.5.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(255, 255, 255, 1)
+            Height: =40
+            Icon: =Icon.BackArrow
+            OnSelect: =Navigate(HomeScreen, ScreenTransition.UnCover)
+            Width: =40
+            X: =20
+            Y: =20
+      - lblEHS_SectionHeader:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =30
+            Size: =14
+            Text: ="EHS Leading (today)"
+            Width: =300
+            X: =30
+            Y: =126
+      - lblEHSTodayStatus:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =If(IsBlank(varEHS_Today), RGBA(0,176,80,1), RGBA(245,158,11,1))
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =30
+            Size: =11
+            Text: |-
+              =If(IsBlank(varEHS_Today), "New row — will be created", "Editing existing
+              row")
+            Width: =300
+            X: =264
+            Y: =126
+      - lblToday_EHSScoreLabel:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =30
+            Size: =14
+            Text: ="EHS Checklist Score *"
+            Width: =300
+            X: =30
+            Y: =147
+      - txtToday_EHSScore:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: =If(IsBlank(varEHS_Today), "", Text(varEHS_Today.EHS_Checklist_Score))
+            Font: =Font.'Open Sans'
+            Format: =TextFormat.Number
+            Height: =45
+            HintText: ="0-28"
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Width: =200
+            X: =30
+            Y: =172
+      - lblToday_EHSCausesHeader:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =30
+            Size: =12
+            Text: ="EHS Causes"
+            Width: =800
+            X: =30
+            Y: =215
+      - txtToday_EHS_PPE:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: |-
+              =If(IsBlank(varEHS_Today), "",
+              Text(varEHS_Today.Cause_IncorrectPPE))
+            Font: =Font.'Open Sans'
+            Format: =TextFormat.Number
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Width: =140
+            X: =30
+            Y: =257
+      - lblToday_EHSCause_PPE:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =30
+            Size: =10
+            Text: ="Incorrect PPE"
+            Width: =140
+            X: =30
+            Y: =234
+      - txtToday_EHS_CM:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: |-
+              =If(IsBlank(varEHS_Today), "",
+              Text(varEHS_Today.Cause_OpenCMBoxes))
+            Font: =Font.'Open Sans'
+            Format: =TextFormat.Number
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Width: =140
+            X: =180
+            Y: =257
+      - lblToday_EHSCause_CM:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =30
+            Size: =10
+            Text: ="Open CM Boxes"
+            Width: =140
+            X: =180
+            Y: =234
+      - txtToday_EHS_Shoes:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: |-
+              =If(IsBlank(varEHS_Today), "",
+              Text(varEHS_Today.Cause_ShoesNotOnShelf))
+            Font: =Font.'Open Sans'
+            Format: =TextFormat.Number
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Width: =140
+            X: =330
+            Y: =257
+      - lblToday_EHSCause_Shoes:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =30
+            Size: =10
+            Text: ="Shoes Not On Shelf"
+            Width: =140
+            X: =330
+            Y: =234
+      - txtToday_EHS_Checklist:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: |-
+              =If(IsBlank(varEHS_Today), "",
+              Text(varEHS_Today.Cause_ChecklistNotSigned))
+            Font: =Font.'Open Sans'
+            Format: =TextFormat.Number
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Width: =140
+            X: =480
+            Y: =257
+      - lblToday_EHSCause_Checklist:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =30
+            Size: =10
+            Text: ="Checklist Not Signed"
+            Width: =140
+            X: =480
+            Y: =234
+      - txtToday_EHS_Other:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: |-
+              =If(IsBlank(varEHS_Today), "",
+              Text(varEHS_Today.Cause_Other))
+            Font: =Font.'Open Sans'
+            Format: =TextFormat.Number
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Width: =140
+            X: =630
+            Y: =257
+      - lblToday_EHSCause_Other:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =30
+            Size: =10
+            Text: ="Other"
+            Width: =140
+            X: =630
+            Y: =234
+      - txtToday_EHSNotes:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: =If(IsBlank(varEHS_Today), "", varEHS_Today.Notes)
+            Font: =Font.'Open Sans'
+            Format: =TextFormat.Number
+            Height: =50
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Mode: =TextMode.MultiLine
+            Width: =750
+            X: =30
+            Y: =323
+      - lblToday_EHSNotesLabel:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =30
+            Size: =10
+            Text: ="EHS Notes"
+            Width: =140
+            X: =30
+            Y: =300
+      - lblDelivery_SectionHeader:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =30
+            Size: =14
+            Text: ="Delivery Leading (today)"
+            Width: =300
+            X: =30
+            Y: =379
+      - lblDeliveryTodayStatus:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =If(IsBlank(varDelivery_Today), RGBA(0,176,80,1), RGBA(245,158,11,1))
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =30
+            Size: =11
+            Text: |-
+              =If(IsBlank(varDelivery_Today), "New row — will be created", "Editing existing
+              row")
+            Width: =300
+            X: =264
+            Y: =379
+      - lblToday_DWIPLabel:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =30
+            Size: =14
+            Text: ="Lots WIP ≥ 10h *"
+            Width: =800
+            X: =30
+            Y: =400
+      - txtToday_DWIP:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: |-
+              =If(IsBlank(varDelivery_Today), "",
+              Text(varDelivery_Today.D_Leading_LotsWIP_10hPlus))
+            Font: =Font.'Open Sans'
+            Format: =TextFormat.Number
+            Height: =45
+            HintText: ="Number of lots"
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Width: =200
+            X: =30
+            Y: =425
+      - lblToday_DWIPHint:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =30
+            Size: =10
+            Text: ="Manual snapshot — read from Power BI presentation"
+            Width: =400
+            X: =237
+            Y: =433
+      - txtToday_D_MissingRep:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: |-
+              =If(IsBlank(varDelivery_Today), "",
+              Text(varDelivery_Today.Cause_MissingReplicates))
+            Font: =Font.'Open Sans'
+            Format: =TextFormat.Number
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Width: =140
+            X: =30
+            Y: =519
+      - lblToday_DCause_MissingRep:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =30
+            Size: =10
+            Text: ="Missing Replicates"
+            Width: =140
+            X: =30
+            Y: =496
+      - txtToday_D_SmallLots:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: |-
+              =If(IsBlank(varDelivery_Today), "",
+              Text(varDelivery_Today.Cause_SmallLots))
+            Font: =Font.'Open Sans'
+            Format: =TextFormat.Number
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Width: =140
+            X: =180
+            Y: =519
+      - lblToday_DCause_SmallLots:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =30
+            Size: =10
+            Text: ="Small Lots"
+            Width: =140
+            X: =180
+            Y: =496
+      - txtToday_D_Staffing:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: |-
+              =If(IsBlank(varDelivery_Today), "",
+              Text(varDelivery_Today.Cause_StaffingIssues))
+            Font: =Font.'Open Sans'
+            Format: =TextFormat.Number
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Width: =140
+            X: =330
+            Y: =519
+      - lblToday_DCause_Staffing:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =30
+            Size: =10
+            Text: ="Staffing Issues"
+            Width: =140
+            X: =330
+            Y: =496
+      - txtToday_D_Aborted:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: |-
+              =If(IsBlank(varDelivery_Today), "",
+              Text(varDelivery_Today.Cause_AbortedLots))
+            Font: =Font.'Open Sans'
+            Format: =TextFormat.Number
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Width: =140
+            X: =480
+            Y: =519
+      - lblToday_DCause_Aborted:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =30
+            Size: =10
+            Text: ="Aborted Lots"
+            Width: =140
+            X: =480
+            Y: =496
+      - lblToday_DCausesHeader:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =30
+            Size: =12
+            Text: ="Delivery Causes (optional)"
+            Width: =800
+            X: =30
+            Y: =475
+      - txtToday_D_NC:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: |-
+              =If(IsBlank(varDelivery_Today), "",
+              Text(varDelivery_Today.Cause_NC))
+            Font: =Font.'Open Sans'
+            Format: =TextFormat.Number
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Width: =140
+            X: =30
+            Y: =582
+      - lblToday_DCause_NC:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =30
+            Size: =10
+            Text: ="NC"
+            Width: =140
+            X: =30
+            Y: =559
+      - txtToday_D_Resample:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: |-
+              =If(IsBlank(varDelivery_Today), "",
+              Text(varDelivery_Today.Cause_Resample))
+            Font: =Font.'Open Sans'
+            Format: =TextFormat.Number
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Width: =140
+            X: =180
+            Y: =582
+      - lblToday_DCause_Resample:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =30
+            Size: =10
+            Text: ="Resampling"
+            Width: =140
+            X: =180
+            Y: =559
+      - txtToday_D_SPInput:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: |-
+              =If(IsBlank(varDelivery_Today), "",
+              Text(varDelivery_Today.Cause_SPInputError))
+            Font: =Font.'Open Sans'
+            Format: =TextFormat.Number
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Width: =140
+            X: =330
+            Y: =582
+      - lblToday_DCause_SPInput:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =30
+            Size: =10
+            Text: ="SP Input Error"
+            Width: =140
+            X: =330
+            Y: =559
+      - txtToday_D_SRRetest:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: |-
+              =If(IsBlank(varDelivery_Today), "",
+              Text(varDelivery_Today.Cause_SRRetest))
+            Font: =Font.'Open Sans'
+            Format: =TextFormat.Number
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Width: =140
+            X: =480
+            Y: =582
+      - lblToday_DCause_SRRetest:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =30
+            Size: =10
+            Text: ="SR Retest"
+            Width: =140
+            X: =480
+            Y: =559
+      - txtToday_D_QA:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: |-
+              =If(IsBlank(varDelivery_Today), "",
+              Text(varDelivery_Today.Cause_QAFinding))
+            Font: =Font.'Open Sans'
+            Format: =TextFormat.Number
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Width: =140
+            X: =30
+            Y: =645
+      - lblToday_DCause_QA:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =30
+            Size: =10
+            Text: ="QA Finding"
+            Width: =140
+            X: =30
+            Y: =622
+      - txtToday_D_MissROBAL:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: |-
+              =If(IsBlank(varDelivery_Today), "",
+              Text(varDelivery_Today.Cause_MissFromROBAL))
+            Font: =Font.'Open Sans'
+            Format: =TextFormat.Number
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Width: =140
+            X: =180
+            Y: =645
+      - lblToday_DCause_MissROBAL:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =30
+            Size: =10
+            Text: ="Miss from ROBAL"
+            Width: =140
+            X: =180
+            Y: =622
+      - txtToday_D_ITMES:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: |-
+              =If(IsBlank(varDelivery_Today), "",
+              Text(varDelivery_Today.Cause_ITMESIssues))
+            Font: =Font.'Open Sans'
+            Format: =TextFormat.Number
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Width: =140
+            X: =330
+            Y: =645
+      - lblToday_DCause_ITMES:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =30
+            Size: =10
+            Text: ="IT/MES Issues"
+            Width: =140
+            X: =330
+            Y: =622
+      - txtToday_D_Unknown:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: |-
+              =If(IsBlank(varDelivery_Today), "",
+              Text(varDelivery_Today.Cause_UnknownReason))
+            Font: =Font.'Open Sans'
+            Format: =TextFormat.Number
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Width: =140
+            X: =480
+            Y: =645
+      - lblToday_DCause_Unknown:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =30
+            Size: =10
+            Text: ="Unknown Reason"
+            Width: =140
+            X: =480
+            Y: =622
+      - txtToday_D_FoundOverdue:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: |-
+              =If(IsBlank(varDelivery_Today), "",
+              Text(varDelivery_Today.Cause_FoundOverdueLotsPowerBI))
+            Font: =Font.'Open Sans'
+            Format: =TextFormat.Number
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Width: =140
+            X: =630
+            Y: =519
+      - lblToday_DCause_FoundOverdue:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =30
+            Size: =10
+            Text: ="Found Overdue Lots"
+            X: =630
+            Y: =497
+      - lblToday_DNotesLabel:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            Height: =30
+            Size: =10
+            Text: ="Delivery Notes"
+            Width: =140
+            X: =30
+            Y: =688
+      - txtToday_DNotes:
+          Control: Classic/TextInput@2.3.2
+          Properties:
+            Align: =Align.Center
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Default: =If(IsBlank(varDelivery_Today), "", varDelivery_Today.Notes)
+            Font: =Font.'Open Sans'
+            Height: =50
+            HoverBorderColor: =RGBA(0, 18, 107, 1)
+            HoverFill: =RGBA(186, 202, 226, 1)
+            Mode: =TextMode.MultiLine
+            Width: =750
+            X: =30
+            Y: =710
+      - btnSaveToday:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(0, 176, 80, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =50
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: |-
+              =// Validering: huvudmetrics krävs
+              If(
+                  IsBlank(txtToday_EHSScore.Text) || IsBlank(txtToday_DWIP.Text),
+                  Notify("EHS Checklist Score and Delivery WIP 10h+ are required", NotificationType.Error),
+
+                  // UPSERT EHS för idag (inkl causes + notes)
+                  Patch(
+                      QDIP_EHS_Daily,
+                      If(IsBlank(varEHS_Today), Defaults(QDIP_EHS_Daily), varEHS_Today),
+                      {
+                          Title: "EHS " & Text(varToday, "yyyy-mm-dd"),
+                          InputDate: varToday,
+                          EHS_Checklist_Score: Value(txtToday_EHSScore.Text),
+                          Cause_IncorrectPPE: If(IsBlank(txtToday_EHS_PPE.Text), 0, Value(txtToday_EHS_PPE.Text)),
+                          Cause_OpenCMBoxes: If(IsBlank(txtToday_EHS_CM.Text), 0, Value(txtToday_EHS_CM.Text)),
+                          Cause_ShoesNotOnShelf: If(IsBlank(txtToday_EHS_Shoes.Text), 0, Value(txtToday_EHS_Shoes.Text)),
+                          Cause_ChecklistNotSigned: If(IsBlank(txtToday_EHS_Checklist.Text), 0, Value(txtToday_EHS_Checklist.Text)),
+                          Cause_Other: If(IsBlank(txtToday_EHS_Other.Text), 0, Value(txtToday_EHS_Other.Text)),
+                          Notes: txtToday_EHSNotes.Text
+                      }
+                  );
+
+                  // UPSERT Delivery för idag (inkl alla 13 causes + notes)
+                  Patch(
+                      QDIP_Delivery_Daily,
+                      If(IsBlank(varDelivery_Today), Defaults(QDIP_Delivery_Daily), varDelivery_Today),
+                      {
+                          Title: "D " & Text(varToday, "yyyy-mm-dd"),
+                          InputDate: varToday,
+                          D_Leading_LotsWIP_10hPlus: Value(txtToday_DWIP.Text),
+                          Cause_MissingReplicates: If(IsBlank(txtToday_D_MissingRep.Text), 0, Value(txtToday_D_MissingRep.Text)),
+                          Cause_SmallLots: If(IsBlank(txtToday_D_SmallLots.Text), 0, Value(txtToday_D_SmallLots.Text)),
+                          Cause_StaffingIssues: If(IsBlank(txtToday_D_Staffing.Text), 0, Value(txtToday_D_Staffing.Text)),
+                          Cause_AbortedLots: If(IsBlank(txtToday_D_Aborted.Text), 0, Value(txtToday_D_Aborted.Text)),
+                          Cause_NC: If(IsBlank(txtToday_D_NC.Text), 0, Value(txtToday_D_NC.Text)),
+                          Cause_Resample: If(IsBlank(txtToday_D_Resample.Text), 0, Value(txtToday_D_Resample.Text)),
+                          Cause_SPInputError: If(IsBlank(txtToday_D_SPInput.Text), 0, Value(txtToday_D_SPInput.Text)),
+                          Cause_SRRetest: If(IsBlank(txtToday_D_SRRetest.Text), 0, Value(txtToday_D_SRRetest.Text)),
+                          Cause_QAFinding: If(IsBlank(txtToday_D_QA.Text), 0, Value(txtToday_D_QA.Text)),
+                          Cause_MissFromROBAL: If(IsBlank(txtToday_D_MissROBAL.Text), 0, Value(txtToday_D_MissROBAL.Text)),
+                          Cause_ITMESIssues: If(IsBlank(txtToday_D_ITMES.Text), 0, Value(txtToday_D_ITMES.Text)),
+                          Cause_UnknownReason: If(IsBlank(txtToday_D_Unknown.Text), 0, Value(txtToday_D_Unknown.Text)),
+                          Cause_FoundOverdueLotsPowerBI: If(IsBlank(txtToday_D_FoundOverdue.Text), 0, Value(txtToday_D_FoundOverdue.Text)),
+                          Notes: txtToday_DNotes.Text
+                      }
+                  );
+
+                  Notify("Today's leading + causes + notes saved", NotificationType.Success);
+
+                  // Ladda om så vi har senaste raderna (status-indikator uppdateras)
+                  Set(varEHS_Today, LookUp(QDIP_EHS_Daily, InputDate = varToday));
+                  Set(varDelivery_Today, LookUp(QDIP_Delivery_Daily, InputDate = varToday))
+              )
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Size: =10
+            Text: ="Save Today (Leading + Causes + Notes)"
+            Width: =300
+            X: =918
+            Y: =700
+      - lblSectionB_Header:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Bold
+            Height: =30
+            Size: =16
+            Text: |-
+              =If(varIsMonday, "B. LAGGING TO COMPLETE (Friday + Saturday + Sunday)", "B.
+              LAGGING TO COMPLETE (Yesterday)")
+            Visible: =false
+            Width: =300
+            X: =940
+            Y: =73
+      - lblLaggingLauncherTitle:
+          Control: Label@2.5.1
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Color: =RGBA(0, 18, 107, 1)
+            Font: =Font.'Open Sans'
+            FontWeight: =FontWeight.Semibold
+            Height: =24
+            Size: =14
+            Text: ="Lagging to complete"
+            Width: =350
+            X: =930
+            Y: =110
+      - btnOpenLag1:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            Height: =50
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: |-
+              =Set(varLaggingPanelMode, "Full");
+              Set(varLaggingPanelDate, varLaggingDate1);
+              Set(varLaggingPanelLabel, Text(varLaggingDate1, "dddd dd mmm"));
+              Set(varEHS_LagCurrent, LookUp(QDIP_EHS_Daily, InputDate = varLaggingDate1));
+              Set(varQ_LagCurrent, LookUp(QDIP_Quality_Daily, InputDate = varLaggingDate1));
+              Set(varDelivery_LagCurrent, LookUp(QDIP_Delivery_Daily, InputDate = varLaggingDate1));
+              Set(varShowNRFTCauses, false);
+              Set(varShowLFICauses, false);
+              Set(varShowDeliveryCauses, false);
+              Set(varLaggingSaving, false);
+              Set(varLaggingPanelOpen, true);
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Text: ="Open lagging — " & Text(varLaggingDate1, "ddd dd mmm")
+            Width: =320
+            X: =930
+            Y: =145
+      - btnOpenLag2:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            Height: =50
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: |
+              =Set(varLaggingPanelMode, "Weekend");
+              Set(varLaggingPanelDate, varLaggingDate2);
+              Set(varLaggingPanelLabel, Text(varLaggingDate2, "dddd dd mmm"));
+              Set(varEHS_LagCurrent, LookUp(QDIP_EHS_Daily, InputDate = varLaggingDate2));
+              Set(varQ_LagCurrent, LookUp(QDIP_Quality_Daily, InputDate = varLaggingDate2));
+              Set(varDelivery_LagCurrent, LookUp(QDIP_Delivery_Daily, InputDate = varLaggingDate2));
+              Set(varShowNRFTCauses, false);
+              Set(varShowLFICauses, false);
+              Set(varShowDeliveryCauses, false);
+              Set(varLaggingSaving, false);
+              Set(varLaggingPanelOpen, true);
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Text: ="Open lagging — " & Text(varLaggingDate2, "ddd dd mmm")
+            Visible: =varIsMonday
+            Width: =320
+            X: =930
+            Y: =205
+      - btnOpenLag3:
+          Control: Classic/Button@2.2.0
+          Properties:
+            BorderColor: =ColorFade(Self.Fill, -15%)
+            Color: =RGBA(255, 255, 255, 1)
+            DisabledBorderColor: =RGBA(166, 166, 166, 1)
+            Fill: =RGBA(56, 96, 178, 1)
+            Font: =Font.'Open Sans'
+            Height: =50
+            HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+            HoverColor: =RGBA(255, 255, 255, 1)
+            HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+            OnSelect: |-
+              =Set(varLaggingPanelMode, "Weekend");
+              Set(varLaggingPanelDate, varLaggingDate3);
+              Set(varLaggingPanelLabel, Text(varLaggingDate3, "dddd dd mmm"));
+              Set(varEHS_LagCurrent, LookUp(QDIP_EHS_Daily, InputDate = varLaggingDate3));
+              Set(varQ_LagCurrent, LookUp(QDIP_Quality_Daily, InputDate = varLaggingDate3));
+              Set(varDelivery_LagCurrent, LookUp(QDIP_Delivery_Daily, InputDate = varLaggingDate3));
+              Set(varShowNRFTCauses, false);
+              Set(varShowLFICauses, false);
+              Set(varShowDeliveryCauses, false);
+              Set(varLaggingSaving, false);
+              Set(varLaggingPanelOpen, true);
+            PressedBorderColor: =Self.Fill
+            PressedColor: =Self.Fill
+            PressedFill: =Self.Color
+            Text: ="Open lagging — " & Text(varLaggingDate3, "ddd dd mmm")
+            Visible: =varIsMonday
+            Width: =320
+            X: =930
+            Y: =265
+      - rectLaggingOverlay:
+          Control: Rectangle@2.3.0
+          Properties:
+            BorderColor: =RGBA(0, 18, 107, 1)
+            Fill: =RGBA(0, 0, 0, 0.18)
+            Height: =Parent.Height
+            Visible: =varLaggingPanelOpen
+            Width: =Parent.Width
+      - cntLaggingPanel:
+          Control: GroupContainer@1.5.0
+          Variant: ManualLayout
+          Properties:
+            BorderColor: =RGBA(220,220,220,1)
+            BorderThickness: =1
+            Fill: =RGBA(255,255,255,1)
+            Height: =620
+            Visible: =varLaggingPanelOpen
+            Width: =1120
+            X: =120
+            Y: =90
+          Children:
+            - lblLaggingPanelDateInfo:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(100,100,100,1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Height: =20
+                  Size: =10
+                  Text: |-
+                    ="InputDate to save: " & Text(varLaggingPanelDate, "yyyy-mm-dd")
+                  Width: =350
+                  X: =20
+                  Y: =45
+            - btnLagTabCore:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  Fill: =RGBA(56, 96, 178, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =36
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                  OnSelect: =Set(varLaggingTab, "Core")
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  Size: =12
+                  Text: ="Core"
+                  Width: =110
+                  X: =538
+                  Y: =15
+            - lblLag_EHS:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Height: =25
+                  Size: =12
+                  Text: ="EHS Lagging"
+                  Visible: =varLaggingTab = "Core"
+                  Width: =200
+                  X: =20
+                  Y: =90
+            - lblLag_Amplicon:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Height: =20
+                  Size: =10
+                  Text: ="Amplicon*"
+                  Visible: =varLaggingTab = "Core"
+                  Width: =180
+                  X: =20
+                  Y: =120
+            - txtLag_Amplicon:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Default: =If(IsBlank(varEHS_LagCurrent), "", Text(varEHS_LagCurrent.Amplicon_Positive_Points))
+                  Font: =Font.'Open Sans'
+                  Format: =TextFormat.Number
+                  HoverBorderColor: =RGBA(0, 18, 107, 1)
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  Visible: =varLaggingTab = "Core"
+                  Width: =150
+                  X: =20
+                  Y: =145
+            - lblLag_Incident:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Height: =20
+                  Size: =10
+                  Text: ="Incident Count *"
+                  Visible: =varLaggingTab = "Core"
+                  X: =190
+                  Y: =120
+            - txtLag_Incident:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Default: =If(IsBlank(varEHS_LagCurrent), "", Text(varEHS_LagCurrent.Incident_Count))
+                  Font: =Font.'Open Sans'
+                  Format: =TextFormat.Number
+                  HoverBorderColor: =RGBA(0, 18, 107, 1)
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  Visible: =varLaggingTab = "Core"
+                  Width: =150
+                  X: =190
+                  Y: =145
+            - lblLag_Quality:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Height: =25
+                  Size: =12
+                  Text: ="Quality Lagging (NRFT + LFI)"
+                  Visible: =varLaggingTab = "Core"
+                  Width: =260
+                  X: =20
+                  Y: =220
+            - lblLag_NRFT:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Height: =20
+                  Size: =10
+                  Text: ="NRFT Count *"
+                  Visible: =varLaggingPanelMode = "Full"
+                  Width: =120
+                  X: =20
+                  Y: =250
+            - txtLag_NRFT:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Default: =If(IsBlank(varQ_LagCurrent), "", Text(varQ_LagCurrent.NRFT_Count))
+                  Font: =Font.'Open Sans'
+                  Format: =TextFormat.Number
+                  HoverBorderColor: =RGBA(0, 18, 107, 1)
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  Visible: =varLaggingPanelMode = "Full"
+                  Width: =150
+                  X: =20
+                  Y: =275
+            - lblLag_LFI:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Height: =20
+                  Size: =10
+                  Text: ="LFI Count *"
+                  Visible: =varLaggingTab = "Core"
+                  X: =If(varLaggingPanelMode = "Full", 190, 20)
+                  Y: =250
+            - txtLag_LFI:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Default: =If(IsBlank(varQ_LagCurrent), "", Text(varQ_LagCurrent.LFI_Count))
+                  Font: =Font.'Open Sans'
+                  Format: =TextFormat.Number
+                  HoverBorderColor: =RGBA(0, 18, 107, 1)
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  Visible: =varLaggingTab = "Core"
+                  Width: =150
+                  X: =190
+                  Y: =275
+            - lblLag_Delivery:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Height: =25
+                  Size: =12
+                  Text: ="Delivery Lagging — causes/notes only"
+                  Visible: =varLaggingTab = "Core"
+                  Width: =320
+                  X: =20
+                  Y: =350
+            - lblLag_DeliveryInfo:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(120,120,120,1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Height: =30
+                  Size: =10
+                  Text: ="Do NOT enter overdue count here. Delivery Lagging count is calculated automatically in Power BI."
+                  Visible: =varLaggingTab = "Core"
+                  Width: =700
+                  X: =20
+                  Y: =380
+            - lblLag_DNotes:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Bold
+                  Height: =20
+                  Size: =10
+                  Text: ="Delivery Notes"
+                  Visible: =varLaggingTab = "Core"
+                  Width: =120
+                  X: =20
+                  Y: =420
+            - txtLag_DNotes:
+                Control: Classic/TextInput@2.3.2
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Default: =If(IsBlank(varDelivery_LagCurrent), "", varDelivery_LagCurrent.Notes)
+                  Font: =Font.'Open Sans'
+                  Format: =TextFormat.Number
+                  Height: =60
+                  HoverBorderColor: =RGBA(0, 18, 107, 1)
+                  HoverFill: =RGBA(186, 202, 226, 1)
+                  Mode: =TextMode.MultiLine
+                  Size: =12
+                  Visible: =varLaggingTab = "Core"
+                  Width: =500
+                  X: =20
+                  Y: =445
+            - btnSaveLaggingPanel:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  Color: =RGBA(255,255,255,1)
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  DisplayMode: =If(varLaggingSaving, DisplayMode.Disabled, DisplayMode.Edit)
+                  Fill: =RGBA(0,176,80,1)
+                  Font: =Font.'Open Sans'
+                  Height: =45
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                  OnSelect: "=If(\r\n    varLaggingSaving,\r\n    false,\r\n    \r\n    Set(varLaggingSaving, true);\r\n    If(\r\n        IsBlank(txtLag_Amplicon.Text) || IsBlank(txtLag_Incident.Text) || IsBlank(txtLag_NRFT.Text) || IsBlank(txtLag_LFI.Text),\r\n        \r\n        Notify(\"Amplicon, Incident, NRFT and LFI are required\", NotificationType.Error);\r\n        Set(varLaggingSaving, false),\r\n        \r\n        Patch(\r\n            QDIP_EHS_Daily,\r\n            If(IsBlank(varEHS_LagCurrent), Defaults(QDIP_EHS_Daily), varEHS_LagCurrent),\r\n            {\r\n                Title: \"EHS \" & Text(varLaggingPanelDate, \"yyyy-mm-dd\"),\r\n                InputDate: varLaggingPanelDate,\r\n                Amplicon_Positive_Points: Value(txtLag_Amplicon.Text),\r\n                Incident_Count: Value(txtLag_Incident.Text)\r\n            }\r\n        );\r\n        Patch(\r\n            QDIP_Quality_Daily,\r\n            If(IsBlank(varQ_LagCurrent), Defaults(QDIP_Quality_Daily), varQ_LagCurrent),\r\n            {\r\n                Title: \"Q \" & Text(varLaggingPanelDate, \"yyyy-mm-dd\"),\r\n                InputDate: varLaggingPanelDate,\r\n                NRFT_Count: Value(txtLag_NRFT.Text),\r\n                LFI_Count: Value(txtLag_LFI.Text)\r\n            }\r\n        );\r\n        Patch(\r\n            QDIP_Delivery_Daily,\r\n            If(IsBlank(varDelivery_LagCurrent), Defaults(QDIP_Delivery_Daily), varDelivery_LagCurrent),\r\n            {\r\n                Title: \"D \" & Text(varLaggingPanelDate, \"yyyy-mm-dd\"),\r\n                InputDate: varLaggingPanelDate,\r\n                Notes: txtLag_DNotes.Text\r\n            }\r\n        );\r\n        Notify(\"Lagging saved for \" & Text(varLaggingPanelDate, \"yyyy-mm-dd\"), NotificationType.Success);\r\n        Set(varEHS_LagCurrent, LookUp(QDIP_EHS_Daily, InputDate = varLaggingPanelDate));\r\n        Set(varQ_LagCurrent, LookUp(QDIP_Quality_Daily, InputDate = varLaggingPanelDate));\r\n        Set(varDelivery_LagCurrent, LookUp(QDIP_Delivery_Daily, InputDate = varLaggingPanelDate));\r\n        Set(varLaggingSaving, false);\r\n        Set(varLaggingPanelOpen, false)\r\n    )\r\n)\r\n"
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  Size: =12
+                  Text: =If(varLaggingSaving, "Saving...", "Save Lagging")
+                  Width: =250
+                  X: =20
+                  Y: =530
+            - lblLaggingPanelTitle:
+                Control: Label@2.5.1
+                Properties:
+                  BorderColor: =RGBA(0, 18, 107, 1)
+                  Color: =RGBA(0,18,107,1)
+                  Font: =Font.'Open Sans'
+                  FontWeight: =FontWeight.Semibold
+                  Height: =30
+                  Size: =16
+                  Text: = "Lagging input — " & varLaggingPanelLabel
+                  Width: =500
+                  X: =20
+                  Y: =15
+            - btnCloseLaggingPanel:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  Fill: =RGBA(56, 96, 178, 1)
+                  Font: =Font.'Open Sans'
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                  OnSelect: |-
+                    =Set(varLaggingPanelOpen, false);
+                    Set(varLaggingSaving, false);
+                    Set(varShowNRFTCauses, false);
+                    Set(varShowLFICauses, false);
+                    Set(varShowDeliveryCauses, false);
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  Size: =12
+                  Text: ="Close"
+                  Width: =100
+                  X: =980
+                  Y: =15
+            - btnLagTabQuality:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  Fill: =RGBA(56, 96, 178, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =36
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                  OnSelect: =Set(varLaggingTab, "Quality")
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  Size: =12
+                  Text: ="Quality causes"
+                  Width: =140
+                  X: =658
+                  Y: =15
+            - btnLagTabDelivery:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  Fill: =RGBA(56, 96, 178, 1)
+                  Font: =Font.'Open Sans'
+                  Height: =36
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                  OnSelect: =Set(varLaggingTab, "Delivery")
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  Size: =12
+                  Text: ="Delivery causes"
+                  Width: =140
+                  X: =809
+                  Y: =15
+            - btnShowNRFTCauses:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  Fill: =RGBA(56, 96, 178, 1)
+                  Font: =Font.'Open Sans'
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                  OnSelect: |-
+                    =If(
+                        varShowNRFTCauses,
+                        Set(varShowNRFTCauses, false),
+                        Set(varShowNRFTCauses, true);
+                        Set(varShowLFICauses, false);
+                        Set(varShowDeliveryCauses, false)
+                    )
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  Size: =12
+                  Text: =If(varShowNRFTCauses, "Hide NRFT causes", "Show NRFT causes")
+                  Visible: =varLaggingPanelMode = "Full"
+                  Width: =180
+                  X: =380
+                  Y: =275
+            - btnShowLFICauses:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  Fill: =RGBA(56, 96, 178, 1)
+                  Font: =Font.'Open Sans'
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                  OnSelect: |-
+                    =If(
+                        varShowLFICauses,
+                        Set(varShowLFICauses, false),
+                        Set(varShowLFICauses, true);
+                        Set(varShowNRFTCauses, false);
+                        Set(varShowDeliveryCauses, false)
+                    )
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  Size: =12
+                  Text: =If(varShowLFICauses, "Hide LFI causes", "Show LFI causes")
+                  Visible: =varLaggingPanelMode = "Full"
+                  Width: =180
+                  X: =580
+                  Y: =275
+            - btnShowDeliveryCauses:
+                Control: Classic/Button@2.2.0
+                Properties:
+                  BorderColor: =ColorFade(Self.Fill, -15%)
+                  Color: =RGBA(255, 255, 255, 1)
+                  DisabledBorderColor: =RGBA(166, 166, 166, 1)
+                  Fill: =RGBA(56, 96, 178, 1)
+                  Font: =Font.'Open Sans'
+                  HoverBorderColor: =ColorFade(Self.BorderColor, 20%)
+                  HoverColor: =RGBA(255, 255, 255, 1)
+                  HoverFill: =ColorFade(RGBA(56, 96, 178, 1), -20%)
+                  OnSelect: |+
+                    =If(
+                        varShowDeliveryCauses,
+                        Set(varShowDeliveryCauses, false),
+                        Set(varShowNRFTCauses, false);
+                        Set(varShowLFICauses, false);
+                        Set(varShowDeliveryCauses, true)
+                    )
+                  PressedBorderColor: =Self.Fill
+                  PressedColor: =Self.Fill
+                  PressedFill: =Self.Color
+                  Size: =12
+                  Text: =If(varShowDeliveryCauses, "Hide Delivery causes", "Show Delivery causes")
+                  Visible: =varLaggingPanelMode = "Full"
+                  Width: =220
+                  X: =540
+                  Y: =445
+            - cntNRFTCauses:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  BorderColor: =RGBA(230,230,230,1)
+                  BorderThickness: =1
+                  Fill: =RGBA(250,250,250,1)
+                  Height: =230
+                  Visible: =varLaggingPanelMode = "Full" && varShowNRFTCauses
+                  Width: =705
+                  X: =390
+                  Y: =120
+                Children:
+                  - txtLag_NRFT_WrongInfoChecklist:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_NRFT_WrongInfoChecklist, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =10
+                        Y: =48
+                  - lblNRFTCausesTitle:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Bold
+                        Height: =20
+                        Size: =11
+                        Text: ="NRFT causes"
+                        Width: =250
+                        X: =10
+                        Y: =5
+                  - lblNRFT_WrongInfoChecklist:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Wrong info checklist"
+                        Width: =180
+                        X: =10
+                        Y: =28
+                  - lblNRFT_MissingInfoChecklist:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Missing info checklist"
+                        Width: =180
+                        X: =260
+                        Y: =28
+                  - txtLag_NRFT_MissingInfoChecklist:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_NRFT_MissingInfoChecklist, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =260
+                        Y: =48
+                  - lblNRFT_MissingSigWorksheet:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Missing sign worksheet"
+                        Width: =180
+                        X: =510
+                        Y: =28
+                  - txtLag_NRFT_MissingSigWorksheet:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_NRFT_MissingSigWorksheet, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =510
+                        Y: =48
+                  - lblNRFT_WrongRevWorksheet:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Wrong rev worksheet"
+                        Width: =180
+                        X: =760
+                        Y: =28
+                  - txtLag_NRFT_WrongRevWorksheet:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_NRFT_WrongRevWorksheet, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =760
+                        Y: =48
+                  - lblNRFT_MissingPDRChecklist:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Missing PDR checklist"
+                        Width: =180
+                        X: =10
+                        Y: =90
+                  - txtLag_NRFT_MissingPDRChecklist:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_NRFT_MissingPDRChecklist, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =10
+                        Y: =110
+                  - lblNRFT_MissingPDRWorksheet:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Missing PDR worksheet"
+                        Width: =180
+                        X: =260
+                        Y: =90
+                  - txtLag_NRFT_MissingPDRWorksheet:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_NRFT_MissingPDRWorksheet, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =260
+                        Y: =110
+                  - lblNRFT_WrongOBRChecklist:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Wrong OBR checklist"
+                        Width: =180
+                        X: =510
+                        Y: =90
+                  - txtLag_NRFT_WrongOBRChecklist:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: = If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_NRFT_WrongOBRChecklist, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =510
+                        Y: =110
+                  - lblNRFT_CarrierMoveNC:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Carrier move NC"
+                        Width: =180
+                        X: =760
+                        Y: =90
+                  - txtLag_NRFT_CarrierMoveNC:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_NRFT_CarrierMoveNC, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =760
+                        Y: =110
+                  - lblNRFT_LotMovedNCFlow:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Lot moved NC flow"
+                        Width: =180
+                        X: =10
+                        Y: =152
+                  - txtLag_NRFT_LotMovedNCFlow:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_NRFT_LotMovedNCFlow, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =10
+                        Y: =172
+                  - lblNRFT_Other:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Other"
+                        Width: =180
+                        X: =260
+                        Y: =152
+                  - txtLag_NRFT_Other:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_NRFT_Other, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =260
+                        Y: =172
+                  - lblNRFT_ChecklistNotExecuted:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Checklist not executed"
+                        Width: =180
+                        X: =510
+                        Y: =152
+                  - txtLag_NRFT_ChecklistNotExecuted:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_NRFT_ChecklistNotExecuted, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =510
+                        Y: =172
+            - cntLFICauses:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  BorderColor: =RGBA(230,230,230,1)
+                  BorderThickness: =1
+                  Fill: =RGBA(250,250,250,1)
+                  Height: =230
+                  Visible: =varShowLFICauses
+                  Width: =705
+                  X: =390
+                  Y: =120
+                Children:
+                  - txtLag_NRFT_WrongInfoChecklist_1:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_NRFT_WrongInfoChecklist, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =10
+                        Y: =48
+                  - lblNRFTCausesTitle_1:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Bold
+                        Height: =20
+                        Size: =11
+                        Text: ="NRFT causes"
+                        Width: =250
+                        X: =10
+                        Y: =5
+                  - lblNRFT_WrongInfoChecklist_1:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Wrong info checklist"
+                        Width: =180
+                        X: =10
+                        Y: =28
+                  - lblNRFT_MissingInfoChecklist_1:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Missing info checklist"
+                        Width: =180
+                        X: =260
+                        Y: =28
+                  - txtLag_NRFT_MissingInfoChecklist_1:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_NRFT_MissingInfoChecklist, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =260
+                        Y: =48
+                  - lblNRFT_MissingSigWorksheet_1:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Missing sign worksheet"
+                        Width: =180
+                        X: =510
+                        Y: =28
+                  - txtLag_NRFT_MissingSigWorksheet_1:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_NRFT_MissingSigWorksheet, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =510
+                        Y: =48
+                  - lblNRFT_WrongRevWorksheet_1:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Wrong rev worksheet"
+                        Width: =180
+                        X: =760
+                        Y: =28
+                  - txtLag_NRFT_WrongRevWorksheet_1:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_NRFT_WrongRevWorksheet, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =760
+                        Y: =48
+                  - lblNRFT_MissingPDRChecklist_1:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Missing PDR checklist"
+                        Width: =180
+                        X: =10
+                        Y: =90
+                  - txtLag_NRFT_MissingPDRChecklist_1:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_NRFT_MissingPDRChecklist, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =10
+                        Y: =110
+                  - lblNRFT_MissingPDRWorksheet_1:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Missing PDR worksheet"
+                        Width: =180
+                        X: =260
+                        Y: =90
+                  - txtLag_NRFT_MissingPDRWorksheet_1:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_NRFT_MissingPDRWorksheet, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =260
+                        Y: =110
+                  - lblNRFT_WrongOBRChecklist_1:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Wrong OBR checklist"
+                        Width: =180
+                        X: =510
+                        Y: =90
+                  - txtLag_NRFT_WrongOBRChecklist_1:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: = If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_NRFT_WrongOBRChecklist, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =510
+                        Y: =110
+                  - lblNRFT_CarrierMoveNC_1:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Carrier move NC"
+                        Width: =180
+                        X: =760
+                        Y: =90
+                  - txtLag_NRFT_CarrierMoveNC_1:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_NRFT_CarrierMoveNC, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =760
+                        Y: =110
+                  - lblNRFT_LotMovedNCFlow_1:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Lot moved NC flow"
+                        Width: =180
+                        X: =10
+                        Y: =152
+                  - txtLag_NRFT_LotMovedNCFlow_1:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_NRFT_LotMovedNCFlow, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =10
+                        Y: =172
+                  - lblNRFT_Other_1:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Other"
+                        Width: =180
+                        X: =260
+                        Y: =152
+                  - txtLag_NRFT_Other_1:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_NRFT_Other, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =260
+                        Y: =172
+                  - lblNRFT_ChecklistNotExecuted_1:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Checklist not executed"
+                        Width: =180
+                        X: =510
+                        Y: =152
+                  - txtLag_NRFT_ChecklistNotExecuted_1:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_NRFT_ChecklistNotExecuted, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =510
+                        Y: =172
+                  - lblLFICausesTitle:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Bold
+                        Height: =20
+                        Size: =11
+                        Text: ="LFI causes"
+                        Width: =250
+                        X: =10
+                        Y: =5
+                  - lblLFI_Dilution:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Dilution"
+                        Width: =180
+                        X: =10
+                        Y: =28
+                  - txtLag_LFI_Dilution:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_LFI_Dilution, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =10
+                        Y: =48
+                  - lblLFI_Vortexing:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Vortexing"
+                        Width: =180
+                        X: =235
+                        Y: =28
+                  - txtLag_LFI_Vortexing:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_LFI_Vortexing, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =235
+                        Y: =48
+                  - lblLFI_VortexingPippeting:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Vortexing / Pippeting"
+                        Width: =180
+                        X: =460
+                        Y: =28
+                  - txtLag_LFI_VortexingPippeting:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_LFI_VortexingPippeting, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =460
+                        Y: =48
+                  - lblLFI_SampleAddition:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Sample addition"
+                        Width: =180
+                        X: =10
+                        Y: =90
+                  - txtLag_LFI_SampleAddition:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_LFI_SampleAddition, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =10
+                        Y: =110
+                  - lblLFI_Contamination:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Contamination"
+                        Width: =180
+                        X: =235
+                        Y: =90
+                  - txtLag_LFI_Contamination:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_LFI_Contamination, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =235
+                        Y: =110
+                  - lblLFI_NCAfterInitiated:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="NC after initiated"
+                        Width: =180
+                        X: =460
+                        Y: =90
+                  - txtLag_LFI_NCAfterInitiated:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_LFI_NCAfterInitiated, 0)))
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Lighter
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =460
+                        Y: =110
+                  - lblLFI_NCControlMaterial:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="NC control material"
+                        Width: =180
+                        X: =10
+                        Y: =152
+                  - txtLag_LFI_NCControlMaterial:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_LFI_NCControlMaterial, 0)))
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Lighter
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =10
+                        Y: =172
+                  - lblLFI_VoidedLFI:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Voided LFI"
+                        Width: =180
+                        X: =235
+                        Y: =152
+                  - txtLag_LFI_VoidedLFI:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varQ_LagCurrent), "0", Text(Coalesce(varQ_LagCurrent.Cause_LFI_VoidedLFI, 0)))
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Lighter
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =235
+                        Y: =172
+            - cntDeliveryCauses:
+                Control: GroupContainer@1.5.0
+                Variant: ManualLayout
+                Properties:
+                  BorderColor: =RGBA(230,230,230,1)
+                  BorderThickness: =1
+                  Fill: =RGBA(250,250,250,1)
+                  Height: =273
+                  Visible: =varShowLFICauses
+                  Width: =705
+                  X: =390
+                  Y: =120
+                Children:
+                  - txtLag_D_MissingReplicates:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varDelivery_LagCurrent), "0", Text(Coalesce(varDelivery_LagCurrent.Cause_MissingReplicates, 0)))
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Lighter
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =10
+                        Y: =48
+                  - lblDeliveryCausesTitle:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Bold
+                        Height: =20
+                        Size: =11
+                        Text: ="Delivery causes"
+                        Width: =250
+                        X: =10
+                        Y: =5
+                  - lblD_MissingReplicates:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Missing replicates"
+                        Width: =180
+                        X: =10
+                        Y: =28
+                  - lblD_SmallLots:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Small lots"
+                        Width: =180
+                        X: =260
+                        Y: =28
+                  - txtLag_D_SmallLots:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varDelivery_LagCurrent), "0", Text(Coalesce(varDelivery_LagCurrent.Cause_SmallLots, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =260
+                        Y: =48
+                  - lblD_StaffingIssues:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Staffing issues"
+                        Width: =180
+                        X: =510
+                        Y: =28
+                  - txtLag_D_StaffingIssues:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varDelivery_LagCurrent), "0", Text(Coalesce(varDelivery_LagCurrent.Cause_StaffingIssues, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =510
+                        Y: =48
+                  - lblD_AbortedLots:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Aborted lots"
+                        Width: =180
+                        X: =10
+                        Y: =90
+                  - txtLag_D_AbortedLots:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varDelivery_LagCurrent), "0", Text(Coalesce(varDelivery_LagCurrent.Cause_AbortedLots, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =10
+                        Y: =110
+                  - lblD_NC:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="NC"
+                        Width: =180
+                        X: =260
+                        Y: =90
+                  - txtLag_D_NC:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varDelivery_LagCurrent), "0", Text(Coalesce(varDelivery_LagCurrent.Cause_NC, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =260
+                        Y: =110
+                  - lblD_Resample:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Resample"
+                        Width: =180
+                        X: =510
+                        Y: =90
+                  - txtLag_D_Resample:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varDelivery_LagCurrent), "0", Text(Coalesce(varDelivery_LagCurrent.Cause_Resample, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =510
+                        Y: =110
+                  - lblD_SPInputError:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Wrong OBR checklist"
+                        Width: =180
+                        X: =10
+                        Y: =152
+                  - txtLag_D_SPInputError:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varDelivery_LagCurrent), "0", Text(Coalesce(varDelivery_LagCurrent.Cause_SPInputError, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =10
+                        Y: =172
+                  - lblD_SRRetest:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="SR retest"
+                        Width: =180
+                        X: =260
+                        Y: =152
+                  - txtLag_D_SRRetest:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varDelivery_LagCurrent), "0", Text(Coalesce(varDelivery_LagCurrent.Cause_SRRetest, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =260
+                        Y: =172
+                  - lblD_QAFinding:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="QA finding"
+                        Width: =180
+                        X: =510
+                        Y: =152
+                  - txtLag_D_QAFinding:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varDelivery_LagCurrent), "0", Text(Coalesce(varDelivery_LagCurrent.Cause_QAFinding, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =510
+                        Y: =172
+                  - lblD_MissFromROBAL:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Miss from ROBAL"
+                        Width: =180
+                        X: =10
+                        Y: =212
+                  - txtLag_D_MissFromROBAL:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varDelivery_LagCurrent), "0", Text(Coalesce(varDelivery_LagCurrent.Cause_MissFromROBAL, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =10
+                        Y: =232
+                  - lblD_ITMESIssues:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="IT/MES issues"
+                        Width: =180
+                        X: =260
+                        Y: =212
+                  - txtLag_D_ITMESIssues:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varDelivery_LagCurrent), "0", Text(Coalesce(varDelivery_LagCurrent.Cause_ITMESIssues, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =260
+                        Y: =232
+                  - lblD_UnknownReason:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Unknown reason"
+                        Width: =180
+                        X: =510
+                        Y: =212
+                  - txtLag_D_UnknownReason:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varDelivery_LagCurrent), "0", Text(Coalesce(varDelivery_LagCurrent.Cause_UnknownReason, 0)))
+                        Font: =Font.'Open Sans'
+                        FontWeight: =FontWeight.Lighter
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =510
+                        Y: =232
+                  - lblD_FoundOverdueLotsPowerBI:
+                      Control: Label@2.5.1
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Font: =Font.'Open Sans'
+                        Height: =18
+                        Size: =10
+                        Text: ="Found overdue lots PBI"
+                        Width: =180
+                        X: =10
+                        Y: =262
+                  - txtLag_D_FoundOverdueLotsPowerBI:
+                      Control: Classic/TextInput@2.3.2
+                      Properties:
+                        BorderColor: =RGBA(0, 18, 107, 1)
+                        Default: =If(IsBlank(varDelivery_LagCurrent), "0", Text(Coalesce(varDelivery_LagCurrent.Cause_FoundOverdueLotsPowerBI, 0)))
+                        Font: =Font.'Open Sans'
+                        Format: =TextFormat.Number
+                        Height: =36
+                        HoverBorderColor: =RGBA(0, 18, 107, 1)
+                        HoverFill: =RGBA(186, 202, 226, 1)
+                        Width: =180
+                        X: =10
+                        Y: =292
