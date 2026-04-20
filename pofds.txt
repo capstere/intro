@@ -1,0 +1,11 @@
+Projektledaren skrev:
+”Fredriksson, Jesper Let's create separate AWFs for D29447 and D12547 since D12547 is pending changes from other project and would like ot make sure that D29447 gets released without issue. your thoughts ? 
+Let me know if there are any questions.”
+
+Jag svarade:
+“How does it add up if we say in the global SOP D29447: NOTE: Handling and escalation criteria for reduced outer film seal (90–99%) are defined in D12547. 
+while D12547 only has Solna as the affected site?
+I think both documents should be released simultaneously, if possible.”
+
+Hon svarade:
+That's true! Good point  I will escalate to the stakeholders and see if we can get to release the pending AWF for D12547. We have two options in that case (1) Expedite the pending AWF and route D29447 and D12547 together (2)Remove the reference to D12547 from D29447 for now and route the handling and pause criteria later ( this is something I want to avoid)
