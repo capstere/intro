@@ -1,3 +1,27 @@
+Här är en zip-fil med alla "</> Code View" för mina screens.
+
+Innehåll:
+App.txt (OnSelect)
+HomeScreen.txt
+DailyScreen.txt
+CorrectionScreen.txt
+ActionsScreen.txt
+EditActionScreen.txt
+
+Analysera gärna Appens delar.
+EditActionScreen fungerar inte, specifika error:
+ddEditSection.Default = If(IsBlank(varEditAction), Blank(), varEditAction.QDIP_Section) = There is an error in this formula. Try revising the formula and running again.
+ddEditStatus.Default = If(IsBlank(varEditAction), 
+   LookUp(Choices(QDIP_Actions.Status), Value = "Assigned"), 
+   varEditAction.Status
+) = There is an error in this formula. Try revising the formula and running again.
+
+För alla date så har jag bytt ut till fungerande: " TimeUnit.Days " INTE: Days.
+
+Skriv gärna en REN, noggrann, detaljerad guide för att finjustera appen så jag kan lägga in den i Power Bi efteråt! Tack
+
+
+
 SortByColumns(
     Filter(
         QDIP_Actions,
