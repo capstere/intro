@@ -1,110 +1,16 @@
-Jag ändrade M-koden för Query "Fact_DeliveryLagging_Daily" och lade till dina 3 nya Measures.
+Jag fick detta när jag skulle signera Worksheet:
 
-Det har blivit bättre men visar inte 100% rätt.
+[13:55:30]  ❌ SIGNERINGSFEL Worksheet:
+Exception: Cannot bind argument to parameter 'Parent' because it is null.
 
-Jag bifogar en excel-fil där jag hämtat alla Orders som blivit "IPT - Document review" inom fiskalmånad April fram till gårdagen (28 Mars till 21 April).
-Enligt den är det 132 orders. Men enligt din kod så är det endast 128. 
+Jag tror det beror på att det mergade området där det ska skrivas in inte har N/A i sina "spök-celler", eller om området är tomt.
+Eller beror det på detta worksheet just?
+Kan du felsöka och åtgärda detta så det fungerar? Gärna med att visa exakt diff-patch.
 
-Här är din M-kod för "Fact_DeliveryLagging_Daily":
-let
-    Source = #"Cepheid | Production orders",
+Kan du även gå igenom projektet generellt för att se var jag kan optimera det utan att äventyra logiken!
 
-    // Steg 1: Behåll bara de 3 nödvändiga kolumnerna
-    KeepCols = Table.SelectColumns(
-        Source,
-        {
-            "Order#",
-            "ROBAL - Actual end date/ time",
-            "IPT - Document review"
-        }
-    ),
 
-    // Steg 2: Filtrera på Order# prefix 10 eller 11
-    FilterOrderPrefix = Table.SelectRows(
-        KeepCols,
-        each
-            let o = Text.From([#"Order#"])
-            in Text.StartsWith(o, "10") or Text.StartsWith(o, "11")
-    ),
 
-    // Steg 3: Filtrera på att BÅDE ROBAL-end och IPT-Document review är ifyllda
-    Filtered = Table.SelectRows(
-        FilterOrderPrefix,
-        each [#"ROBAL - Actual end date/ time"] <> null
-            and [#"IPT - Document review"] <> null
-    ),
+✓ Totalt: 0 avvikelser — alla tester OK!
 
-    // Steg 4: Beräkna D_Lagging_Date = datum-delen av IPT-Document review
-    //         (detta är datumet som avgör fiskalmånadstillhörighet)
-    AddedLaggingDate = Table.AddColumn(
-        Filtered,
-        "D_Lagging_Date",
-        each Date.From([#"IPT - Document review"]),
-        type date
-    ),
-
-    // Steg 5: Beräkna lagging-tid i timmar (IPT-Document review - ROBAL end)
-    //         Kan spänna över fiskalmånadsgräns — det är exakt det vi vill
-    AddedLaggingHours = Table.AddColumn(
-        AddedLaggingDate,
-        "D_Lagging_Hours_Num",
-        each Duration.TotalHours([#"IPT - Document review"] - [#"ROBAL - Actual end date/ time"]),
-        type number
-    ),
-
-    // Steg 6: Filtrera bort eventuella negativa eller null-värden
-    FilteredValidHours = Table.SelectRows(
-        AddedLaggingHours,
-        each [D_Lagging_Hours_Num] <> null and [D_Lagging_Hours_Num] >= 0
-    ),
-
-    // Steg 7: Behåll bara datum + timmar inför groupering
-    KeepFinalCols = Table.SelectColumns(
-        FilteredValidHours,
-        {"D_Lagging_Date", "D_Lagging_Hours_Num"}
-    ),
-
-    // Steg 8: Gruppera per dag och räkna aggregat
-    Grouped = Table.Group(
-        KeepFinalCols,
-        {"D_Lagging_Date"},
-        {
-            {"TotalLotsReviewed", each Table.RowCount(_), Int64.Type},
-            {"LotsOver20h",       each Table.RowCount(Table.SelectRows(_, each [D_Lagging_Hours_Num] >= 20)), Int64.Type},
-            {"AvgLaggingHours",   each List.Average([D_Lagging_Hours_Num]), type number}
-        }
-    ),
-
-    // Steg 9: Lägg till beräknad "LotsWithin20h"
-    AddedWithin20h = Table.AddColumn(
-        Grouped,
-        "LotsWithin20h",
-        each [TotalLotsReviewed] - [LotsOver20h],
-        Int64.Type
-    ),
-
-    Sorted = Table.Sort(
-        AddedWithin20h,
-        {{"D_Lagging_Date", Order.Descending}, {"AvgLaggingHours", Order.Descending}}
-    )
-in
-    Sorted
-
-Här är dina _Measures
-D_Lagging_MonthToMinusOne_TotalLots = 
-CALCULATE(
-    SUM(Fact_DeliveryLagging_Daily[TotalLotsReviewed]),
-    KEEPFILTERS(Dim_Date[Date] < TODAY())
-)
-
-D_Lagging_MonthToMinusOne_Over20h = 
-CALCULATE(
-    SUM(Fact_DeliveryLagging_Daily[LotsOver20h]),
-    KEEPFILTERS(Dim_Date[Date] < TODAY())
-)
-
-D_Lagging_MonthToMinusOne_Pct = 
-VAR _total = [D_Lagging_MonthToMinusOne_TotalLots]
-VAR _over  = [D_Lagging_MonthToMinusOne_Over20h]
-VAR _within = _total - _over
-RETURN DIVIDE(_within, _total, BLANK())
+Totalt: 1 avvikelser (1 Minor)
