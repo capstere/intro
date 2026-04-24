@@ -1,0 +1,12 @@
+Bifogad zip-fil "IPT Compile Project.zip" innehåller i stort sett alla projektets filer.
+
+Jag har även lagt in fyra text-filer med en strukturerad fillista per del:
+
+FileList_zz_IPTCompile_Shortcut.txt
+FileList_IPTCompile_Install.txt
+FileList_zz_IPTCompile_Shortcut.txt
+FileList_IPT.txt
+
+När det kommer till förbättring av loggning och audit (för mig som utvecklare) finns det något som går att optimera eller göras tydligare för mig? Analysera detta utifrån bifogad zip-fil.
+
+Finns det något generellt som kan göra skriptet att fungera snabbare utan att äventyra dess funktionalitet?
