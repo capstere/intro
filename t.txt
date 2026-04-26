@@ -1,0 +1,41 @@
+Jag har fått resultat nu. Det är för mycket data för mig som människa. DU måste analysera detta åt mig.
+Jag bifogar "analys.zip".
+
+Den innehåller en excel-fil där D-lagging stämmer från officiella Power Bi:
+correct_delivery_lagging_20260328-to-20260425.xlsx
+
+Den innehåller resultat från PowerShell skriptet med:
+Specific_Orders
+OrderSearch_Results.csv
+
+Samt en folder med ALL results:
+QDIP_SP_Investigation_20260426_182313
+All_SharePoint_Lists.csv
+CalculatedFormulas_Cepheid _ Production orders - Archive.csv
+CalculatedFormulas_Cepheid _ Production orders.csv
+CalculatedFormulas_Changes.csv
+CalculatedFormulas_Document Review.csv
+CalculatedFormulas_QAR - Order info.csv
+CalculatedFormulas_Restriction Failure Investigations.csv
+CalculatedFormulas_Work Order Changes.csv
+CalculatedFormulas_Workflow History.csv
+Fields_Cepheid _ Production orders - Archive.csv
+Fields_Cepheid _ Production orders.csv
+Fields_Changes.csv
+Fields_Document Review.csv
+Fields_QAR - Order info.csv
+Fields_Restriction Failure Investigations.csv
+Fields_Work Order Changes.csv
+Fields_Workflow History.csv
+ProductionOrders_ImportantFieldMap.csv
+README_QDIP_Investigation.txt
+Views_Cepheid _ Production orders - Archive.csv
+Views_Cepheid _ Production orders.csv
+Views_Changes.csv
+Views_Document Review.csv
+Views_QAR - Order info.csv
+Views_Restriction Failure Investigations.csv
+Views_Work Order Changes.csv
+Views_Workflow History.csv
+
+Kan du utan att gissa eller hallucinera komma vidare i vår process att förstå oss på hur vi ska få ut samma Lagging till vår QDIP ?
