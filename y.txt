@@ -1,0 +1,30 @@
+Jag bifogar excelfilen "Data.xlsx". Där har du all data jag kan använda.
+
+Vi måste alltså ""Börja"" om och använda OneLake istället. Alltså ta bort "Cepheid | Production orders" som datakälla. Men med OneLake kan man inte "Transform data" eftersom det inte är en Query.
+Men vi borde kunna spara ganska mycket annat.
+Hur gör vi för att bygga om min Power BI med detta?
+
+Delivery Leading och Lagging är ALLTID filtreras på:
+Lead time is not blank
+Order# starts with '10' or starts with '11'"	
+
+Data för att få fram Lagging (Historical Production Orders):
+Ledtid: Lead time (Aggregation)
+Antal Ordrar: Count Quality finished orders (Measure)
+Procent Ordrar inom 20h: Share of Quality within 20h (Measure)
+
+Däremot har officiela data inte min Dim Date. Den har data:
+Danaher Calendar Table
+Date Column
+DHR Month Column
+DHR Quarter Column
+Is last month Column
+Is this month Column
+is Today or earlier Column
+Month Index Aggregation
+Week Aggregation
+Week Index Aggregation
+Week start date Column
+Year Aggregation
+
+Och man sorterar på datumfilter. Kanske är bättre?
