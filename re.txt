@@ -1,0 +1,19 @@
+Funktionaliteten är godkänd.
+
+Jag bifogar återigen en zip-fil med alla mina Screens "</> Code View".
+
+Känslan/logiken för "DailyScreen" är inte bra.
+Det blir väldigt plottrigt med allt.
+Det fungerar rent generellt, men det är en ”konstigt” UX och väldigt mycket på en gång.
+Det bästa vore att skärmen med sektion A och B var väldigt clean. Det ska vara robust så att användare hela tiden förstår vad de gör.
+Och en sak som ska ändras helt är att "Delivery Causes" SKA finnas på LAGGING också. Men på LAGGING är den inte Optional! Då måste man ange orsak varför en Lot överstigit 20h!
+
+I "CorrectionScreen" så måste man kunna korrigera Delivery Lagging också!
+
+I ActionScreen får inte Actions raderas automatiskt när de är ”Fix Confirmed”.
+Vi måste kunna spåra gamla actions! De får enbart försvinna om man antingen tar bort de via Power Appen eller direkt via SharePoint List.
+Dessutom vill jag att default mode på action screen ska visa alla ”öppna” Actions (som inte har ”Fix Confirmed”.
+Om det inte finns några öppna actions så visa ”All”.
+
+Kan du utvärdera zip-filen och sedan skriva en komplett detaljerad plan för VARJE steg, varje placering av varje lbl, txt, btn, rec, gal och så vidare och alla positioner, fx-funktioner, inställningar med mera.
+Jag vill ha en komplett app som känns väldigt naturlig och snygg utifrån mina exakta datakälllor som du har tillgång till i bifogade zip-filen.
