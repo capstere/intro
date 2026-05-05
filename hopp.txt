@@ -1,0 +1,70 @@
+[17:14:18]  Sanity: IPT_NETWORK_ROOT=\\SE.CEPHEID.PRI\Cepheid Sweden\QC\QC-1\IPT\Skiftspecifika dokument\PQC analyst\JESPER\zz_IPTCompile | IPT_ROOT_EFFECTIVE=\\SE.CEPHEID.PRI\Cepheid Sweden\QC\QC-1\IPT | IPT_ROOT_SOURCE=DEFAULT | LogPath=C:\IPTCompile\Loggar\anderssonb_20260505_171418.txt | StructuredLogPath=C:\IPTCompile\Loggar\anderssonb_20260505_171418.jsonl
+[17:15:30]  🔎 Söker filer för 53702…
+[17:15:30]  📂 Mapp: R12 - HCV VL #53702 - PQC (7,200)
+[17:15:32]  ✅ Filer laddade.
+[17:16:36]  🔃 Skapar rapport…
+[17:16:37]  📥 Snapshot → TEMP: SealNEG__2026 05 05 HCV VL 53702 Seal Test Neg.xlsx
+[17:16:38]  📥 Snapshot → TEMP: SealPOS__2026 05 05 HCV VL 53702 Seal Test Pos.xlsx
+[17:16:39]  📥 Snapshot → TEMP: CSV_Primary__2026 05 05 HCV VL #53702 Tests Summary.csv
+[17:16:39]  📄 Neg: 2026 05 05 HCV VL 53702 Seal Test Neg.xlsx
+[17:16:39]  📄 Pos: 2026 05 05 HCV VL 53702 Seal Test Pos.xlsx
+[17:16:39]  📄 CSV: 2026 05 05 HCV VL #53702 Tests Summary.csv
+[17:16:59]  🖊️ Signatur satt: NEG 5 blad (överhoppade 0), POS 5 blad (överhoppade 0).
+[17:17:00]  ✅ Seal Test NEG verifierad: 5/5 blad OK.
+[17:17:00]  ✅ Seal Test POS verifierad: 5/5 blad OK.
+[17:17:18]  ❌ SIGNERINGSFEL Worksheet: Cannot index into a null array.
+[17:17:49]  🔃 Skapar rapport…
+[17:17:49]  📥 Snapshot → TEMP: SealNEG__2026 05 05 HCV VL 53702 Seal Test Neg.xlsx
+[17:17:49]  📥 Snapshot → TEMP: SealPOS__2026 05 05 HCV VL 53702 Seal Test Pos.xlsx
+[17:17:50]  📥 Snapshot → TEMP: CSV_Primary__2026 05 05 HCV VL #53702 Tests Summary.csv
+[17:17:50]  📄 Neg: 2026 05 05 HCV VL 53702 Seal Test Neg.xlsx
+[17:17:50]  📄 Pos: 2026 05 05 HCV VL 53702 Seal Test Pos.xlsx
+[17:17:50]  📄 CSV: 2026 05 05 HCV VL #53702 Tests Summary.csv
+[17:17:57]  🖊️ Signatur satt: NEG 5 blad (överhoppade 0), POS 5 blad (överhoppade 0).
+[17:17:57]  ✅ Seal Test NEG verifierad: 5/5 blad OK.
+[17:17:58]  ✅ Seal Test POS verifierad: 5/5 blad OK.
+[17:18:14]  ❌ SIGNERINGSFEL Worksheet: Cannot index into a null array.
+[17:18:18]  🔃 Skapar rapport…
+[17:18:18]  📥 Snapshot → TEMP: SealNEG__2026 05 05 HCV VL 53702 Seal Test Neg.xlsx
+[17:18:19]  📥 Snapshot → TEMP: SealPOS__2026 05 05 HCV VL 53702 Seal Test Pos.xlsx
+[17:18:19]  📥 Snapshot → TEMP: CSV_Primary__2026 05 05 HCV VL #53702 Tests Summary.csv
+[17:18:19]  📄 Neg: 2026 05 05 HCV VL 53702 Seal Test Neg.xlsx
+[17:18:19]  📄 Pos: 2026 05 05 HCV VL 53702 Seal Test Pos.xlsx
+[17:18:19]  📄 CSV: 2026 05 05 HCV VL #53702 Tests Summary.csv
+[17:18:24]  🖊️ Signatur satt: NEG 5 blad (överhoppade 0), POS 5 blad (överhoppade 0).
+[17:18:25]  ✅ Seal Test NEG verifierad: 5/5 blad OK.
+[17:18:25]  ✅ Seal Test POS verifierad: 5/5 blad OK.
+[17:18:48]  ❌ SIGNERINGSFEL Worksheet: Kunde inte spara WorksheetPart 'Seal Test Failure Count': Exception calling "Save" with "0" argument(s): "Unable to determine the identity of domain."
+[17:18:48]  ⚠️ Kunde inte spara snapshot: The process cannot access the file '\\SE.CEPHEID.PRI\Cepheid Sweden\QC\QC-1\IPT\3. IPT - KLART FÖR SAMMANSTÄLLNING\R12 - HCV VL #53702 - PQC (7,200)\2026 05 05 HCV VL 53702 Worksheet D51112.xlsx' because it is being used by another process.
+[17:18:52]  🔃 Skapar rapport…
+[17:18:52]  📥 Snapshot → TEMP: SealNEG__2026 05 05 HCV VL 53702 Seal Test Neg.xlsx
+[17:18:53]  📥 Snapshot → TEMP: SealPOS__2026 05 05 HCV VL 53702 Seal Test Pos.xlsx
+[17:18:53]  📥 Snapshot → TEMP: CSV_Primary__2026 05 05 HCV VL #53702 Tests Summary.csv
+[17:18:54]  📄 Neg: 2026 05 05 HCV VL 53702 Seal Test Neg.xlsx
+[17:18:54]  📄 Pos: 2026 05 05 HCV VL 53702 Seal Test Pos.xlsx
+[17:18:54]  📄 CSV: 2026 05 05 HCV VL #53702 Tests Summary.csv
+[17:19:00]  🖊️ Signatur satt: NEG 5 blad (överhoppade 0), POS 5 blad (överhoppade 0).
+[17:19:01]  ✅ Seal Test NEG verifierad: 5/5 blad OK.
+[17:19:01]  ✅ Seal Test POS verifierad: 5/5 blad OK.
+[17:19:05]  ⚠️ Kunde inte läsa signeringsplan (Sammanställning): Cannot index into a null array.
+[17:19:11]  🛑 Worksheet-signatur ej bekräftad.
+[17:19:12]  🔃 CSV sorterad på kolumn C (Sample ID). Rader: 228
+[17:19:12]  🔎 Assay från CSV: Xpert_HCV Viral Load
+[17:19:12]  ⚠️ Data Summary scan fel: Exception calling ".ctor" with "1" argument(s): "CRC error: the file being extracted appears to be corrupted. Expected 0x5F20D946, Actual 0x250239F0"
+[17:19:12]  🧠 RuleBank laddad från compiled. ResultCallPatterns=187, QuantSpecRules=0, SampleExpectationRules=4, ErrorCodes=23, MissingSamplesConfig=1, SampleIdMarkers=5, ParityCheckConfig=5, SampleNumberRules=111, TestTypePolicy=91
+[17:19:12]  🧠 Regelmotor: CSV-källa: Import-CsvRows (228)
+[17:19:14]  ⚠️ RuleEngine dev: ERROR | 100925ARMO_09_0_02X | Exp=NEG | Obs=ERROR | Err=2008
+[17:19:14]  🧪 Kontrollmaterial-flik: HCV VL
+[17:19:15]  ✅ Seal Test hittades
+[17:19:16]  📥 Snapshot → TEMP: Worksheet__2026 05 05 HCV VL 53702 Worksheet D51112.xlsx
+[17:19:18]  🔎 Worksheet: 2026 05 05 HCV VL 53702 Worksheet D51112.xlsx
+[17:19:18]  ⚠️ WS-fel: Exception calling ".ctor" with "1" argument(s): "CRC error: the file being extracted appears to be corrupted. Expected 0x5F20D946, Actual 0x250239F0"
+[17:19:18]  ✅ Utrustningslista kopierad.
+[17:19:19]  ✅ Kontrollmaterial: 'HCV VL'
+[17:19:19]  ⚠️ SharePoint ej tillgängligt: System.Exception: Administrator rights are required to install or update. Log on to the computer with an account that has Administrator rights, and then try again, or install by adding "-Scope CurrentUser" to your command. You can also try running the Windows PowerShell session with elevated rights (Run as Administrator).
+[17:19:20]  🔎 Order# hittad i Seal Test: 1116778
+[17:19:20]  💾 Sparar rapport: anderssonb_output_53702_20260505_171920.xlsx
+[17:19:20]  🧠 Skriver CSV-Sammanfattning...
+[17:19:20]  Rapport sparad: C:\Users\ANDERS~1\AppData\Local\Temp\anderssonb_output_53702_20260505_171920.xlsx (28,4s)
+[17:19:20]  🔏 Verifierad signering: Seal Test: NEG+POS, WS Sammanst.
+[17:19:21]     Uppskattad tidsbesparning: ~10 min (manuellt ~10 min, IPTCompile 28,4s)
