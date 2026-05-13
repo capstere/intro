@@ -6,7 +6,7 @@ men jag får endast detta error:
 PS C:\Users\jesper.fredriksson\OneDrive - Danaher\Desktop\IPTComp_json\tools\IPTReport> C:\Users\jesper.fredriksson\OneDrive - Danaher\Desktop\IPTComp_json\tools\IPTReport\Convert-IPTReportJsonToHtml.ps1
 cmdlet Convert-IPTReportJsonToHtml.ps1 at command pipeline position 1
 Supply values for the following parameters:
-InputPath: C:\Users\jesper.fredriksson\AppData\Local\Temp\jesper.fredriksson_output_53502_20260513_125144.report.json
+InputPath: C:\Users\jesper.fredriksson\AppData\Local\Temp\jesper.fredriksson_output_33901_20260513_131257.report.json
 Convert-IPTReportJsonToHtml : Parameter set cannot be resolved using the specified named parameters.
 At C:\Users\jesper.fredriksson\OneDrive - Danaher\Desktop\IPTComp_json\tools\IPTReport\Convert-IPTReportJsonToHtml.ps1:102 char:13
 + $htmlPath = Convert-IPTReportJsonToHtml -JsonPath $jsonPath -Template ...
