@@ -1,0 +1,23 @@
+IPTCompile.zip (LIVE project inställt på SIGN "true")
+
+WORKING.zip
+fungerande_CARBA 14701.xlsx
+fungerande_GXMTB ULTRA 97101.xlsx
+fungerande_HPV v2 33901.xlsx
+
+FAILING.zip:
+HBV VL #32602.xlsx
+HCV FS #17102.xlsx
+MRSA NXG #15506.xlsx
+XP3 SARS COV2 #17803.xlsx
+
+LOGGAR.zip
+logg för CARBA #14701.txt
+logg för GXMTB RIF ULTRA #97101.txt
+logg för HBV VL #32602.txt
+logg för HCV FS #17102.txt
+logg för HPV v2 #33901.txt
+logg för MRSA NXG #15506.txt
+logg för XP3 SARS COV2 #17803.txt
+
+
