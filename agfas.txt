@@ -1,3 +1,139 @@
+Absolut — och jag håller med om kravet: **100% säker** betyder att vi bara ska slå fast sådant som **står i ert insamlade underlag**, och tydligt markera vad som **inte** kan bevisas utan kompletterande kontroll.
+
+Nedan är därför **”hårda fakta” (bevisbara skillnader)** mellan INF5 och INF1/INF3, baserat på era filer.
+
+***
+
+## ✅ 1) 100% säkra DIFFAR (som faktiskt syns i datan)
+
+### A) **WSUS / Windows Update-policyer: INF5 saknar flera policy-rader som INF1/INF3 har**
+
+I era insamlade registry-policy-rader har **INF1 och INF3** följande värden, medan **INF5 står som “Not found in collected registry rows”**:
+
+* **WUServer** = `http://dhrau1svapwu01.danaher.org:8530` (INF1/INF3) men **inte hittad** för INF5 i insamlingen [\[03_INF5_vs...ifferences \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B7739D00A-9F64-46B1-9762-F879C5293C0C%7D&file=03_INF5_vs_INF1_INF3_concrete_differences.csv&action=default&mobileredirect=true)
+* **WUStatusServer** = samma WSUS-URL (INF1/INF3) men **inte hittad** för INF5 i insamlingen [\[03_INF5_vs...ifferences \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B7739D00A-9F64-46B1-9762-F879C5293C0C%7D&file=03_INF5_vs_INF1_INF3_concrete_differences.csv&action=default&mobileredirect=true)
+* **UseWUServer** = `1` (INF1/INF3) men **inte hittad** för INF5 i insamlingen [\[03_INF5_vs...ifferences \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B7739D00A-9F64-46B1-9762-F879C5293C0C%7D&file=03_INF5_vs_INF1_INF3_concrete_differences.csv&action=default&mobileredirect=true)
+* **DisableDualScan** = `1` (INF1/INF3) men **inte hittad** för INF5 i insamlingen [\[03_INF5_vs...ifferences \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B7739D00A-9F64-46B1-9762-F879C5293C0C%7D&file=03_INF5_vs_INF1_INF3_concrete_differences.csv&action=default&mobileredirect=true)
+* **TargetReleaseVersionInfo** = `21H2` (INF1/INF3) men **inte hittad** för INF5 i insamlingen [\[03_INF5_vs...ifferences \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B7739D00A-9F64-46B1-9762-F879C5293C0C%7D&file=03_INF5_vs_INF1_INF3_concrete_differences.csv&action=default&mobileredirect=true)
+
+> **100% säkert fynd:** INF5 saknar dessa policy-rader **i det datamaterial ni samlat in**.   
+> **Viktigt:** detta bevisar *inte* att de är 100% frånvarande i verkligheten — bara att de **inte finns i ert registry-utdrag** (se “Vad vi INTE kan påstå” längre ner). [\[03_INF5_vs...ifferences \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B7739D00A-9F64-46B1-9762-F879C5293C0C%7D&file=03_INF5_vs_INF1_INF3_concrete_differences.csv&action=default&mobileredirect=true), [\[Infinity_R...d_Evidence \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7BBC6D3C61-22C5-4752-BB42-ECDDDBB74B37%7D&file=Infinity_Reboot_Trimmed_Evidence.xlsx&action=default&mobileredirect=true) [\[Infinity_R...d_Evidence \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7BBC6D3C61-22C5-4752-BB42-ECDDDBB74B37%7D&file=Infinity_Reboot_Trimmed_Evidence.xlsx&action=default&mobileredirect=true)
+
+***
+
+### B) **Patchnivå/hotfix: INF5 har Maj-CU som INF1/INF3 inte visar**
+
+Ert hotfix-underlag visar:
+
+* **INF5**: **KB5087544** (Maj kumulativ uppdatering) installerad `2026-05-14 12:00:00 AM` [\[03_INF5_vs...ifferences \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B7739D00A-9F64-46B1-9762-F879C5293C0C%7D&file=03_INF5_vs_INF1_INF3_concrete_differences.csv&action=default&mobileredirect=true), [\[Infinity_R...d_Evidence \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7BBC6D3C61-22C5-4752-BB42-ECDDDBB74B37%7D&file=Infinity_Reboot_Trimmed_Evidence.xlsx&action=default&mobileredirect=true)
+* **INF1 & INF3**: **KB5087544** = “Not present in collected hotfix list” [\[03_INF5_vs...ifferences \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B7739D00A-9F64-46B1-9762-F879C5293C0C%7D&file=03_INF5_vs_INF1_INF3_concrete_differences.csv&action=default&mobileredirect=true), [\[Infinity_R...d_Evidence \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7BBC6D3C61-22C5-4752-BB42-ECDDDBB74B37%7D&file=Infinity_Reboot_Trimmed_Evidence.xlsx&action=default&mobileredirect=true)
+* **INF1 & INF3**: **KB5082200** (April CU/security update) installerad `2026-04-23 12:00:00 AM` [\[03_INF5_vs...ifferences \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B7739D00A-9F64-46B1-9762-F879C5293C0C%7D&file=03_INF5_vs_INF1_INF3_concrete_differences.csv&action=default&mobileredirect=true)
+* **INF5**: **KB5082200** = “Not present in collected hotfix list” [\[03_INF5_vs...ifferences \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B7739D00A-9F64-46B1-9762-F879C5293C0C%7D&file=03_INF5_vs_INF1_INF3_concrete_differences.csv&action=default&mobileredirect=true)
+
+> **100% säkert fynd:** I ert hotfix-underlag är INF5 på **Maj-CU**, medan INF1/INF3 i samma underlag ser ut att ligga kvar på **April-CU**. [\[03_INF5_vs...ifferences \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B7739D00A-9F64-46B1-9762-F879C5293C0C%7D&file=03_INF5_vs_INF1_INF3_concrete_differences.csv&action=default&mobileredirect=true), [\[Infinity_R...d_Evidence \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7BBC6D3C61-22C5-4752-BB42-ECDDDBB74B37%7D&file=Infinity_Reboot_Trimmed_Evidence.xlsx&action=default&mobileredirect=true)
+
+***
+
+### C) **Omstartshändelser Event ID 1074 i datumen: INF5 har dem — INF1/INF3 har inga i fönstret**
+
+I jämförelsefilen för Event 1074 och datumfönstren:
+
+* **INF1**: “No 1074 restart/shutdown event in this date window” (både 10/5 och 14/5) [\[04_1074_co...ay10_May14 \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B09945DE9-9D35-4875-8BB9-F1F0E7783BEA%7D&file=04_1074_compare_INF1_INF3_INF5_May10_May14.csv&action=default&mobileredirect=true), [\[Infinity_R...d_Evidence \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7BBC6D3C61-22C5-4752-BB42-ECDDDBB74B37%7D&file=Infinity_Reboot_Trimmed_Evidence.xlsx&action=default&mobileredirect=true)
+* **INF3**: samma (ingen 1074 i fönstret) [\[04_1074_co...ay10_May14 \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B09945DE9-9D35-4875-8BB9-F1F0E7783BEA%7D&file=04_1074_compare_INF1_INF3_INF5_May10_May14.csv&action=default&mobileredirect=true), [\[Infinity_R...d_Evidence \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7BBC6D3C61-22C5-4752-BB42-ECDDDBB74B37%7D&file=Infinity_Reboot_Trimmed_Evidence.xlsx&action=default&mobileredirect=true)
+* **INF5**: har **4 st 1074** i dessa fönster: [\[04_1074_co...ay10_May14 \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B09945DE9-9D35-4875-8BB9-F1F0E7783BEA%7D&file=04_1074_compare_INF1_INF3_INF5_May10_May14.csv&action=default&mobileredirect=true), [\[Infinity_R...d_Evidence \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7BBC6D3C61-22C5-4752-BB42-ECDDDBB74B37%7D&file=Infinity_Reboot_Trimmed_Evidence.xlsx&action=default&mobileredirect=true)
+  1. `2026-05-10 00:20:00` – `svchost.exe` på uppdrag av `NT AUTHORITY\\SYSTEM` (Planned, `0x80020010`) [\[04_1074_co...ay10_May14 \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B09945DE9-9D35-4875-8BB9-F1F0E7783BEA%7D&file=04_1074_compare_INF1_INF3_INF5_May10_May14.csv&action=default&mobileredirect=true), [\[04_1074_co...ay10_May14 \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B09945DE9-9D35-4875-8BB9-F1F0E7783BEA%7D&file=04_1074_compare_INF1_INF3_INF5_May10_May14.csv&action=default&mobileredirect=true)
+  2. `2026-05-14 00:18:26` – `MusNotificationUx.exe` på uppdrag av `SE\\Labuser_IPT` (Planned, `0x80020010`) [\[04_1074_co...ay10_May14 \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B09945DE9-9D35-4875-8BB9-F1F0E7783BEA%7D&file=04_1074_compare_INF1_INF3_INF5_May10_May14.csv&action=default&mobileredirect=true), [\[04_1074_co...ay10_May14 \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B09945DE9-9D35-4875-8BB9-F1F0E7783BEA%7D&file=04_1074_compare_INF1_INF3_INF5_May10_May14.csv&action=default&mobileredirect=true)
+  3. `2026-05-14 01:56:01` – `svchost.exe` på uppdrag av `SYSTEM` (Planned, `0x80020010`) [\[04_1074_co...ay10_May14 \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B09945DE9-9D35-4875-8BB9-F1F0E7783BEA%7D&file=04_1074_compare_INF1_INF3_INF5_May10_May14.csv&action=default&mobileredirect=true), [\[04_1074_co...ay10_May14 \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B09945DE9-9D35-4875-8BB9-F1F0E7783BEA%7D&file=04_1074_compare_INF1_INF3_INF5_May10_May14.csv&action=default&mobileredirect=true)
+  4. `2026-05-14 01:57:27` – `TrustedInstaller.exe` på uppdrag av `SYSTEM` (Upgrade Planned, `0x80020003`) [\[04_1074_co...ay10_May14 \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B09945DE9-9D35-4875-8BB9-F1F0E7783BEA%7D&file=04_1074_compare_INF1_INF3_INF5_May10_May14.csv&action=default&mobileredirect=true), [\[04_1074_co...ay10_May14 \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B09945DE9-9D35-4875-8BB9-F1F0E7783BEA%7D&file=04_1074_compare_INF1_INF3_INF5_May10_May14.csv&action=default&mobileredirect=true)
+
+> **100% säkert fynd:** I ert datainsamlade 1074-underlag finns dessa restart-trigger-händelser för INF5, men inga för INF1/INF3 i de aktuella fönstren. [\[04_1074_co...ay10_May14 \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B09945DE9-9D35-4875-8BB9-F1F0E7783BEA%7D&file=04_1074_compare_INF1_INF3_INF5_May10_May14.csv&action=default&mobileredirect=true), [\[Infinity_R...d_Evidence \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7BBC6D3C61-22C5-4752-BB42-ECDDDBB74B37%7D&file=Infinity_Reboot_Trimmed_Evidence.xlsx&action=default&mobileredirect=true)
+
+***
+
+### D) **BIOS-version skiljer**
+
+* INF1 = **1.38.0**, INF3 = **1.38.0**, INF5 = **1.33.2** [\[03_INF5_vs...ifferences \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B7739D00A-9F64-46B1-9762-F879C5293C0C%7D&file=03_INF5_vs_INF1_INF3_concrete_differences.csv&action=default&mobileredirect=true), [\[Infinity_R...d_Evidence \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7BBC6D3C61-22C5-4752-BB42-ECDDDBB74B37%7D&file=Infinity_Reboot_Trimmed_Evidence.xlsx&action=default&mobileredirect=true)
+
+> **100% säkert fynd:** BIOS-versionen skiljer i ert system-sammanfattningsunderlag.   
+> (Men detta är **inte** i sig bevis på reboot-orsak.) [\[03_INF5_vs...ifferences \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B7739D00A-9F64-46B1-9762-F879C5293C0C%7D&file=03_INF5_vs_INF1_INF3_concrete_differences.csv&action=default&mobileredirect=true) [\[03_INF5_vs...ifferences \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B7739D00A-9F64-46B1-9762-F879C5293C0C%7D&file=03_INF5_vs_INF1_INF3_concrete_differences.csv&action=default&mobileredirect=true), [\[Infinity_R...d_Evidence \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7BBC6D3C61-22C5-4752-BB42-ECDDDBB74B37%7D&file=Infinity_Reboot_Trimmed_Evidence.xlsx&action=default&mobileredirect=true)
+
+***
+
+### E) **Active Hours är samma (inte en differens)**
+
+Alla tre har **Active Hours 08–17**, och INF5-rebootarna sker utanför (00–02). [\[03_INF5_vs...ifferences \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B7739D00A-9F64-46B1-9762-F879C5293C0C%7D&file=03_INF5_vs_INF1_INF3_concrete_differences.csv&action=default&mobileredirect=true), [\[04_1074_co...ay10_May14 \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B09945DE9-9D35-4875-8BB9-F1F0E7783BEA%7D&file=04_1074_compare_INF1_INF3_INF5_May10_May14.csv&action=default&mobileredirect=true)
+
+***
+
+## ✅ 2) Vad betyder dessa diffar (utan att gissa)
+
+Det här kan vi säga “säkert + sakligt”:
+
+1. **INF5 har faktisk uppdaterings-/servicing-restart-kedja i logg (1074)** just de datumen, INF1/INF3 har det inte i ert fönster. [\[04_1074_co...ay10_May14 \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B09945DE9-9D35-4875-8BB9-F1F0E7783BEA%7D&file=04_1074_compare_INF1_INF3_INF5_May10_May14.csv&action=default&mobileredirect=true), [\[04_1074_co...ay10_May14 \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B09945DE9-9D35-4875-8BB9-F1F0E7783BEA%7D&file=04_1074_compare_INF1_INF3_INF5_May10_May14.csv&action=default&mobileredirect=true)
+2. **INF5 är på en annan patchnivå (Maj-CU) än INF1/INF3 (April-CU) i ert hotfix-underlag**, vilket är en rimlig förklaring till att INF5 måste göra uppdateringsreboots när INF1/INF3 inte behöver det just då. [\[03_INF5_vs...ifferences \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B7739D00A-9F64-46B1-9762-F879C5293C0C%7D&file=03_INF5_vs_INF1_INF3_concrete_differences.csv&action=default&mobileredirect=true), [\[Infinity_R...d_Evidence \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7BBC6D3C61-22C5-4752-BB42-ECDDDBB74B37%7D&file=Infinity_Reboot_Trimmed_Evidence.xlsx&action=default&mobileredirect=true)
+3. **INF5 saknar flera WSUS-/WU-policy-rader i registry-utdraget**, vilket är en konkret, mätbar avvikelse i insamlingen. [\[03_INF5_vs...ifferences \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B7739D00A-9F64-46B1-9762-F879C5293C0C%7D&file=03_INF5_vs_INF1_INF3_concrete_differences.csv&action=default&mobileredirect=true), [\[Infinity_R...d_Evidence \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7BBC6D3C61-22C5-4752-BB42-ECDDDBB74B37%7D&file=Infinity_Reboot_Trimmed_Evidence.xlsx&action=default&mobileredirect=true)
+
+***
+
+## 🚫 3) Vad vi INTE kan vara 100% säkra på (viktigt)
+
+För att vara helt korrekta:
+
+* Vi kan **inte** bevisa från detta underlag att INF5 *inte* har WSUS-policy i verkligheten — bara att den **inte finns i de rader ni samlat in**. [\[03_INF5_vs...ifferences \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B7739D00A-9F64-46B1-9762-F879C5293C0C%7D&file=03_INF5_vs_INF1_INF3_concrete_differences.csv&action=default&mobileredirect=true), [\[Infinity_R...d_Evidence \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7BBC6D3C61-22C5-4752-BB42-ECDDDBB74B37%7D&file=Infinity_Reboot_Trimmed_Evidence.xlsx&action=default&mobileredirect=true)
+* Vi kan **inte** bevisa att en operatör “klickade” på en knapp. Vi kan däremot bevisa att restart initierades av **MusNotificationUx.exe** på uppdrag av `SE\\Labuser_IPT`, vilket är Windows Update UX-vägen. [\[04_1074_co...ay10_May14 \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B09945DE9-9D35-4875-8BB9-F1F0E7783BEA%7D&file=04_1074_compare_INF1_INF3_INF5_May10_May14.csv&action=default&mobileredirect=true), [\[Infinity_R...d_Evidence \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7BBC6D3C61-22C5-4752-BB42-ECDDDBB74B37%7D&file=Infinity_Reboot_Trimmed_Evidence.xlsx&action=default&mobileredirect=true)
+
+***
+
+## 🔍 4) Hur du gör det “100% bevisat” även utanför datainsamlingen (snabb check)
+
+För att avgöra om INF5 **verkligen** saknar policys (och inte bara “saknas i utdraget”), kör dessa på INF5 + INF1 + INF3 och jämför output:
+
+### A) Verifiera policy från *faktisk* registry
+
+```powershell
+reg query "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate"
+reg query "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU"
+```
+
+### B) Verifiera vilken GPO som sätter Windows Update
+
+```powershell
+gpresult /h C:\Temp\gp.html
+```
+
+Öppna rapporten och sök på “Windows Update” / “WSUS” / “Specify intranet Microsoft update service location”.
+
+### C) Verifiera update-källa (WSUS vs Microsoft Update)
+
+```powershell
+reg query "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" /v WUServer
+reg query "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate" /v WUStatusServer
+reg query "HKLM\SOFTWARE\Policies\Microsoft\Windows\WindowsUpdate\AU" /v UseWUServer
+```
+
+***
+
+## ✅ Bottom line (EN mening, 100% korrekt mot ert data)
+
+**INF5 skiljer sig genom att (1) den har 1074-restart-händelser 10/5 och 14/5, (2) den ligger på Maj-CU KB5087544 medan INF1/INF3 inte gör det i hotfix-listan, och (3) flera WSUS/WU-policy-rader som syns på INF1/INF3 saknas i INF5:s insamlade registry-rader.** [\[04_1074_co...ay10_May14 \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B09945DE9-9D35-4875-8BB9-F1F0E7783BEA%7D&file=04_1074_compare_INF1_INF3_INF5_May10_May14.csv&action=default&mobileredirect=true), [\[03_INF5_vs...ifferences \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7B7739D00A-9F64-46B1-9762-F879C5293C0C%7D&file=03_INF5_vs_INF1_INF3_concrete_differences.csv&action=default&mobileredirect=true), [\[Infinity_R...d_Evidence \| Excel\]](https://danaher-my.sharepoint.com/personal/labuser_ipt_cepheid_com/_layouts/15/Doc.aspx?sourcedoc=%7BBC6D3C61-22C5-4752-BB42-ECDDDBB74B37%7D&file=Infinity_Reboot_Trimmed_Evidence.xlsx&action=default&mobileredirect=true)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 🔴 Det som DIFFAR på INF5 jämfört med INF1 & INF3
 ✅ 1. INF5 saknar WSUS-konfiguration
 INF1 & INF3 har:
