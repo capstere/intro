@@ -1,0 +1,268 @@
+Testade på min dator först. Batch filen fungerade inte så jag körde Powershell direkt.
+Jag fick dessa error när jag körde:
+
+PS C:\Users\jesper.fredriksson\OneDrive - Danaher\Desktop\INF_troubleshoot> C:\Users\jesper.fredriksson\OneDrive - Danaher\Desktop\INF_troubleshoot\Collect-InfinityKioskRebootDiag.ps1
+Collecting Infinity kiosk reboot diagnostics...
+Output folder: C:\Users\jesper.fredriksson\OneDrive - Danaher\Desktop\InfinityKiosk_RebootDiag_CEPSNALPSTD8579_20260518_101421
+Argument types do not match
+At C:\Users\jesper.fredriksson\OneDrive - Danaher\Desktop\INF_troubleshoot\Collect-InfinityKioskRebootDiag.ps1:408 char:12
++     return @($rows)
++            ~~~~~~~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+ 
+Argument types do not match
+At C:\Users\jesper.fredriksson\OneDrive - Danaher\Desktop\INF_troubleshoot\Collect-InfinityKioskRebootDiag.ps1:408 char:12
++     return @($rows)
++            ~~~~~~~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+ 
+Argument types do not match
+At C:\Users\jesper.fredriksson\OneDrive - Danaher\Desktop\INF_troubleshoot\Collect-InfinityKioskRebootDiag.ps1:408 char:12
++     return @($rows)
++            ~~~~~~~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+ 
+Argument types do not match
+At C:\Users\jesper.fredriksson\OneDrive - Danaher\Desktop\INF_troubleshoot\Collect-InfinityKioskRebootDiag.ps1:408 char:12
++     return @($rows)
++            ~~~~~~~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+ 
+Argument types do not match
+At C:\Users\jesper.fredriksson\OneDrive - Danaher\Desktop\INF_troubleshoot\Collect-InfinityKioskRebootDiag.ps1:408 char:12
++     return @($rows)
++            ~~~~~~~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+ 
+Argument types do not match
+At C:\Users\jesper.fredriksson\OneDrive - Danaher\Desktop\INF_troubleshoot\Collect-InfinityKioskRebootDiag.ps1:408 char:12
++     return @($rows)
++            ~~~~~~~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+ 
+Argument types do not match
+At C:\Users\jesper.fredriksson\OneDrive - Danaher\Desktop\INF_troubleshoot\Collect-InfinityKioskRebootDiag.ps1:492 char:12
++     return @($rows)
++            ~~~~~~~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+ 
+Export-Csv : Cannot bind argument to parameter 'InputObject' because it is null.
+At C:\Users\jesper.fredriksson\OneDrive - Danaher\Desktop\INF_troubleshoot\Collect-InfinityKioskRebootDiag.ps1:139 char:20
++ ...      $arr | Export-Csv -Path $Path -NoTypeInformation -Encoding UTF8  ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidData: (:) [Export-Csv], ParameterBindingValidationException
+    + FullyQualifiedErrorId : ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ExportCsvCommand
+ 
+Argument types do not match
+At C:\Users\jesper.fredriksson\OneDrive - Danaher\Desktop\INF_troubleshoot\Collect-InfinityKioskRebootDiag.ps1:408 char:12
++     return @($rows)
++            ~~~~~~~~
+    + CategoryInfo          : OperationStopped: (:) [], ArgumentException
+    + FullyQualifiedErrorId : System.ArgumentException
+ 
+Export-Csv : Cannot bind argument to parameter 'InputObject' because it is null.
+At C:\Users\jesper.fredriksson\OneDrive - Danaher\Desktop\INF_troubleshoot\Collect-InfinityKioskRebootDiag.ps1:139 char:20
++ ...      $arr | Export-Csv -Path $Path -NoTypeInformation -Encoding UTF8  ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidData: (:) [Export-Csv], ParameterBindingValidationException
+    + FullyQualifiedErrorId : ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ExportCsvCommand
+ 
+
+Getting the list of all ETL files...
+
+Please wait for all of conversions to complete...
+
+
+================ Results from WULog_0 ================
+
+Input
+----------------
+File(s):
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.506.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.507.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.508.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.509.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.510.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.511.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.512.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.513.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.514.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.515.etl
+
+100.00%
+
+Output
+----------------
+DumpFile:           C:\Users\JESPER~1.FRE\AppData\Local\Temp\WindowsUpdateLog\wuetl.XML.tmp.109dcd8c-184b-4253-983f-d4b0f26c6aa7.00000
+Warning:
+Some events do not match the schema.
+Please rerun the command with -lr to get less restricted XML dump
+The command completed successfully.
+
+==================================================
+
+
+================ Results from WULog_1 ================
+
+Input
+----------------
+File(s):
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.516.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.517.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.518.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.519.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.520.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.521.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.522.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.523.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.524.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.525.etl
+
+100.00%
+
+Output
+----------------
+DumpFile:           C:\Users\JESPER~1.FRE\AppData\Local\Temp\WindowsUpdateLog\wuetl.XML.tmp.109dcd8c-184b-4253-983f-d4b0f26c6aa7.00001
+Warning:
+Some events do not match the schema.
+Please rerun the command with -lr to get less restricted XML dump
+The command completed successfully.
+
+==================================================
+
+
+================ Results from WULog_2 ================
+
+Input
+----------------
+File(s):
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.526.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.527.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.528.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.529.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.530.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.531.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.532.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.533.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.534.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.535.etl
+
+100.00%
+
+Output
+----------------
+DumpFile:           C:\Users\JESPER~1.FRE\AppData\Local\Temp\WindowsUpdateLog\wuetl.XML.tmp.109dcd8c-184b-4253-983f-d4b0f26c6aa7.00002
+Warning:
+Some events do not match the schema.
+Please rerun the command with -lr to get less restricted XML dump
+The command completed successfully.
+
+==================================================
+
+
+================ Results from WULog_3 ================
+
+Input
+----------------
+File(s):
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.536.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.537.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.538.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.539.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.540.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.541.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.542.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.543.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.544.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.545.etl
+
+100.00%
+
+Output
+----------------
+DumpFile:           C:\Users\JESPER~1.FRE\AppData\Local\Temp\WindowsUpdateLog\wuetl.XML.tmp.109dcd8c-184b-4253-983f-d4b0f26c6aa7.00003
+Warning:
+Some events do not match the schema.
+Please rerun the command with -lr to get less restricted XML dump
+The command completed successfully.
+
+==================================================
+
+
+================ Results from WULog_4 ================
+
+Input
+----------------
+File(s):
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.546.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.547.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.548.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.549.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.550.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.551.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.552.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.553.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.554.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.555.etl
+
+100.00%
+
+Output
+----------------
+DumpFile:           C:\Users\JESPER~1.FRE\AppData\Local\Temp\WindowsUpdateLog\wuetl.XML.tmp.109dcd8c-184b-4253-983f-d4b0f26c6aa7.00004
+Warning:
+Some events do not match the schema.
+Please rerun the command with -lr to get less restricted XML dump
+The command completed successfully.
+
+==================================================
+
+
+================ Results from WULog_5 ================
+
+Input
+----------------
+File(s):
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.556.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.557.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.558.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.559.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.560.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.561.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.562.etl
+     C:\WINDOWS\logs\WindowsUpdate\WindowsUpdate.20260513.081549.787.563.etl
+
+100.00%
+
+Output
+----------------
+DumpFile:           C:\Users\JESPER~1.FRE\AppData\Local\Temp\WindowsUpdateLog\wuetl.XML.tmp.109dcd8c-184b-4253-983f-d4b0f26c6aa7.00005
+Warning:
+Some events do not match the schema.
+Please rerun the command with -lr to get less restricted XML dump
+The command completed successfully.
+
+==================================================
+
+
+WindowsUpdate_converted.log written to C:\Users\jesper.fredriksson\OneDrive - Danaher\Desktop\InfinityKiosk_RebootDiag_CEPSNALPSTD8579_20260518_101421\TXT\WindowsUpdate_converte
+d.log
+
+Collecting event logs from 03/19/2026 10:14:21 to 05/18/2026 10:14:21 ...
+Export-Csv : Cannot bind argument to parameter 'InputObject' because it is null.
+At C:\Users\jesper.fredriksson\OneDrive - Danaher\Desktop\INF_troubleshoot\Collect-InfinityKioskRebootDiag.ps1:139 char:20
++ ...      $arr | Export-Csv -Path $Path -NoTypeInformation -Encoding UTF8  ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : InvalidData: (:) [Export-Csv], ParameterBindingValidationException
+    + FullyQualifiedErrorId : ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ExportCsvCommand
+
+
+
+Du kanske kan korrigera detta så det fungerar?
