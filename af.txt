@@ -1,0 +1,9 @@
+RCA‑text (kopiera in i incident/ticket)
+
+Fakta: INF5 (CPHD‑5RT7YB4) har planerade omstarter (Event ID 1074) där initiatorn är Windows Update/servicing‑komponenter: svchost.exe (SYSTEM) 2026‑05‑10 00:20 och 2026‑05‑14 01:56, MusNotificationUx.exe (SE\Labuser_IPT) 2026‑05‑14 00:18, samt TrustedInstaller.exe (SYSTEM) 2026‑05‑14 01:57 (Upgrade Planned).
+Stöd: Under samma period installerar INF5 uppdateringar som ofta kräver reboot: KB5088859 (.NET CU) och KB5087544 (Windows 10 CU) med tydliga “Installation Started” och “Installation Successful” i WindowsUpdateClient‑loggarna.
+Jämförelse: INF1 och INF3 saknar motsvarande Windows Update‑initierade 1074‑klasser (”Windows Update service/svchost planned restart” och ”MusNotificationUx”) och deras 1074‑händelser domineras istället av Winlogon/SCCM/TrustedInstaller/RuntimeBroker/WMI (beroende på maskin).
+Slutsats (bevisbar i datasetet): INF5 startar om eftersom Windows Update/servicing explicit initierar planerade restarts (1074 med 0x80020010/0x80020003), medan INF1/INF3 inte visar samma update‑triggerade reboot‑sekvens i era insamlade 1074‑data för motsvarande period.
+Konfigurations‑diff (i er export): I policy/registry‑utdraget saknar INF5 rader för WSUS/WU‑nycklarna (WUServer/WUStatusServer/UseWUServer/DisableDualScan/TargetReleaseVersionInfo) som finns för INF1/INF3; detta kan bidra till annorlunda update‑beteende men är begränsat till vad som faktiskt kom med i exporten.
+Uteslutning: INF5 visar inga oväntade shutdown/bugcheck‑reboots i “unexpected_shutdown_bugcheck”‑listan; däremot har INF3 sådana (Kernel‑Power 41/6008/bugcheck) i mars—INF5:s händelser här är alltså planerade, inte krascher.
+Rekommenderad åtgärd: Säkerställ att INF5 har samma Windows Update‑policy/WSUS‑styrning som INF1/INF3 och verifiera faktisk policy med gpresult + reg query (för att bekräfta om nycklarna verkligen saknas eller bara saknades i exporten).
