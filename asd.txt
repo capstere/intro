@@ -1,0 +1,28 @@
+På sommaren så kommer vi att "Merge" Seal test POS och NEG.
+Det innebär att vi endast kommer använda ett labb - Det positiva.
+Det betyder att Seal Test filen kommer innehålla ALLA replikat, båda Positiva och Negativa.
+Det betyder att endast utrustning från "Positiva labbet" kommer att användas.
+Det betyder att skriptet endast kollar efter EN Seal Test Fil.
+
+Det betyder att jag skulle behöva en ny funktion som gör att användaren kan välja "mode" för en "SEAL TEST FIL".
+
+Jag vet inte hur mycket som krävs för att implementera detta i skriptet men kan du hjälpa mig med detta?
+Jag förstår om ett kompletterande excel-templat kan krävas utöver "output_template-v4.xlsx", men helst vill jag ändra så lite som möjligt för att det ska fungera.
+
+Jag bifogar nuvarande LIVE-skript. (bifogad som: IPTCompile-LIVE.zip)
+
+Jag bifogar exempel på Seal Test-filer som underlag för förståelse. (bifogad som: Merge-Seal Test.zip)
+Innehåll:
+Merge-Seal Test.xlsx = Exempel på alla tester i en Seal test fil.
+Template-Seal Test.xlsx = Tempate på hur grunden av Seal Test filen ser ut.
+Split-Seal Test Neg.xlsx = Nuvarande skriptets förväntade Seal Test NEG
+Split-Seal Test Pos.xlsx = Exempel på nuvarande skriptets förväntade Seal Test POS.
+
+Bifogar även zip-fil "cm-equip-xlsm+excel+automapp.zip" om du behöver se:
+Utrustningslista In Process Testing kopia.xlsx
+KONTROLLPROVSFIL - Version 2.5.xlsm
+equipment.xml
+Auto Mappscript.ps1
+
+Jag vill att du löser detta på ett optimerat och robust sätt. Gissa eller hallucinera inte, behöver du mer information för förståelse av uppgiften så fråga.
+Tack. 
