@@ -1,0 +1,9 @@
+All data i CSV hamnar i första kolumnen (kolumn A)
+
+1. Markera kolumn A.
+2. Gå till fliken Data och välj Text to Columns.
+3. Välj Delimited och klicka Next.
+4. Markera Comma och klicka Next.
+5. Slutför genom att klicka vidare till Finish om alternativet visas.
+
+Går detta att lägga till i macrot för "Ctrl+Shift+a"?
