@@ -1,0 +1,29 @@
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass -Force
+
+
+
+if(Test-Path -Path "C:\Users\${Env:UserName}\AppData\Roaming\Microsoft\Excel\XLSTART") {
+	
+	Write-Host -ForegroundColor Magenta -BackgroundColor Gray "Directory found, continuing"
+    Write-Host -ForegroundColor Magenta -BackgroundColor Gray "Copying file"
+	Copy-Item "\\SE.CEPHEID.PRI\Cepheid Sweden\QC\QC-1\IPT\3. IPT - KLART FÖR SAMMANSTÄLLNING\2.Test Summary Macros\Nya funktioner(Beta)\MacroBeta\PERSONAL.XLSB" "C:\Users\${Env:UserName}\AppData\Roaming\Microsoft\Excel\XLSTART\"
+	
+	Write-Host -ForegroundColor Gray -BackgroundColor DarkGreen "Done! You can now open Excel and close this program"
+
+    #$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
+
+} else {
+
+  	Write-Host -ForegroundColor Magenta -BackgroundColor Gray "No directory found, creating one"
+	
+	New-Item -Path "C:\Users\${Env:UserName}\AppData\Roaming\Microsoft\Excel\XLSTART" -ItemType Directory
+    
+    Write-Host -ForegroundColor Magenta -BackgroundColor Gray "Copying file"
+
+	Copy-Item "\\SE.CEPHEID.PRI\Cepheid Sweden\QC\QC-1\IPT\3. IPT - KLART FÖR SAMMANSTÄLLNING\2.Test Summary Macros\Nya funktioner(Beta)\MacroBeta\PERSONAL.XLSB" "C:\Users\${Env:UserName}\AppData\Roaming\Microsoft\Excel\XLSTART\"
+	
+	Write-Host -ForegroundColor Gray -BackgroundColor DarkGreen "Done! You can now open Excel and close this program"
+
+	#$null = $Host.UI.RawUI.ReadKey('NoEcho,IncludeKeyDown');
+}
+
