@@ -1,0 +1,41 @@
+Är detta bra? Jag tycker inte det låter som "jag" haha:
+
+PQC Rework Plan instruction:
+
+Due to changed market demand, a portion of GXSACOMP-CE-10 Lot 19003 / Batch 1001528736 is reworked to GXSACOMP-JP-10, Batch 1001534891. The rework consists of unpacking kits, sorting contents, relabeling cartridges, and repacking on PAL.
+
+The cartridges originate from the same lot (Lot 19003). Part number (700-4023) and ADF (P0358) remain unchanged. The rework does not impact cartridge design, assay chemistry, ADF, or LSP, and therefore does not affect intrinsic product performance characteristics.
+
+Approved same-lot source data from the original D36872 worksheet will be used as source evidence for the JP release package for:
+- First 10 / Sample Type 0: 10 replicates
+- Sample Type 0 Negative: 100 replicates
+- Sample Type 1 Medium Positive: 70 replicates
+
+A JP-specific testing gap has been identified consisting of:
+- Sample Type 2 Low Positive: 20 replicates
+- Sample Type 3 High Positive: 10 replicates
+
+To close this gap and to verify that rework activities (handling, sorting, relabeling, repacking) have not introduced errors or mix-ups, 30 additional replicates will be generated post-rework under D66614.
+
+The final D66614 worksheet shall clearly distinguish:
+- approved original same-lot source data
+- newly generated post-rework data
+
+Original source data shall not be considered newly generated JP test data but shall be used as approved same-lot source evidence. Any accepted errors or minor failures present in the original data remain part of the final assessment and shall not be removed, repeated, or reset.
+
+Final release is acceptable only if the completed D66614 worksheet, including both original source data and additional post-rework data, meets all applicable acceptance criteria.
+
+
+Comment in worksheet D66614:
+
+This worksheet is used as bridged release evidence for rework from GXSACOMP-CE-10 Lot 19003 / Batch 1001528736 to GXSACOMP-JP-10 Lot 19003 / Batch 1001534891.
+
+Approved same-lot source data from original worksheet D36872 are used for First 10, Sample Type 0, and Sample Type 1 testing (total 180 replicates).
+
+Additional post-rework testing under D66614 is performed to close the JP-specific gap:
+- 20 replicates Sample Type 2
+- 10 replicates Sample Type 3
+
+Original source data and newly generated post-rework data are maintained as traceable and distinct data sets and shall not be interpreted as one single newly generated JP test execution.
+
+Final acceptance is based on the completed D66614 worksheet, evaluated against applicable acceptance criteria and in accordance with the approved rework plan.
