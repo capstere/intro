@@ -1,0 +1,71 @@
+﻿[18:25:32]  Sanity: IPT_NETWORK_ROOT=<empty> | IPT_ROOT_EFFECTIVE=\\SE.CEPHEID.PRI\Cepheid Sweden\QC\QC-1\IPT | IPT_ROOT_SOURCE=DEFAULT | LogPath=C:\Users\jesper.fredriksson\OneDrive - Danaher\Desktop\IPTCompile_merge.split\Loggar\jesper.fredriksson_20260528_182532.txt | StructuredLogPath=C:\Users\jesper.fredriksson\OneDrive - Danaher\Desktop\IPTCompile_merge.split\Loggar\jesper.fredriksson_20260528_182532.jsonl
+[18:25:46]  🔎 Söker filer för 33302…
+[18:25:46]  📂 Mapp: R12 - HIV VL XC CN #33302 - PQC (14,400)
+[18:25:48]  ✅ Filer laddade.
+[18:25:51]  🔃 Skapar rapport…
+[18:25:51]  ℹ️ Seal Test mode: Split / NEG+POS.
+[18:25:52]  📥 Snapshot → TEMP: SealNEG__2026 05 20 HIV VL XC CN 33302 Seal Test Neg.xlsx
+[18:25:52]  📥 Snapshot → TEMP: SealPOS__2026 05 20 HIV VL XC CN 33302 Seal Test Pos.xlsx
+[18:25:52]  📥 Snapshot → TEMP: CSV_Primary__2026 05 20 HIV VL XC CN #33302 Tests Summary.csv
+[18:25:53]  📄 Neg: 2026 05 20 HIV VL XC CN 33302 Seal Test Neg.xlsx
+[18:25:53]  📄 Pos: 2026 05 20 HIV VL XC CN 33302 Seal Test Pos.xlsx
+[18:25:53]  📄 CSV: 2026 05 20 HIV VL XC CN #33302 Tests Summary.csv
+[18:25:53]  🧠 RuleBank laddad från compiled. ResultCallPatterns=187, QuantSpecRules=0, SampleExpectationRules=4, ErrorCodes=23, MissingSamplesConfig=1, SampleIdMarkers=5, ParityCheckConfig=5, SampleNumberRules=111, TestTypePolicy=93
+[18:25:53]  ⚠️ Regelmotor: fallback-raw för CSV misslyckades: Cannot validate argument on parameter 'Header'. The argument is null or empty. Provide an argument that is not null or empty, and then try the command again.
+[18:25:53]  🧠 Regelmotor: CSV-källa: Fallback-raw (0)
+[18:25:53]  ⚠️ Regelmotor: CSV-objekt saknas (0 rader) – hoppar över.
+[18:25:53]  ℹ️ Ingen Kontrollmaterialsflik (fortsätter utan).
+[18:25:55]  ✅ Seal Test hittades
+[18:25:55]  📥 Snapshot → TEMP: Worksheet__2026 05 20 HIV VL XC CN 33302 Worksheet D84316.xlsx
+[18:25:57]  🔎 Worksheet: 2026 05 20 HIV VL XC CN 33302 Worksheet D84316.xlsx
+[18:25:57]  ✅ Utrustningslista hämtad.
+[18:25:57]  ✅ Worksheet header korrekt
+[18:25:58]  ✅ Utrustningslista kopierad.
+[18:25:58]  ℹ️ Ingen Control-flik skapad (saknar mappning eller kontrollfil).
+[18:25:59]  🔎 Order# hittad i Seal Test: 1117050
+[18:26:03]  ✅ SharePoint Order/Batch/LSP matchar filer/header
+[18:26:03]  📄 SharePoint-post hittad – skriver blad.
+[18:26:03]  💾 Sparar rapport: jesper.fredriksson_output_33302_20260528_182603.xlsx
+[18:26:03]  🧠 Regelmotor: saknas vid Save → bygger nu...
+[18:26:03]  ⚠️ Regelmotor: fallback-raw för CSV vid Save misslyckades: Cannot validate argument on parameter 'Header'. The argument is null or empty. Provide an argument that is not null or empty, and then try the command again.
+[18:26:03]  ⚠️ Regelmotor: kunde inte bygga vid Save (0 rader).
+[18:26:03]  ⚠️ Kunde inte skriva CSV-Sammanfattning.
+[18:26:03]  Rapport sparad: C:\Users\JESPER~1.FRE\AppData\Local\Temp\jesper.fredriksson_output_33302_20260528_182603.xlsx (12.0s)
+[18:26:03]  ✅ Sammanfattning: rapport skapad utan varningar | 12.0s
+[18:26:11]  🧹 Fönstret rensat.
+[18:26:16]  🔎 Söker filer för 33301…
+[18:26:16]  📂 Mapp: R6 - HPV v2 #33301 - PQC (20,000)  SE-26-LFI-009 & 26-NC-14599
+[18:26:20]  ✅ Filer laddade.
+[18:26:22]  🔃 Skapar rapport…
+[18:26:23]  ❌ Du har valt 2 CSV-filer men ingen Resampling CSV-fil. Avmarkera en fil eller välj korrekt Resampling CSV-fil.
+[18:26:26]  🧹 Fönstret rensat.
+[18:26:32]  🔎 Söker filer för 97017…
+[18:26:32]  📂 Mapp: R6 - GXMTB RIF ULTRA #97017 - PQC (18,000)  OBR
+[18:26:32]  🔎 Seal Test mode föreslagen automatiskt: Merged / en Seal Test-fil (neutral Seal Test-fil hittades). Du kan ändra manuellt.
+[18:26:35]  🔃 Skapar rapport…
+[18:26:35]  ℹ️ Seal Test mode: Merged / en Seal Test-fil.
+[18:26:35]  📥 Snapshot → TEMP: SealMERGED__2026 05 17 GXMTB RIF ULTRA 97017 Seal Test.xlsx
+[18:26:36]  📥 Snapshot → TEMP: CSV_Primary__2026 05 17 GXMTB RIF ULTRA 97017 Tests Summary.csv
+[18:26:37]  📄 Seal Test: SealMERGED__2026 05 17 GXMTB RIF ULTRA 97017 Seal Test.xlsx
+[18:26:37]  📄 CSV: 2026 05 17 GXMTB RIF ULTRA 97017 Tests Summary.csv
+[18:26:37]  🧠 RuleBank laddad från compiled. ResultCallPatterns=187, QuantSpecRules=0, SampleExpectationRules=4, ErrorCodes=23, MissingSamplesConfig=1, SampleIdMarkers=5, ParityCheckConfig=5, SampleNumberRules=111, TestTypePolicy=93
+[18:26:37]  ⚠️ Regelmotor: fallback-raw för CSV misslyckades: The member "Analyte Name" is already present.
+[18:26:37]  🧠 Regelmotor: CSV-källa: Fallback-raw (0)
+[18:26:37]  ⚠️ Regelmotor: CSV-objekt saknas (0 rader) – hoppar över.
+[18:26:37]  ℹ️ Ingen Kontrollmaterialsflik (fortsätter utan).
+[18:26:41]  📥 Snapshot → TEMP: Worksheet__2026 05 17 GXMTB RIF ULTRA 97017 Worksheet D25862.xlsx
+[18:26:42]  🔎 Worksheet: 2026 05 17 GXMTB RIF ULTRA 97017 Worksheet D25862.xlsx
+[18:26:42]  ✅ Utrustningslista hämtad.
+[18:26:43]  ✅ Worksheet header korrekt
+[18:26:44]  ✅ Utrustningslista kopierad.
+[18:26:44]  ℹ️ Ingen Control-flik skapad (saknar mappning eller kontrollfil).
+[18:26:44]  🔎 Order# hittad i Seal Test: 1116936
+[18:26:47]  ✅ SharePoint Order/Batch/LSP matchar filer/header
+[18:26:47]  📄 SharePoint-post hittad – skriver blad.
+[18:26:47]  💾 Sparar rapport: jesper.fredriksson_output_97017_20260528_182647.xlsx
+[18:26:47]  🧠 Regelmotor: saknas vid Save → bygger nu...
+[18:26:47]  ⚠️ Regelmotor: fallback-raw för CSV vid Save misslyckades: The member "Analyte Name" is already present.
+[18:26:47]  ⚠️ Regelmotor: kunde inte bygga vid Save (0 rader).
+[18:26:47]  ⚠️ Kunde inte skriva CSV-Sammanfattning.
+[18:26:47]  Rapport sparad: C:\Users\JESPER~1.FRE\AppData\Local\Temp\jesper.fredriksson_output_97017_20260528_182647.xlsx (12.9s)
+[18:26:47]  ⚠️ Sammanfattning: rapport skapad med 2 varning(ar) | 12.9s
