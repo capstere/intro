@@ -1,0 +1,33 @@
+﻿[15:16:02]  Sanity: IPT_NETWORK_ROOT=<empty> | IPT_ROOT_EFFECTIVE=\\SE.CEPHEID.PRI\Cepheid Sweden\QC\QC-1\IPT | IPT_ROOT_SOURCE=DEFAULT | LogPath=C:\Users\jesper.fredriksson\OneDrive - Danaher\Desktop\IPTCompile_merge.split\Loggar\jesper.fredriksson_20260528_151602.txt | StructuredLogPath=C:\Users\jesper.fredriksson\OneDrive - Danaher\Desktop\IPTCompile_merge.split\Loggar\jesper.fredriksson_20260528_151602.jsonl
+[15:16:13]  🔎 Söker filer för 33301…
+[15:16:13]  📂 Mapp: R6 - HPV v2 #33301 - PQC (20,000)  SE-26-LFI-009 & 26-NC-14599
+[15:16:15]  ✅ Filer laddade.
+[15:16:19]  🔃 Skapar rapport…
+[15:16:21]  ❌ Du har valt 2 CSV-filer men ingen Resampling CSV-fil. Avmarkera en fil eller välj korrekt Resampling CSV-fil.
+[15:16:27]  🔃 Skapar rapport…
+[15:16:28]  ℹ️ Seal Test mode: Split / NEG+POS.
+[15:16:28]  📥 Snapshot → TEMP: SealNEG__2026 02 14 HPV v2 33301 Seal Test Neg.xlsx
+[15:16:28]  📥 Snapshot → TEMP: SealPOS__2026 02 14 HPV v2 33301 Seal Test Pos.xlsx
+[15:16:29]  📥 Snapshot → TEMP: CSV_Primary__2026 02 14 HPV v2 #33301 Tests Summary.csv
+[15:16:30]  📄 Neg: 2026 02 14 HPV v2 33301 Seal Test Neg.xlsx
+[15:16:30]  📄 Pos: 2026 02 14 HPV v2 33301 Seal Test Pos.xlsx
+[15:16:30]  📄 CSV: 2026 02 14 HPV v2 #33301 Tests Summary.csv
+[15:16:31]  🔃 CSV sorterad på kolumn C (Sample ID). Rader: 246
+[15:16:32]  🧠 RuleBank laddad från compiled. ResultCallPatterns=187, QuantSpecRules=0, SampleExpectationRules=4, ErrorCodes=23, MissingSamplesConfig=1, SampleIdMarkers=5, ParityCheckConfig=5, SampleNumberRules=111, TestTypePolicy=93
+[15:16:32]  🧠 Regelmotor: CSV-källa: Import-CsvRows (246)
+[15:16:34]  ⚠️ RuleEngine (shadow) fel: Exception calling "Add" with "1" argument(s): "Collection was of a fixed size."
+[15:16:34]  ℹ️ Ingen Kontrollmaterialsflik (fortsätter utan).
+[15:16:39]  📥 Snapshot → TEMP: Worksheet__2026 02 14 HPV v2 33301 Worksheet D16546.xlsx
+[15:16:41]  🔎 Worksheet: 2026 02 14 HPV v2 33301 Worksheet D16546.xlsx
+[15:16:41]  ✅ Utrustningslista hämtad.
+[15:16:41]  ✅ Worksheet header korrekt
+[15:16:42]  ✅ Utrustningslista kopierad.
+[15:16:42]  ℹ️ Ingen Control-flik skapad (saknar mappning eller kontrollfil).
+[15:16:42]  🔎 Order# hittad i Seal Test: 1114028
+[15:16:46]  ✅ SharePoint Order/Batch/LSP matchar filer/header
+[15:16:46]  📄 SharePoint-post hittad – skriver blad.
+[15:16:46]  💾 Sparar rapport: jesper.fredriksson_output_33301_20260528_151646.xlsx
+[15:16:46]  🧠 Regelmotor: saknas vid Save → bygger nu...
+[15:16:48]  ⚠️ Kunde inte skriva CSV-Sammanfattning: Exception calling "Add" with "1" argument(s): "Collection was of a fixed size."
+[15:16:48]  Rapport sparad: C:\Users\JESPER~1.FRE\AppData\Local\Temp\jesper.fredriksson_output_33301_20260528_151646.xlsx (21.1s)
+[15:16:48]  ⚠️ Sammanfattning: rapport skapad med 5 varning(ar) | 21.1s

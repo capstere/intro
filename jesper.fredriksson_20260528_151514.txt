@@ -1,0 +1,32 @@
+﻿[15:15:14]  Sanity: IPT_NETWORK_ROOT=<empty> | IPT_ROOT_EFFECTIVE=\\SE.CEPHEID.PRI\Cepheid Sweden\QC\QC-1\IPT | IPT_ROOT_SOURCE=DEFAULT | LogPath=C:\Users\jesper.fredriksson\OneDrive - Danaher\Desktop\IPTCompile_merge.split\Loggar\jesper.fredriksson_20260528_151514.txt | StructuredLogPath=C:\Users\jesper.fredriksson\OneDrive - Danaher\Desktop\IPTCompile_merge.split\Loggar\jesper.fredriksson_20260528_151514.jsonl
+[15:15:31]  🔎 Söker filer för 33302…
+[15:15:31]  📂 Mapp: R12 - HIV VL XC CN #33302 - PQC (14,400)
+[15:15:33]  ✅ Filer laddade.
+[15:15:34]  🔃 Skapar rapport…
+[15:15:35]  ℹ️ Seal Test mode: Split / NEG+POS.
+[15:15:35]  📥 Snapshot → TEMP: SealNEG__2026 05 20 HIV VL XC CN 33302 Seal Test Neg.xlsx
+[15:15:36]  📥 Snapshot → TEMP: SealPOS__2026 05 20 HIV VL XC CN 33302 Seal Test Pos.xlsx
+[15:15:36]  📥 Snapshot → TEMP: CSV_Primary__2026 05 20 HIV VL XC CN #33302 Tests Summary_____.csv
+[15:15:37]  📄 Neg: 2026 05 20 HIV VL XC CN 33302 Seal Test Neg.xlsx
+[15:15:37]  📄 Pos: 2026 05 20 HIV VL XC CN 33302 Seal Test Pos.xlsx
+[15:15:37]  📄 CSV: 2026 05 20 HIV VL XC CN #33302 Tests Summary_____.csv
+[15:15:38]  🔃 CSV sorterad på kolumn C (Sample ID). Rader: 210
+[15:15:38]  🧠 RuleBank laddad från compiled. ResultCallPatterns=187, QuantSpecRules=0, SampleExpectationRules=4, ErrorCodes=23, MissingSamplesConfig=1, SampleIdMarkers=5, ParityCheckConfig=5, SampleNumberRules=111, TestTypePolicy=93
+[15:15:38]  🧠 Regelmotor: CSV-källa: Import-CsvRows (210)
+[15:15:39]  ⚠️ RuleEngine (shadow) fel: RuleEngine: Could not read CSV header (auto-detect row 8/9 failed).
+[15:15:39]  ℹ️ Ingen Kontrollmaterialsflik (fortsätter utan).
+[15:15:40]  ✅ Seal Test hittades
+[15:15:42]  📥 Snapshot → TEMP: Worksheet__2026 05 20 HIV VL XC CN 33302 Worksheet D84316.xlsx
+[15:15:43]  🔎 Worksheet: 2026 05 20 HIV VL XC CN 33302 Worksheet D84316.xlsx
+[15:15:43]  ✅ Utrustningslista hämtad.
+[15:15:44]  ✅ Worksheet header korrekt
+[15:15:44]  ✅ Utrustningslista kopierad.
+[15:15:44]  ℹ️ Ingen Control-flik skapad (saknar mappning eller kontrollfil).
+[15:15:45]  🔎 Order# hittad i Seal Test: 1117050
+[15:15:49]  ✅ SharePoint Order/Batch/LSP matchar filer/header
+[15:15:49]  📄 SharePoint-post hittad – skriver blad.
+[15:15:49]  💾 Sparar rapport: jesper.fredriksson_output_33302_20260528_151549.xlsx
+[15:15:49]  🧠 Regelmotor: saknas vid Save → bygger nu...
+[15:15:50]  ⚠️ Kunde inte skriva CSV-Sammanfattning: RuleEngine: Could not read CSV header (auto-detect row 8/9 failed).
+[15:15:50]  Rapport sparad: C:\Users\JESPER~1.FRE\AppData\Local\Temp\jesper.fredriksson_output_33302_20260528_151549.xlsx (15.3s)
+[15:15:50]  ✅ Sammanfattning: rapport skapad utan varningar | 15.3s
