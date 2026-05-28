@@ -1,0 +1,524 @@
+See the end of this message for details on invoking 
+just-in-time (JIT) debugging instead of this dialog box.
+
+************** Exception Text **************
+System.Management.Automation.PipelineStoppedException: The pipeline has been stopped.
+   at System.Management.Automation.ScriptBlock.InvokeWithPipeImpl(ScriptBlockClauseToInvoke clauseToInvoke, Boolean createLocalScope, Dictionary`2 functionsToDefine, List`1 variablesToDefine, ErrorHandlingBehavior errorHandlingBehavior, Object dollarUnder, Object input, Object scriptThis, Pipe outputPipe, InvocationInfo invocationInfo, Object[] args)
+   at System.Management.Automation.ScriptBlock.<>c__DisplayClass57_0.<InvokeWithPipe>b__0()
+   at System.Management.Automation.Runspaces.RunspaceBase.RunActionIfNoRunningPipelinesWithThreadCheck(Action action)
+   at System.Management.Automation.ScriptBlock.InvokeWithPipe(Boolean useLocalScope, ErrorHandlingBehavior errorHandlingBehavior, Object dollarUnder, Object input, Object scriptThis, Pipe outputPipe, InvocationInfo invocationInfo, Boolean propagateAllExceptionsToTop, List`1 variablesToDefine, Dictionary`2 functionsToDefine, Object[] args)
+   at System.Management.Automation.ScriptBlock.InvokeAsDelegateHelper(Object dollarUnder, Object dollarThis, Object[] args)
+   at lambda_method(Closure , Object , FormClosedEventArgs )
+   at System.Windows.Forms.Form.OnFormClosed(FormClosedEventArgs e)
+   at System.Windows.Forms.Form.WmClose(Message& m)
+   at System.Windows.Forms.Form.WndProc(Message& m)
+   at System.Windows.Forms.Control.ControlNativeWindow.OnMessage(Message& m)
+   at System.Windows.Forms.Control.ControlNativeWindow.WndProc(Message& m)
+   at System.Windows.Forms.NativeWindow.Callback(IntPtr hWnd, Int32 msg, IntPtr wparam, IntPtr lparam)
+
+
+************** Loaded Assemblies **************
+mscorlib
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9324.0 built by: NET481REL1LAST_C
+    CodeBase: file:///C:/Windows/Microsoft.NET/Framework/v4.0.30319/mscorlib.dll
+----------------------------------------
+powershell_ise
+    Assembly Version: 3.0.0.0
+    Win32 Version: 10.0.26100.1591 (WinBuild.160101.0800)
+    CodeBase: file:///C:/WINDOWS/syswow64/WindowsPowerShell/v1.0/PowerShell_ISE.exe
+----------------------------------------
+CrowdStrike.Sensor.ScriptControl
+    Assembly Version: 7.35.20709.0
+    Win32 Version: 7.35.20709.0
+    CodeBase: file:///C:/WINDOWS/assembly/GAC_MSIL/CrowdStrike.Sensor.ScriptControl/7.35.20709.0__02b60967b1f68187/CrowdStrike.Sensor.ScriptControl.dll
+----------------------------------------
+System.Windows.Forms
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9324.0 built by: NET481REL1LAST_C
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Windows.Forms/v4.0_4.0.0.0__b77a5c561934e089/System.Windows.Forms.dll
+----------------------------------------
+System
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9332.0 built by: NET481REL1LAST_B
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System/v4.0_4.0.0.0__b77a5c561934e089/System.dll
+----------------------------------------
+System.Drawing
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9032.0 built by: NET481REL1
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Drawing/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.Drawing.dll
+----------------------------------------
+System.Management.Automation
+    Assembly Version: 3.0.0.0
+    Win32 Version: 10.0.26100.8457
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Management.Automation/v4.0_3.0.0.0__31bf3856ad364e35/System.Management.Automation.dll
+----------------------------------------
+System.Core
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9334.0 built by: NET481REL1LAST_B
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Core/v4.0_4.0.0.0__b77a5c561934e089/System.Core.dll
+----------------------------------------
+Microsoft.PowerShell.ISECommon
+    Assembly Version: 3.0.0.0
+    Win32 Version: 10.0.26100.1
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Microsoft.PowerShell.ISECommon/v4.0_3.0.0.0__31bf3856ad364e35/Microsoft.PowerShell.ISECommon.dll
+----------------------------------------
+System.Configuration
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9032.0 built by: NET481REL1
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Configuration/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.Configuration.dll
+----------------------------------------
+System.Xml
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9032.0 built by: NET481REL1
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Xml/v4.0_4.0.0.0__b77a5c561934e089/System.Xml.dll
+----------------------------------------
+Microsoft.PowerShell.GPowerShell
+    Assembly Version: 3.0.0.0
+    Win32 Version: 10.0.26100.7309
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Microsoft.PowerShell.GPowerShell/v4.0_3.0.0.0__31bf3856ad364e35/Microsoft.PowerShell.GPowerShell.dll
+----------------------------------------
+System.ComponentModel.Composition
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9032.0
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.ComponentModel.Composition/v4.0_4.0.0.0__b77a5c561934e089/System.ComponentModel.Composition.dll
+----------------------------------------
+Microsoft.PowerShell.Editor
+    Assembly Version: 3.0.0.0
+    Win32 Version: 10.0.26100.7309
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Microsoft.PowerShell.Editor/v4.0_3.0.0.0__31bf3856ad364e35/Microsoft.PowerShell.Editor.dll
+----------------------------------------
+WindowsBase
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9334.0 built by: NET481REL1LAST_B
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/WindowsBase/v4.0_4.0.0.0__31bf3856ad364e35/WindowsBase.dll
+----------------------------------------
+PresentationCore
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9334.0 built by: NET481REL1LAST_B
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_32/PresentationCore/v4.0_4.0.0.0__31bf3856ad364e35/PresentationCore.dll
+----------------------------------------
+PresentationFramework
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9334.0
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/PresentationFramework/v4.0_4.0.0.0__31bf3856ad364e35/PresentationFramework.dll
+----------------------------------------
+System.Xaml
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9334.0 built by: NET481REL1LAST_B
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Xaml/v4.0_4.0.0.0__b77a5c561934e089/System.Xaml.dll
+----------------------------------------
+UIAutomationProvider
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9334.0 built by: NET481REL1LAST_B
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/UIAutomationProvider/v4.0_4.0.0.0__31bf3856ad364e35/UIAutomationProvider.dll
+----------------------------------------
+UIAutomationTypes
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9334.0 built by: NET481REL1LAST_B
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/UIAutomationTypes/v4.0_4.0.0.0__31bf3856ad364e35/UIAutomationTypes.dll
+----------------------------------------
+System.Runtime.Serialization
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9332.0 built by: NET481REL1LAST_B
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Runtime.Serialization/v4.0_4.0.0.0__b77a5c561934e089/System.Runtime.Serialization.dll
+----------------------------------------
+Accessibility
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9032.0 built by: NET481REL1
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Accessibility/v4.0_4.0.0.0__b03f5f7f11d50a3a/Accessibility.dll
+----------------------------------------
+MetadataViewProxies_94e84354-cacf-4130-88ca-bff073b93d81
+    Assembly Version: 0.0.0.0
+    Win32 Version: 4.8.9032.0
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.ComponentModel.Composition/v4.0_4.0.0.0__b77a5c561934e089/System.ComponentModel.Composition.dll
+----------------------------------------
+System.Management
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9032.0 built by: NET481REL1
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Management/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.Management.dll
+----------------------------------------
+System.DirectoryServices
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9282.0 built by: NET481REL1LAST_C
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.DirectoryServices/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.DirectoryServices.dll
+----------------------------------------
+Microsoft.Management.Infrastructure
+    Assembly Version: 1.0.0.0
+    Win32 Version: 10.0.26100.7309
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Microsoft.Management.Infrastructure/v4.0_1.0.0.0__31bf3856ad364e35/Microsoft.Management.Infrastructure.dll
+----------------------------------------
+PresentationFramework.Aero2
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9032.0 built by: NET481REL1
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/PresentationFramework.Aero2/v4.0_4.0.0.0__31bf3856ad364e35/PresentationFramework.Aero2.dll
+----------------------------------------
+PresentationFramework-SystemXml
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9032.0
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/PresentationFramework-SystemXml/v4.0_4.0.0.0__b77a5c561934e089/PresentationFramework-SystemXml.dll
+----------------------------------------
+System.Data
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9214.0 built by: NET481REL1LAST_B
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_32/System.Data/v4.0_4.0.0.0__b77a5c561934e089/System.Data.dll
+----------------------------------------
+Anonymously Hosted DynamicMethods Assembly
+    Assembly Version: 0.0.0.0
+    Win32 Version: 4.8.9324.0 built by: NET481REL1LAST_C
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_32/mscorlib/v4.0_4.0.0.0__b77a5c561934e089/mscorlib.dll
+----------------------------------------
+Microsoft.PowerShell.Security
+    Assembly Version: 3.0.0.0
+    Win32 Version: 10.0.26100.1
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Microsoft.PowerShell.Security/v4.0_3.0.0.0__31bf3856ad364e35/Microsoft.PowerShell.Security.dll
+----------------------------------------
+System.Transactions
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9032.0 built by: NET481REL1
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_32/System.Transactions/v4.0_4.0.0.0__b77a5c561934e089/System.Transactions.dll
+----------------------------------------
+System.Numerics
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9032.0 built by: NET481REL1
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Numerics/v4.0_4.0.0.0__b77a5c561934e089/System.Numerics.dll
+----------------------------------------
+Microsoft.PowerShell.GraphicalHost
+    Assembly Version: 3.0.0.0
+    Win32 Version: 10.0.26100.1591
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Microsoft.PowerShell.GraphicalHost/v4.0_3.0.0.0__31bf3856ad364e35/Microsoft.PowerShell.GraphicalHost.dll
+----------------------------------------
+Microsoft.GeneratedCode
+    Assembly Version: 1.0.0.0
+    Win32 Version: 4.8.9032.0 built by: NET481REL1
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Xml/v4.0_4.0.0.0__b77a5c561934e089/System.Xml.dll
+----------------------------------------
+PresentationFramework-SystemData
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9334.0
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/PresentationFramework-SystemData/v4.0_4.0.0.0__b77a5c561934e089/PresentationFramework-SystemData.dll
+----------------------------------------
+PresentationFramework-SystemCore
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9032.0
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/PresentationFramework-SystemCore/v4.0_4.0.0.0__b77a5c561934e089/PresentationFramework-SystemCore.dll
+----------------------------------------
+Windows.UI
+    Assembly Version: 255.255.255.255
+    Win32 Version: 10.0.10011.16384
+    CodeBase: file:///C:/WINDOWS/SysNative/WinMetadata/Windows.UI.winmd
+----------------------------------------
+System.Runtime.InteropServices.WindowsRuntime
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9032.0
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Runtime.InteropServices.WindowsRuntime/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.Runtime.InteropServices.WindowsRuntime.dll
+----------------------------------------
+Microsoft.PowerShell.Commands.Utility
+    Assembly Version: 3.0.0.0
+    Win32 Version: 10.0.26100.8328
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Microsoft.PowerShell.Commands.Utility/v4.0_3.0.0.0__31bf3856ad364e35/Microsoft.PowerShell.Commands.Utility.dll
+----------------------------------------
+System.Configuration.Install
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9032.0 built by: NET481REL1
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Configuration.Install/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.Configuration.Install.dll
+----------------------------------------
+Microsoft.PowerShell.Commands.Management
+    Assembly Version: 3.0.0.0
+    Win32 Version: 10.0.26100.7309
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Microsoft.PowerShell.Commands.Management/v4.0_3.0.0.0__31bf3856ad364e35/Microsoft.PowerShell.Commands.Management.dll
+----------------------------------------
+System.ServiceProcess
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9032.0 built by: NET481REL1
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.ServiceProcess/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.ServiceProcess.dll
+----------------------------------------
+System.ComponentModel
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9032.0
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.ComponentModel/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.ComponentModel.dll
+----------------------------------------
+Microsoft.VisualBasic
+    Assembly Version: 10.0.0.0
+    Win32 Version: 14.8.9032.0 built by: NET481REL1
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Microsoft.VisualBasic/v4.0_10.0.0.0__b03f5f7f11d50a3a/Microsoft.VisualBasic.dll
+----------------------------------------
+System.Web.Extensions
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9316.0
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Web.Extensions/v4.0_4.0.0.0__31bf3856ad364e35/System.Web.Extensions.dll
+----------------------------------------
+System.Web
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9316.0 built by: NET481REL1LAST_C
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_32/System.Web/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.Web.dll
+----------------------------------------
+Microsoft.PowerShell.Commands.Diagnostics
+    Assembly Version: 3.0.0.0
+    Win32 Version: 10.0.26100.1
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Microsoft.PowerShell.Commands.Diagnostics/v4.0_3.0.0.0__31bf3856ad364e35/Microsoft.PowerShell.Commands.Diagnostics.dll
+----------------------------------------
+Microsoft.PowerShell.ConsoleHost
+    Assembly Version: 3.0.0.0
+    Win32 Version: 10.0.26100.8328
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Microsoft.PowerShell.ConsoleHost/v4.0_3.0.0.0__31bf3856ad364e35/Microsoft.PowerShell.ConsoleHost.dll
+----------------------------------------
+Microsoft.WSMan.Management
+    Assembly Version: 3.0.0.0
+    Win32 Version: 10.0.26100.1
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Microsoft.WSMan.Management/v4.0_3.0.0.0__31bf3856ad364e35/Microsoft.WSMan.Management.dll
+----------------------------------------
+Microsoft.WSMan.Runtime
+    Assembly Version: 3.0.0.0
+    Win32 Version: 10.0.26100.1
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/Microsoft.WSMan.Runtime/v4.0_3.0.0.0__31bf3856ad364e35/Microsoft.WSMan.Runtime.dll
+----------------------------------------
+Microsoft.PowerShell.PackageManagement
+    Assembly Version: 3.0.0.0
+    Win32 Version: 10.0.26100.7309
+    CodeBase: file:///C:/Program%20Files/WindowsPowerShell/Modules/PackageManagement/1.0.0.1/Microsoft.PowerShell.PackageManagement.dll
+----------------------------------------
+Microsoft.PackageManagement
+    Assembly Version: 3.0.0.0
+    Win32 Version: 10.0.26100.7309
+    CodeBase: file:///C:/Program%20Files/WindowsPowerShell/Modules/PackageManagement/1.0.0.1/Microsoft.PackageManagement.DLL
+----------------------------------------
+System.Xml.Linq
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9032.0 built by: NET481REL1
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Xml.Linq/v4.0_4.0.0.0__b77a5c561934e089/System.Xml.Linq.dll
+----------------------------------------
+Microsoft.PackageManagement.MetaProvider.PowerShell
+    Assembly Version: 3.0.0.0
+    Win32 Version: 10.0.26100.7309
+    CodeBase: file:///C:/Program%20Files/WindowsPowerShell/Modules/PackageManagement/1.0.0.1/Microsoft.PackageManagement.MetaProvider.PowerShell.dll
+----------------------------------------
+Microsoft.PackageManagement.MsuProvider
+    Assembly Version: 3.0.0.0
+    Win32 Version: 10.0.26100.1
+    CodeBase: file:///C:/Program%20Files/WindowsPowerShell/Modules/PackageManagement/1.0.0.1/Microsoft.PackageManagement.MsuProvider.dll
+----------------------------------------
+Microsoft.PackageManagement.CoreProviders
+    Assembly Version: 3.0.0.0
+    Win32 Version: 10.0.26100.7309
+    CodeBase: file:///C:/Program%20Files/WindowsPowerShell/Modules/PackageManagement/1.0.0.1/Microsoft.PackageManagement.CoreProviders.dll
+----------------------------------------
+Microsoft.PackageManagement.MsiProvider
+    Assembly Version: 3.0.0.0
+    Win32 Version: 10.0.26100.7309
+    CodeBase: file:///C:/Program%20Files/WindowsPowerShell/Modules/PackageManagement/1.0.0.1/Microsoft.PackageManagement.MsiProvider.dll
+----------------------------------------
+Microsoft.PackageManagement.ArchiverProviders
+    Assembly Version: 3.0.0.0
+    Win32 Version: 10.0.26100.1
+    CodeBase: file:///C:/Program%20Files/WindowsPowerShell/Modules/PackageManagement/1.0.0.1/Microsoft.PackageManagement.ArchiverProviders.dll
+----------------------------------------
+Microsoft.PackageManagement.NuGetProvider
+    Assembly Version: 2.8.5.208
+    Win32 Version: 2.8.5.208
+    CodeBase: file:///C:/Users/jesper.fredriksson/AppData/Local/PackageManagement/ProviderAssemblies/nuget/2.8.5.208/Microsoft.PackageManagement.NuGetProvider.dll
+----------------------------------------
+System.Net.Http
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9032.0 built by: NET481REL1
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Net.Http/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.Net.Http.dll
+----------------------------------------
+DynamicClasses
+    Assembly Version: 0.0.0.0
+    Win32 Version: 10.0.26100.7309
+    CodeBase: file:///C:/Program%20Files/WindowsPowerShell/Modules/PackageManagement/1.0.0.1/Microsoft.PackageManagement.dll
+----------------------------------------
+p0dxaly2
+    Assembly Version: 0.0.0.0
+    Win32 Version: 4.8.9332.0 built by: NET481REL1LAST_B
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System/v4.0_4.0.0.0__b77a5c561934e089/System.dll
+----------------------------------------
+PnP.PowerShell
+    Assembly Version: 1.12.0.0
+    Win32 Version: 1.12.0.0
+    CodeBase: file:///C:/Users/jesper.fredriksson/OneDrive%20-%20Danaher/Documents/WindowsPowerShell/Modules/PnP.PowerShell/1.12.0/Framework/PnP.PowerShell.dll
+----------------------------------------
+PnP.Framework
+    Assembly Version: 1.11.2.0
+    Win32 Version: 1.11.2.0
+    CodeBase: file:///C:/Users/jesper.fredriksson/OneDrive%20-%20Danaher/Documents/WindowsPowerShell/Modules/PnP.PowerShell/1.12.0/Framework/PnP.Framework.DLL
+----------------------------------------
+netstandard
+    Assembly Version: 2.0.0.0
+    Win32 Version: 4.8.9032.0
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/netstandard/v4.0_2.0.0.0__cc7b13ffcd2ddd51/netstandard.dll
+----------------------------------------
+Microsoft.Online.SharePoint.Client.Tenant
+    Assembly Version: 16.1.0.0
+    Win32 Version: 16.1.23019.12000
+    CodeBase: file:///C:/Users/jesper.fredriksson/OneDrive%20-%20Danaher/Documents/WindowsPowerShell/Modules/PnP.PowerShell/1.12.0/Framework/Microsoft.Online.SharePoint.Client.Tenant.DLL
+----------------------------------------
+Microsoft.SharePoint.Client.Runtime
+    Assembly Version: 16.1.0.0
+    Win32 Version: 16.1.23019.12000
+    CodeBase: file:///C:/Users/jesper.fredriksson/OneDrive%20-%20Danaher/Documents/WindowsPowerShell/Modules/PnP.PowerShell/1.12.0/Framework/Microsoft.SharePoint.Client.Runtime.DLL
+----------------------------------------
+Microsoft.SharePoint.Client
+    Assembly Version: 16.1.0.0
+    Win32 Version: 16.1.23019.12000
+    CodeBase: file:///C:/Users/jesper.fredriksson/OneDrive%20-%20Danaher/Documents/WindowsPowerShell/Modules/PnP.PowerShell/1.12.0/Framework/Microsoft.SharePoint.Client.DLL
+----------------------------------------
+PnP.Core
+    Assembly Version: 1.8.3.0
+    Win32 Version: 1.8.3.0
+    CodeBase: file:///C:/Users/jesper.fredriksson/OneDrive%20-%20Danaher/Documents/WindowsPowerShell/Modules/PnP.PowerShell/1.12.0/Framework/PnP.Core.DLL
+----------------------------------------
+System.Memory
+    Assembly Version: 4.0.1.1
+    Win32 Version: 4.6.28619.01
+    CodeBase: file:///C:/Users/jesper.fredriksson/OneDrive%20-%20Danaher/Documents/WindowsPowerShell/Modules/PnP.PowerShell/1.12.0/Framework/System.Memory.DLL
+----------------------------------------
+System.Text.Json
+    Assembly Version: 4.0.1.2
+    Win32 Version: 4.700.20.21406
+    CodeBase: file:///C:/Users/jesper.fredriksson/OneDrive%20-%20Danaher/Documents/WindowsPowerShell/Modules/PnP.PowerShell/1.12.0/Framework/System.Text.Json.DLL
+----------------------------------------
+Microsoft.SharePoint.Client.Taxonomy
+    Assembly Version: 16.1.0.0
+    Win32 Version: 16.1.23019.12000
+    CodeBase: file:///C:/Users/jesper.fredriksson/OneDrive%20-%20Danaher/Documents/WindowsPowerShell/Modules/PnP.PowerShell/1.12.0/Framework/Microsoft.SharePoint.Client.Taxonomy.DLL
+----------------------------------------
+Microsoft.SharePoint.Client.DocumentManagement
+    Assembly Version: 16.1.0.0
+    Win32 Version: 16.1.23019.12000
+    CodeBase: file:///C:/Users/jesper.fredriksson/OneDrive%20-%20Danaher/Documents/WindowsPowerShell/Modules/PnP.PowerShell/1.12.0/Framework/Microsoft.SharePoint.Client.DocumentManagement.DLL
+----------------------------------------
+System.ValueTuple
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9032.0
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.ValueTuple/v4.0_4.0.0.0__cc7b13ffcd2ddd51/System.ValueTuple.dll
+----------------------------------------
+Microsoft.Identity.Client
+    Assembly Version: 4.36.1.0
+    Win32 Version: 4.36.1.0
+    CodeBase: file:///C:/Users/jesper.fredriksson/OneDrive%20-%20Danaher/Documents/WindowsPowerShell/Modules/PnP.PowerShell/1.12.0/Framework/Microsoft.Identity.Client.DLL
+----------------------------------------
+Microsoft.Extensions.DependencyInjection
+    Assembly Version: 2.2.0.0
+    Win32 Version: 2.2.0.18315
+    CodeBase: file:///C:/Users/jesper.fredriksson/OneDrive%20-%20Danaher/Documents/WindowsPowerShell/Modules/PnP.PowerShell/1.12.0/Framework/Microsoft.Extensions.DependencyInjection.DLL
+----------------------------------------
+Microsoft.Extensions.DependencyInjection.Abstractions
+    Assembly Version: 5.0.0.0
+    Win32 Version: 5.0.20.51904
+    CodeBase: file:///C:/Users/jesper.fredriksson/OneDrive%20-%20Danaher/Documents/WindowsPowerShell/Modules/PnP.PowerShell/1.12.0/Framework/Microsoft.Extensions.DependencyInjection.Abstractions.dll
+----------------------------------------
+System.Configuration.ConfigurationManager
+    Assembly Version: 4.0.3.0
+    Win32 Version: 4.700.19.56404
+    CodeBase: file:///C:/Users/jesper.fredriksson/OneDrive%20-%20Danaher/Documents/WindowsPowerShell/Modules/PnP.PowerShell/1.12.0/Framework/System.Configuration.ConfigurationManager.DLL
+----------------------------------------
+Microsoft.Extensions.Http
+    Assembly Version: 2.2.0.0
+    Win32 Version: 2.2.0.18316
+    CodeBase: file:///C:/Users/jesper.fredriksson/OneDrive%20-%20Danaher/Documents/WindowsPowerShell/Modules/PnP.PowerShell/1.12.0/Framework/Microsoft.Extensions.Http.DLL
+----------------------------------------
+Microsoft.Extensions.Logging
+    Assembly Version: 2.2.0.0
+    Win32 Version: 2.2.0.18315
+    CodeBase: file:///C:/Users/jesper.fredriksson/OneDrive%20-%20Danaher/Documents/WindowsPowerShell/Modules/PnP.PowerShell/1.12.0/Framework/Microsoft.Extensions.Logging.DLL
+----------------------------------------
+Microsoft.Extensions.Options
+    Assembly Version: 2.2.0.0
+    Win32 Version: 2.2.0.18315
+    CodeBase: file:///C:/Users/jesper.fredriksson/OneDrive%20-%20Danaher/Documents/WindowsPowerShell/Modules/PnP.PowerShell/1.12.0/Framework/Microsoft.Extensions.Options.DLL
+----------------------------------------
+Microsoft.Extensions.Logging.Abstractions
+    Assembly Version: 2.2.0.0
+    Win32 Version: 2.2.0.18315
+    CodeBase: file:///C:/Users/jesper.fredriksson/OneDrive%20-%20Danaher/Documents/WindowsPowerShell/Modules/PnP.PowerShell/1.12.0/Framework/Microsoft.Extensions.Logging.Abstractions.DLL
+----------------------------------------
+Microsoft.Extensions.Primitives
+    Assembly Version: 2.2.0.0
+    Win32 Version: 2.2.0.18315
+    CodeBase: file:///C:/Users/jesper.fredriksson/OneDrive%20-%20Danaher/Documents/WindowsPowerShell/Modules/PnP.PowerShell/1.12.0/Framework/Microsoft.Extensions.Primitives.DLL
+----------------------------------------
+PnP.PowerShell.ALC
+    Assembly Version: 1.12.0.0
+    Win32 Version: 1.12.0.0
+    CodeBase: file:///C:/Users/jesper.fredriksson/OneDrive%20-%20Danaher/Documents/WindowsPowerShell/Modules/PnP.PowerShell/1.12.0/Common/PnP.PowerShell.ALC.dll
+----------------------------------------
+System.Runtime.InteropServices.RuntimeInformation
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9032.0
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Runtime.InteropServices.RuntimeInformation/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.Runtime.InteropServices.RuntimeInformation.dll
+----------------------------------------
+Microsoft.ApplicationInsights
+    Assembly Version: 2.13.1.12554
+    Win32 Version: 2.13.1.12554
+    CodeBase: file:///C:/Users/jesper.fredriksson/OneDrive%20-%20Danaher/Documents/WindowsPowerShell/Modules/PnP.PowerShell/1.12.0/Common/Microsoft.ApplicationInsights.dll
+----------------------------------------
+System.Diagnostics.DiagnosticSource
+    Assembly Version: 4.0.4.0
+    Win32 Version: 4.700.19.46214
+    CodeBase: file:///C:/Users/jesper.fredriksson/OneDrive%20-%20Danaher/Documents/WindowsPowerShell/Modules/PnP.PowerShell/1.12.0/Common/System.Diagnostics.DiagnosticSource.dll
+----------------------------------------
+System.Runtime
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9032.0
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Runtime/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.Runtime.dll
+----------------------------------------
+System.Threading
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9032.0
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Threading/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.Threading.dll
+----------------------------------------
+System.IO.Compression.FileSystem
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9032.0
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.IO.Compression.FileSystem/v4.0_4.0.0.0__b77a5c561934e089/System.IO.Compression.FileSystem.dll
+----------------------------------------
+3nxmtgai
+    Assembly Version: 0.0.0.0
+    Win32 Version: 4.8.9332.0 built by: NET481REL1LAST_B
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System/v4.0_4.0.0.0__b77a5c561934e089/System.dll
+----------------------------------------
+EPPlus
+    Assembly Version: 4.5.3.3
+    Win32 Version: 4.8.9324.0 built by: NET481REL1LAST_C
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_32/mscorlib/v4.0_4.0.0.0__b77a5c561934e089/mscorlib.dll
+----------------------------------------
+System.Runtime.InteropServices
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9032.0
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.Runtime.InteropServices/v4.0_4.0.0.0__b03f5f7f11d50a3a/System.Runtime.InteropServices.dll
+----------------------------------------
+PresentationFramework-SystemXmlLinq
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9032.0
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/PresentationFramework-SystemXmlLinq/v4.0_4.0.0.0__b77a5c561934e089/PresentationFramework-SystemXmlLinq.dll
+----------------------------------------
+SMDiagnostics
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9332.0 built by: NET481REL1LAST_B
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/SMDiagnostics/v4.0_4.0.0.0__b77a5c561934e089/SMDiagnostics.dll
+----------------------------------------
+System.ServiceModel.Internals
+    Assembly Version: 4.0.0.0
+    Win32 Version: 4.8.9332.0 built by: NET481REL1LAST_B
+    CodeBase: file:///C:/WINDOWS/Microsoft.Net/assembly/GAC_MSIL/System.ServiceModel.Internals/v4.0_4.0.0.0__31bf3856ad364e35/System.ServiceModel.Internals.dll
+----------------------------------------
+
+************** JIT Debugging **************
+To enable just-in-time (JIT) debugging, the .config file for this
+application or computer (machine.config) must have the
+jitDebugging value set in the system.windows.forms section.
+The application must also be compiled with debugging
+enabled.
+
+For example:
+
+<configuration>
+    <system.windows.forms jitDebugging="true" />
+</configuration>
+
+When JIT debugging is enabled, any unhandled exception
+will be sent to the JIT debugger registered on the computer
+rather than be handled by this dialog box.
+
+
