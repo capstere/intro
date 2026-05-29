@@ -1,0 +1,110 @@
+﻿[15:37:25]  Sanity: IPT_NETWORK_ROOT=<empty> | IPT_ROOT_EFFECTIVE=\\SE.CEPHEID.PRI\Cepheid Sweden\QC\QC-1\IPT | IPT_ROOT_SOURCE=DEFAULT | LogPath=C:\Users\jesper.fredriksson\OneDrive - Danaher\Desktop\IPTCompile_merge.split\Loggar\jesper.fredriksson_20260529_153725.txt | StructuredLogPath=C:\Users\jesper.fredriksson\OneDrive - Danaher\Desktop\IPTCompile_merge.split\Loggar\jesper.fredriksson_20260529_153725.jsonl
+[15:37:36]  🔎 Söker filer för 33302…
+[15:37:36]  📂 Mapp: R12 - HIV VL XC CN #33302 - PQC (14,400)
+[15:37:38]  ✅ Filer laddade.
+[15:37:40]  🔃 Skapar rapport…
+[15:37:41]  ℹ️ Seal Test mode: Split / NEG+POS.
+[15:37:41]  📥 Snapshot → TEMP: SealNEG__2026 05 20 HIV VL XC CN 33302 Seal Test Neg.xlsx
+[15:37:42]  📥 Snapshot → TEMP: SealPOS__2026 05 20 HIV VL XC CN 33302 Seal Test Pos.xlsx
+[15:37:42]  📥 Snapshot → TEMP: CSV_Primary__2026 05 20 HIV VL XC CN #33302 Tests Summary.csv
+[15:37:42]  📄 Neg: 2026 05 20 HIV VL XC CN 33302 Seal Test Neg.xlsx
+[15:37:42]  📄 Pos: 2026 05 20 HIV VL XC CN 33302 Seal Test Pos.xlsx
+[15:37:42]  📄 CSV: 2026 05 20 HIV VL XC CN #33302 Tests Summary.csv
+[15:37:43]  🔃 CSV sorterad på kolumn C (Sample ID). Rader: 210
+[15:37:43]  🔎 Assay från CSV: Xpert HIV-1 Qual XC PQC
+[15:37:44]  🧠 RuleBank laddad från compiled. ResultCallPatterns=187, QuantSpecRules=0, SampleExpectationRules=4, ErrorCodes=23, MissingSamplesConfig=1, SampleIdMarkers=5, ParityCheckConfig=5, SampleNumberRules=111, TestTypePolicy=93
+[15:37:44]  🧠 Regelmotor: CSV-källa: Import-CsvRows (210)
+[15:37:45]  ⚠️ RuleEngine dev: ERROR | 060525Masa_01_0_08+ | Exp=NEG | Obs=ERROR | Err=5006
+[15:37:45]  ⚠️ RuleEngine dev: ERROR | 060525Masa_06_0_04X | Exp=NEG | Obs=ERROR | Err=5006
+[15:37:45]  ⚠️ RuleEngine dev: ERROR | 121525MATE_04_1_12X | Exp=POS | Obs=ERROR | Err=5006
+[15:37:45]  ⚠️ RuleEngine dev: ERROR | 121525MATE_07_1_13X | Exp=POS | Obs=ERROR | Err=5006
+[15:37:45]  ⚠️ RuleEngine dev: ERROR | 121525MATE_09_1_12X | Exp=POS | Obs=ERROR | Err=5006
+[15:37:45]  🧪 Kontrollmaterial-flik: HIV QA XC
+[15:37:47]  ✅ Seal Test hittades
+[15:37:48]  📥 Snapshot → TEMP: Worksheet__2026 05 20 HIV VL XC CN 33302 Worksheet D84316.xlsx
+[15:37:50]  🔎 Worksheet: 2026 05 20 HIV VL XC CN 33302 Worksheet D84316.xlsx
+[15:37:50]  ✅ Utrustningslista hämtad.
+[15:37:50]  ✅ Worksheet header korrekt
+[15:37:50]  ℹ️ QC Data: Assay matchar men Part/Cat. No. 'GXHIV-VL-XC-CN-10' ej i listan → hoppar över.
+[15:37:51]  ✅ Utrustningslista kopierad.
+[15:37:51]  ✅ Kontrollmaterial: 'HIV QA XC'
+[15:37:52]  🔎 Order# hittad i Seal Test: 1117050
+[15:37:57]  ✅ SharePoint Order/Batch/LSP matchar filer/header
+[15:37:57]  📄 SharePoint-post hittad – skriver blad.
+[15:37:57]  💾 Sparar rapport: jesper.fredriksson_output_33302_20260529_153757.xlsx
+[15:37:57]  🧠 Skriver CSV-Sammanfattning...
+[15:37:58]  Rapport sparad: C:\Users\JESPER~1.FRE\AppData\Local\Temp\jesper.fredriksson_output_33302_20260529_153757.xlsx (17.9s)
+[15:37:58]  ✅ Sammanfattning: rapport skapad utan varningar | 17.9s
+[15:38:14]  🧹 Fönstret rensat.
+[15:38:17]  🔎 Söker filer för 33301…
+[15:38:17]  📂 Mapp: R6 - HPV v2 #33301 - PQC (20,000)  SE-26-LFI-009 & 26-NC-14599
+[15:38:19]  ✅ Filer laddade.
+[15:38:21]  🔃 Skapar rapport…
+[15:38:23]  ℹ️ Seal Test mode: Split / NEG+POS.
+[15:38:23]  📥 Snapshot → TEMP: SealNEG__2026 02 14 HPV v2 33301 Seal Test Neg.xlsx
+[15:38:23]  📥 Snapshot → TEMP: SealPOS__2026 02 14 HPV v2 33301 Seal Test Pos.xlsx
+[15:38:24]  📥 Snapshot → TEMP: CSV_Primary__2026 02 14 HPV v2 #33301 Tests Summary.csv
+[15:38:25]  📥 Snapshot → TEMP: CSV_Resample__2026 02 14 HPV v2 #33301 Tests Summary_RES.csv
+[15:38:26]  📄 Neg: 2026 02 14 HPV v2 33301 Seal Test Neg.xlsx
+[15:38:26]  📄 Pos: 2026 02 14 HPV v2 33301 Seal Test Pos.xlsx
+[15:38:26]  📄 CSV: 2026 02 14 HPV v2 #33301 Tests Summary.csv
+[15:38:26]  📄 CSV (Resample): 2026 02 14 HPV v2 #33301 Tests Summary_RES.csv
+[15:38:27]  🔃 CSV sorterad på kolumn C (Sample ID). Rader: 246
+[15:38:27]  🔎 Assay från CSV: Xpert HPV v2 HR
+[15:38:27]  🔃 Resample-CSV sorterad. Rader: 200
+[15:38:28]  🧠 RuleBank laddad från compiled. ResultCallPatterns=187, QuantSpecRules=0, SampleExpectationRules=4, ErrorCodes=23, MissingSamplesConfig=1, SampleIdMarkers=5, ParityCheckConfig=5, SampleNumberRules=111, TestTypePolicy=93
+[15:38:28]  🧠 Regelmotor: CSV-källa: Import-CsvRows (246)
+[15:38:30]  🧠 Regelmotor (Resample): Import-CsvRows (200)
+[15:38:31]  ✅ Merge CSV + Resampling CSV: 446 rader totalt
+[15:38:31]  ⚠️ RuleEngine dev: ERROR | 073125MATE_01_1_17+ | Exp=POS | Obs=ERROR | Err=5006
+[15:38:31]  ⚠️ RuleEngine dev: ERROR | NEG_07_0_03X | Exp=NEG | Obs=ERROR | Err=2008
+[15:38:31]  ⚠️ RuleEngine dev: ERROR | 073125MATE_RES_2_188X | Exp=POS | Obs=ERROR | Err=5006
+[15:38:31]  ⚠️ RuleEngine dev: ERROR | NEG_RES_0_006X | Exp=NEG | Obs=ERROR | Err=5006
+[15:38:31]  🧪 Kontrollmaterial-flik: HPV
+[15:38:35]  📥 Snapshot → TEMP: Worksheet__2026 02 14 HPV v2 33301 Worksheet D16546.xlsx
+[15:38:36]  🔎 Worksheet: 2026 02 14 HPV v2 33301 Worksheet D16546.xlsx
+[15:38:37]  ✅ Utrustningslista hämtad.
+[15:38:37]  ✅ Worksheet header korrekt
+[15:38:37]  ✅ Utrustningslista kopierad.
+[15:38:38]  ✅ Kontrollmaterial: 'HPV'
+[15:38:39]  🔎 Order# hittad i Seal Test: 1114028
+[15:38:43]  ✅ SharePoint Order/Batch/LSP matchar filer/header
+[15:38:43]  📄 SharePoint-post hittad – skriver blad.
+[15:38:43]  💾 Sparar rapport: jesper.fredriksson_output_33301_20260529_153843.xlsx
+[15:38:43]  🧠 Skriver CSV-Sammanfattning...
+[15:38:45]  Rapport sparad: C:\Users\JESPER~1.FRE\AppData\Local\Temp\jesper.fredriksson_output_33301_20260529_153843.xlsx (23.7s)
+[15:38:45]  ⚠️ Sammanfattning: rapport skapad med 5 varning(ar) | 23.7s
+[15:38:50]  🧹 Fönstret rensat.
+[15:38:53]  🔎 Söker filer för 97017…
+[15:38:53]  📂 Mapp: R6 - GXMTB RIF ULTRA #97017 - PQC (18,000)  OBR
+[15:38:53]  🔎 Seal Test mode föreslagen automatiskt: Merged / en Seal Test-fil (neutral Seal Test-fil hittades). Du kan ändra manuellt.
+[15:38:54]  ✅ Filer laddade.
+[15:38:55]  🔃 Skapar rapport…
+[15:38:57]  ℹ️ Seal Test mode: Merged / en Seal Test-fil.
+[15:38:57]  📥 Snapshot → TEMP: SealMERGED__2026 05 17 GXMTB RIF ULTRA 97017 Seal Test.xlsx
+[15:38:57]  📥 Snapshot → TEMP: CSV_Primary__2026 05 17 GXMTB RIF ULTRA 97017 Tests Summary.csv
+[15:38:58]  📄 Seal Test: SealMERGED__2026 05 17 GXMTB RIF ULTRA 97017 Seal Test.xlsx
+[15:38:58]  📄 CSV: 2026 05 17 GXMTB RIF ULTRA 97017 Tests Summary.csv
+[15:38:59]  🔃 CSV sorterad på kolumn C (Sample ID). Rader: 211
+[15:38:59]  🔎 Assay från CSV: Xpert MTB-RIF Ultra
+[15:39:00]  🧠 RuleBank laddad från compiled. ResultCallPatterns=187, QuantSpecRules=0, SampleExpectationRules=4, ErrorCodes=23, MissingSamplesConfig=1, SampleIdMarkers=5, ParityCheckConfig=5, SampleNumberRules=111, TestTypePolicy=93
+[15:39:00]  🧠 Regelmotor: CSV-källa: Import-CsvRows (211)
+[15:39:02]  ⚠️ RuleEngine dev: ERROR | B27FEB25A_04_1_16+ | Exp=POS_RIF_DETECTED | Obs=ERROR | Err=2126
+[15:39:02]  ⚠️ RuleEngine dev: ERROR | B27FEB25A_06_1_16+ | Exp=POS_RIF_DETECTED | Obs=ERROR | Err=Indeterminate
+[15:39:02]  ⚠️ RuleEngine dev: ERROR | NEG_00_0_02X | Exp=NEG | Obs=ERROR | Err=5011
+[15:39:02]  ⚠️ RuleEngine dev: ERROR | NEG_06_0_01X | Exp=NEG | Obs=ERROR | Err=2037
+[15:39:02]  🧪 Kontrollmaterial-flik: MTB ULTRA
+[15:39:06]  📥 Snapshot → TEMP: Worksheet__2026 05 17 GXMTB RIF ULTRA 97017 Worksheet D25862.xlsx
+[15:39:07]  🔎 Worksheet: 2026 05 17 GXMTB RIF ULTRA 97017 Worksheet D25862.xlsx
+[15:39:08]  ✅ Utrustningslista hämtad.
+[15:39:08]  ✅ Worksheet header korrekt
+[15:39:09]  ✅ Utrustningslista kopierad.
+[15:39:10]  ✅ Kontrollmaterial: 'MTB ULTRA'
+[15:39:10]  🔎 Order# hittad i Seal Test: 1116936
+[15:39:14]  ✅ SharePoint Order/Batch/LSP matchar filer/header
+[15:39:14]  📄 SharePoint-post hittad – skriver blad.
+[15:39:14]  💾 Sparar rapport: jesper.fredriksson_output_97017_20260529_153914.xlsx
+[15:39:14]  🧠 Skriver CSV-Sammanfattning...
+[15:39:15]  Rapport sparad: C:\Users\JESPER~1.FRE\AppData\Local\Temp\jesper.fredriksson_output_97017_20260529_153914.xlsx (19.7s)
+[15:39:15]  ⚠️ Sammanfattning: rapport skapad med 2 varning(ar) | 19.7s
+[15:39:27]  🧹 Fönstret rensat.
