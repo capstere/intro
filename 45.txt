@@ -1,39 +1,41 @@
-[11:10:43]  Sanity: IPT_NETWORK_ROOT=<empty> | IPT_ROOT_EFFECTIVE=\\SE.CEPHEID.PRI\Cepheid Sweden\QC\QC-1\IPT | IPT_ROOT_SOURCE=DEFAULT | LogPath=C:\Users\jesper.fredriksson\OneDrive - Danaher\Desktop\IPTCompile_merge.split\Loggar\jesper.fredriksson_20260603_111042.txt | StructuredLogPath=C:\Users\jesper.fredriksson\OneDrive - Danaher\Desktop\IPTCompile_merge.split\Loggar\jesper.fredriksson_20260603_111042.jsonl
-[11:11:06]  🔎 Söker filer för 12608…
-[11:11:06]  📂 Mapp: 12608
-[11:11:06]  🔎 Seal Test mode föreslagen automatiskt: Merged / en Seal Test-fil (neutral Seal Test-fil hittades). Du kan ändra manuellt.
-[11:11:07]  ✅ Filer laddade.
-[11:12:04]  🔎 Söker filer för 33302…
-[11:12:04]  📂 Mapp: R12 - HIV VL XC CN #33302 - PQC (14,400)
-[11:12:06]  ✅ Filer laddade.
-[11:13:11]  🔃 Skapar rapport…
-[11:13:12]  ℹ️ Seal Test mode: Split / NEG+POS.
-[11:13:12]  ℹ️ Filval via Bläddra.
-[11:13:12]  📥 Snapshot → TEMP: SealNEG__2026 06 01 MTB XDR 12608 Seal Test Neg.xlsx
-[11:13:13]  📥 Snapshot → TEMP: SealPOS__2026 06 01 MTB XDR 12608 Seal Test Pos.xlsx
-[11:13:14]  📥 Snapshot → TEMP: CSV_Primary__2026 06 01 MTB XDR 12608 Tests Summary RES - CSV.csv
-[11:13:37]  📄 Neg: 2026 06 01 MTB XDR 12608 Seal Test Neg.xlsx
-[11:13:37]  📄 Pos: 2026 06 01 MTB XDR 12608 Seal Test Pos.xlsx
-[11:13:37]  📄 CSV: 2026 06 01 MTB XDR 12608 Tests Summary RES - CSV.csv
-[11:13:38]  🔃 CSV sorterad på kolumn C (Sample ID). Rader: 199
-[11:13:38]  🔎 Assay från CSV: Xpert MTB-XDR	1	D15JAN26A_RES_1_101X	646967158	12602	Positive Control 1	802069	210017357	7.1.14	2026-06-02T16:43:29+0200	Done	MTB DETECTED
-[11:13:40]  🧠 RuleBank laddad från compiled. ResultCallPatterns=187, QuantSpecRules=0, SampleExpectationRules=4, ErrorCodes=23, MissingSamplesConfig=1, SampleIdMarkers=5, ParityCheckConfig=5, SampleNumberRules=111, TestTypePolicy=93
-[11:13:40]  🧠 Regelmotor: CSV-källa: Import-CsvRows (199)
-[11:13:40]  ⚠️ RuleEngine (shadow) fel: RuleEngine: Could not read CSV header (line 8).
-[11:13:40]  ℹ️ Ingen Kontrollmaterialsflik (fortsätter utan).
-[11:13:41]  ⚠️ Avvikelse: Print Full Name, Sign, and Date (NEG vs POS)
-[11:13:42]  ✅ Seal Test hittades
-[11:13:42]  📥 Snapshot → TEMP: Worksheet__2026 06 01 MTB XDR 12608 Worksheet D37339 NY.xlsx
-[11:13:44]  🔎 Worksheet: 2026 06 01 MTB XDR 12608 Worksheet D37339 NY.xlsx
-[11:13:44]  ✅ Utrustningslista hämtad.
-[11:13:46]  ✅ Worksheet header korrekt
-[11:13:47]  ✅ Utrustningslista kopierad.
-[11:13:47]  ℹ️ Ingen Control-flik skapad (saknar mappning eller kontrollfil).
-[11:13:48]  🔎 Order# hittad i Seal Test: 1117032
-[11:13:52]  ✅ SharePoint Order/Batch/LSP matchar filer/header
-[11:13:52]  📄 SharePoint-post hittad – skriver blad.
-[11:13:52]  💾 Sparar rapport: jesper.fredriksson_output_Manuell_20260603_111352.xlsx
-[11:13:52]  🧠 Regelmotor: saknas vid Save → bygger nu...
-[11:13:52]  ⚠️ Kunde inte skriva CSV-Sammanfattning: RuleEngine: Could not read CSV header (line 8).
-[11:13:53]  Rapport sparad: C:\Users\JESPER~1.FRE\AppData\Local\Temp\jesper.fredriksson_output_Manuell_20260603_111352.xlsx (41.1s)
-[11:13:53]  ⚠️ Sammanfattning: rapport skapad med 3 varning(ar) | 41.1s
+Jag bifogar: IPTCompile_original working.zip
+Det är versionen som är LIVE för avdelningen just nu. Den fungerar men inte med "NYA" CSV.
+
+Jag bifogar: IPTCompile_split not working.zip
+Det är senaste versionen du skickade till mig. Den fungerar inte så bra. Det krävs mer felsökning.
+
+Jag bifogar även ny data för 12608: "12608.zip"
+Du har redan tillgång till övriga HIV 33302, HPV 33301, GXMTB 97017.
+
+Här är relevant logg för vad körningarna gav för output för den senaste versionen:
+
+12608:
+[11:31:32]  📄 CSV: 2026 06 01 MTB XDR 12608 Tests Summary.csv
+[11:31:32]  🔃 CSV sorterad på kolumn C (Sample ID). Rader: 199
+[11:31:32]  🔎 Assay från CSV: Xpert MTB-XDR	1	D15JAN26A_RES_1_101X	646967158	12602	Positive Control 1	802069	210017357	7.1.14	2026-06-02T16:43:29+0200	Done	MTB DETECTED
+[11:31:34]  🧠 RuleBank laddad från compiled. ResultCallPatterns=187, QuantSpecRules=0, SampleExpectationRules=4, ErrorCodes=23, MissingSamplesConfig=1, SampleIdMarkers=5, ParityCheckConfig=5, SampleNumberRules=111, TestTypePolicy=93
+[11:31:35]  🧠 Regelmotor: CSV-källa: Import-CsvRows (199)
+[11:31:35]  ⚠️ RuleEngine (shadow) fel: RuleEngine: Could not read CSV header (line 8).
+[11:31:35]  ℹ️ Ingen Kontrollmaterialsflik (fortsätter utan).
+
+33302:
+[11:33:54]  📄 Neg: 2026 05 20 HIV VL XC CN 33302 Seal Test Neg.xlsx
+[11:33:54]  📄 Pos: 2026 05 20 HIV VL XC CN 33302 Seal Test Pos.xlsx
+[11:33:54]  📄 CSV: 2026 05 20 HIV VL XC CN #33302 Tests Summary.csv
+[11:33:54]  🔃 CSV sorterad på kolumn C (Sample ID). Rader: 210
+[11:33:54]  🔎 Assay från CSV: Xpert HIV-1 Qual XC PQC,1,121525MATE_10_1_11X,1245326673,33302,Specimen,807363,220011649,6.8,2026-05-24T17:24:14+0200,Done,HIV-1 DETECTED,SPC,SPC,1,NA,32.4,188,NA,-9999.0,73,133,73,PASS,0.0,45,SAC,IC,1,NA,22.7,194,NA,-9999.0,198,187,196,PASS,0.0,45,HIV-1,Target,1,POS,35.9,578,PASS,-9999.0,213,383,212,PASS,0.0,45,QC-1,Target,2,NEG,0.0,0,NA,-9999.0,141,141,140,PASS,0.0,1,QC-2,Target,3,NEG,0.0,0,NA,-9999.0,414,414,414,PASS,0.0,1,46.1,-20.2,,,,,,<None>
+[11:33:55]  🧠 RuleBank laddad från compiled. ResultCallPatterns=187, QuantSpecRules=0, SampleExpectationRules=4, ErrorCodes=23, MissingSamplesConfig=1, SampleIdMarkers=5, ParityCheckConfig=5, SampleNumberRules=111, TestTypePolicy=93
+[11:33:55]  🧠 Regelmotor: CSV-källa: Import-CsvRows (210)
+[11:33:55]  ⚠️ RuleEngine (shadow) fel: RuleEngine: Could not read CSV header (line 8).
+[11:33:55]  ℹ️ Ingen Kontrollmaterialsflik (fortsätter utan).
+[11:33:56]  ✅ Seal Test hittades
+[11:33:56]  ⚠️ Get-CsvStats: Cannot bind argument to parameter 'Line' because it is an empty string.
+[11:33:56]  ⚠️ Kunde inte extrahera Instrument S/N från CSV: Cannot bind argument to parameter 'Line' because it is an empty string.
+[11:33:56]  Infinity SP fel: Cannot bind argument to parameter 'Line' because it is an empty string.
+[11:33:56]  ⚠️ Fel vid analys av Sample ID: Cannot bind argument to parameter 'Line' because it is an empty string.
+
+33301:
+Fungerar inte ens (resampling) 
+
+97017: 
+Fungerar
