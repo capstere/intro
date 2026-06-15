@@ -1,7 +1,0 @@
-In scrMaterial, add this line inside every Patch(CM_Transactions, Defaults(CM_Transactions), {...}) record:
-
-LotItemID: varSelectedLot.ID,
-
-There are two places:
-1. btnMarkChecked.OnSelect, directly under LotKey: varSelectedLot.LotKey,
-2. btnConfirmDelete.OnSelect, directly under LotKey: varSelectedLot.LotKey,
