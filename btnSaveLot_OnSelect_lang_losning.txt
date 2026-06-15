@@ -1,0 +1,178 @@
+=If(
+    IsBlank(Trim(txtLotNumber.Text)) ||
+    IsBlank(dpExpirationDate.SelectedDate) ||
+    !IsNumeric(txtQty.Text) ||
+    Value(txtQty.Text) <= 0,
+
+    Notify("Enter Lot Number, Expiration Date, and Qty > 0.", NotificationType.Error),
+
+    Set(varBusy, true);
+    Set(varNewLotNumber, Upper(Trim(txtLotNumber.Text)));
+    Set(varNewLotKey, varCurrentMaterial.PN & "|" & varNewLotNumber);
+
+    If(
+        varMode = "Add",
+
+        // ── ADD MODE: always create a NEW CM_Lots row ──
+        IfError(
+            Set(
+                varSavedLot,
+                Patch(
+                    CM_Lots,
+                    Defaults(CM_Lots),
+                    {
+                        Title: varCurrentMaterial.PN,
+                        PN: varCurrentMaterial.PN,
+                        LotNumber: varNewLotNumber,
+                        LotKey: varNewLotKey,
+                        ExpirationDate: dpExpirationDate.SelectedDate,
+                        Qty: Value(txtQty.Text),
+                        IsActive: true,
+                        InventoryStatus: "Not checked",
+                        LastCheckedAt: Blank(),
+                        LastCheckedByName: Blank(),
+                        LastCheckedByEmail: Blank(),
+                        Comments: Trim(txtComments.Text),
+                        ChangedAt: Now(),
+                        ChangedByName: User().FullName,
+                        ChangedByEmail: User().Email
+                    }
+                )
+            );
+
+            Patch(
+                CM_Transactions,
+                Defaults(CM_Transactions),
+                {
+                    Title: varCurrentMaterial.PN,
+                    PN: varCurrentMaterial.PN,
+                    LotNumber: varNewLotNumber,
+                    LotKey: varNewLotKey,
+                    LotItemID: varSavedLot.ID,
+                    ActionType: "Add",
+                    NewQty: Value(txtQty.Text),
+                    NewExpirationDate: dpExpirationDate.SelectedDate,
+                    ChangedAt: Now(),
+                    ChangedByName: User().FullName,
+                    ChangedByEmail: User().Email,
+                    Source: Coalesce(varSource, "Manual")
+                }
+            );
+
+            ClearCollect(colLots, CM_Lots);
+            ClearCollect(colTransactions, CM_Transactions);
+
+            Set(
+                varExpiredCount,
+                CountRows(
+                    Filter(
+                        colLots,
+                        IsActive = true &&
+                        ExpirationDate < Today()
+                    )
+                )
+            );
+
+            Set(
+                varDueSoonCount,
+                CountRows(
+                    Filter(
+                        colLots,
+                        IsActive = true &&
+                        ExpirationDate >= Today() &&
+                        ExpirationDate <= DateAdd(Today(), 30, TimeUnit.Days)
+                    )
+                )
+            );
+
+            Set(varSelectedLot, varSavedLot);
+            Set(varBusy, false);
+            Navigate(scrMaterial, ScreenTransition.Fade),
+
+            Set(varBusy, false);
+            Notify("Save failed: " & FirstError.Message, NotificationType.Error)
+        ),
+
+        // ── CHANGE MODE: update selected CM_Lots row only ──
+        IfError(
+            Set(
+                varSavedLot,
+                Patch(
+                    CM_Lots,
+                    varSelectedLot,
+                    {
+                        Title: varCurrentMaterial.PN,
+                        PN: varCurrentMaterial.PN,
+                        LotNumber: varNewLotNumber,
+                        LotKey: varNewLotKey,
+                        ExpirationDate: dpExpirationDate.SelectedDate,
+                        Qty: Value(txtQty.Text),
+                        Comments: Trim(txtComments.Text),
+                        IsActive: true,
+                        InventoryStatus: "Not checked",
+                        LastCheckedAt: Blank(),
+                        LastCheckedByName: Blank(),
+                        LastCheckedByEmail: Blank(),
+                        ChangedAt: Now(),
+                        ChangedByName: User().FullName,
+                        ChangedByEmail: User().Email
+                    }
+                )
+            );
+
+            Patch(
+                CM_Transactions,
+                Defaults(CM_Transactions),
+                {
+                    Title: varCurrentMaterial.PN,
+                    PN: varCurrentMaterial.PN,
+                    LotNumber: varNewLotNumber,
+                    LotKey: varNewLotKey,
+                    LotItemID: varSavedLot.ID,
+                    ActionType: "Change",
+                    OldQty: varSelectedLot.Qty,
+                    NewQty: Value(txtQty.Text),
+                    OldExpirationDate: varSelectedLot.ExpirationDate,
+                    NewExpirationDate: dpExpirationDate.SelectedDate,
+                    ChangedAt: Now(),
+                    ChangedByName: User().FullName,
+                    ChangedByEmail: User().Email,
+                    Source: Coalesce(varSource, "Manual")
+                }
+            );
+
+            ClearCollect(colLots, CM_Lots);
+            ClearCollect(colTransactions, CM_Transactions);
+
+            Set(
+                varExpiredCount,
+                CountRows(
+                    Filter(
+                        colLots,
+                        IsActive = true &&
+                        ExpirationDate < Today()
+                    )
+                )
+            );
+
+            Set(
+                varDueSoonCount,
+                CountRows(
+                    Filter(
+                        colLots,
+                        IsActive = true &&
+                        ExpirationDate >= Today() &&
+                        ExpirationDate <= DateAdd(Today(), 30, TimeUnit.Days)
+                    )
+                )
+            );
+
+            Set(varSelectedLot, varSavedLot);
+            Set(varBusy, false);
+            Navigate(scrMaterial, ScreenTransition.Fade),
+
+            Set(varBusy, false);
+            Notify("Save failed: " & FirstError.Message, NotificationType.Error)
+        )
+    )
+)

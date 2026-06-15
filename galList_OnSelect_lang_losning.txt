@@ -1,0 +1,12 @@
+=If(
+    ThisItem.RowType = "Material",
+    Set(varCurrentMaterial, LookUp(colMaster, PN = ThisItem.RowPN));
+    Set(varSelectedLot, Blank());
+    Set(varMaterialReturnTo, "List");
+    Navigate(scrMaterial, ScreenTransition.Fade),
+
+    Set(varCurrentMaterial, LookUp(colMaster, PN = ThisItem.RowPN));
+    Set(varSelectedLot, LookUp(colLots, ID = ThisItem.RowID));
+    Set(varMaterialReturnTo, "List");
+    Navigate(scrMaterial, ScreenTransition.Fade)
+)
