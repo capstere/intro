@@ -1,8 +1,0 @@
-=Set(varCurrentMaterial, LookUp(colMaster, PN = ThisItem.PN));
-If(
-    !IsBlank(ThisItem.LotItemID),
-    Set(varSelectedLot, LookUp(colLots, ID = ThisItem.LotItemID)),
-    Set(varSelectedLot, LookUp(colLots, LotKey = ThisItem.LotKey && IsActive = true))
-);
-Set(varMaterialReturnTo, "History");
-Navigate(scrMaterial, ScreenTransition.Fade)
