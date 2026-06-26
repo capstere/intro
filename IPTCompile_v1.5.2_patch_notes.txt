@@ -1,0 +1,78 @@
+IPTCompile v1.5.2 – QC merge och CSV-context
+Datum: 2026-06-25
+Bas: IPTCompile v1.5.1 PrefixDistribution
+
+IMPLEMENTERAT
+
+1. Korrekt sammanslagning av Primary och Resample QC
+- Primary- och Resample-rader analyseras separat men sammanfattas därefter om från samtliga redan analyserade rader.
+- Kombinerad Summary räknar om totaler, observed calls, deviations, retest, Minor Functional, Instrument Error, delaminering och replacement.
+- Kombinerad QC räknar om assay/version/lot, modulhotspots, prefixkontroll och globala Cartridge S/N-dubbletter.
+- Sample ID-dubbletter räknas per CSV-källa så att en avsiktlig repetition i Resample inte blir en falsk dubblett mot Primary.
+- Assay-/version-outliers, prefixflagga och modulhotspots räknas om på hela körningen.
+
+2. SourceCsv på varje RuleEngine-rad
+- Varje slutlig resultatrad får SourceCsv med det rena originalfilnamnet.
+- SourceCsvRole används internt som robust Primary/Resample-markör, även om två filer skulle ha samma filnamn.
+- QC Summary använder källinformationen i stället för att i första hand härleda Resample från Sample ID.
+
+3. Pressure Flag
+- Max Pressure >= 90 PSI utan värde i Error ger nu PRESSURE90_NOERR på den slutliga resultatraden.
+- Raden klassas som känd Minor Functional i sammanfattningen.
+
+4. Kombinerat testantal i audit
+- Både den körningsspecifika auditfilen och build_audit.csv använder kombinerad RuleEngine-total.
+- Primary + Resample CSV-statistik används som fallback om regelmotorn inte hann färdigställas.
+
+5. Små Resample-filer
+- En liten CSV med en eller två rader kan klassificeras som Resample när alla eller en hög andel av Sample ID-raderna innehåller RES-markör.
+- Tydliga filnamn med RESAMPLE/RESAMPLING klassificeras direkt.
+- En ensam svag RES-filnamnsmarkör utan stöd i innehållet behandlas fortsatt konservativt.
+
+6. RuleBank-version endast i audit
+- RuleBankVersion läggs till i den körningsspecifika auditfilen och build_audit.csv.
+- Äldre build_audit.csv migreras automatiskt med bibehållna poster och tom version för historiska rader.
+- RuleBank-version skrivs inte i Excelrapporten.
+
+7. QC Summary
+- Ny sektion: Namngivningskontroll.
+- Summerar ogiltigt/saknat prefix, prefixavvikelse, Run Number, Sample Number, suffix och Test Type.
+- Ny sektion: Radavstämning.
+- Jämför inlästa rader per CSV, analyserade RuleEngine-rader och prefixräknade rader.
+- Filnamnen visas i radavstämningen.
+
+8. Exakta assay-/lotfördelningar
+- En detaljtabell visas endast när fler än ett Assay-, Assay Version- eller Reagent Lot-värde förekommer.
+- Tabellen visar exakt värde och antal replikat.
+
+9. CSV-context och filinläsning
+- Varje staged CSV får ett gemensamt context med Lines, Profile, Headers, Rows, Assay, Stats och InstrumentSerials.
+- BuildFlow återanvänder contexten för regelmotor, statistik, headers, assay och utrustningsinformation.
+- BuildFlow innehåller inga nya direkta anrop till Read-TestSummaryCsvLines, Import-CsvRows, Get-AssayFromCsv, Get-CsvStats, Get-HeaderFromTestSummaryFile eller ConvertFrom-Csv.
+- Originalfiler läses för klassificering före staging. Staged kopior läses vid nödvändig normalisering och därefter en gemensam analysinläsning; senare rapportfaser läser inte CSV-filerna igen.
+
+ÖVRIG KORRIGERING
+- Sample ID-parserns mellanvariabler nollställs per rad så att ett tomt Sample ID inte kan ärva parserdata från föregående rad.
+
+VERSION
+- Modules/Config.ps1: v1.5.2 2026 06 25
+- Version.txt: v1.5.2 2026 06 25
+- ReleaseNotes.psd1 uppdaterad.
+
+STATISK VALIDERING
+- Samma 74 filer som i v1.5.1; inga filer tillagda eller borttagna.
+- 14 förväntade käll-/versionsfiler ändrade.
+- Samtliga fristående PowerShell-filer klarade lexical block-/strängbalanskontroll.
+- Samtliga 18 BuildFlow-fragment sammanfogades i appens verkliga ordning och klarade samma kontroll.
+- Alla ändrade PowerShell-filer behåller UTF-8 BOM och CRLF.
+- EPPlus.dll, DocumentFormat.OpenXml.dll, output_template-v4.xlsx och icon.png är byte-identiska med v1.5.1.
+- RuleBankVersion förekommer inte i QC Summary-/rapportskrivaren.
+
+BEGRÄNSNING
+Full exekvering i Windows PowerShell 5.1, WinForms och EPPlus kan inte genomföras i Linuxmiljön. Rekommenderade funktionstester före bred utrullning:
+- Primary utan Resample.
+- Primary + Resample med en rad.
+- Primary + normal Resample.
+- Max Pressure >= 90 med tom Error.
+- Blandade Assay/Assay Version/Reagent Lot.
+- Naming convention-avvikelser och korrekt radavstämning.
