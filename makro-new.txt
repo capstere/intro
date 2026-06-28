@@ -1,0 +1,189 @@
+Option Explicit
+
+'--------------------------------------------------------------
+' Detta VBA-makro synkroniserar Kontrollprovsfil.xlsm med
+' huvudfilen raw_data.xlsx.
+'
+' Makrot öppnar raw_data.xlsx som ReadOnly, kopierar data till
+' denna arbetsboks blad "raw_data", och försöker omordna block om
+' 4 rader så att rader med "N/A" i kolumn B hamnar sist i blocket.
+'
+' Ingen separat loggfil skapas.
+' PowerShell-scriptet ansvarar för audit/loggning av ändringar.
+'--------------------------------------------------------------
+
+Private Sub Workbook_Open()
+    On Error GoTo ErrorHandler
+
+    Call SyncWithMainFile
+    ThisWorkbook.Sheets("BULK SR").Activate
+
+    Exit Sub
+
+ErrorHandler:
+    MsgBox "Ett fel uppstod vid öppning: " & Err.Description, vbCritical
+End Sub
+
+Private Sub Workbook_BeforeClose(Cancel As Boolean)
+    ' Förhindra sparmeddelande för denna arbetsbok
+    ThisWorkbook.Saved = True
+End Sub
+
+Sub SyncWithMainFile()
+
+    Dim mainFilePath As String
+    Dim mainWorkbook As Workbook
+    Dim mainSheet As Worksheet
+    Dim mainRange As Range
+    Dim readOnlySheet As Worksheet
+    Dim readOnlyRange As Range
+
+    Dim oldDisplayAlerts As Boolean
+    Dim oldScreenUpdating As Boolean
+    Dim oldEnableEvents As Boolean
+
+    On Error GoTo ErrorHandler
+
+    ' Sökväg till huvudfilen
+    mainFilePath = "N:\QC\QC-1\IPT\8. IPT - WR + Rework\1. PQC - Kontrollprovsfil - RÖR EJ -\Script Raw Data\raw_data.xlsx"
+
+    ' Kontrollera att huvudfilen finns
+    If Dir(mainFilePath) = "" Then
+        MsgBox "Huvudfilen hittades inte:" & vbCrLf & mainFilePath, vbExclamation
+        Exit Sub
+    End If
+
+    ' Spara nuvarande Excel-inställningar
+    oldDisplayAlerts = Application.DisplayAlerts
+    oldScreenUpdating = Application.ScreenUpdating
+    oldEnableEvents = Application.EnableEvents
+
+    ' Gör synkningen tystare/snabbare
+    Application.DisplayAlerts = False
+    Application.ScreenUpdating = False
+    Application.EnableEvents = False
+
+    ' Öppna huvudfilen som ReadOnly
+    Set mainWorkbook = Workbooks.Open( _
+        Filename:=mainFilePath, _
+        ReadOnly:=True, _
+        UpdateLinks:=False, _
+        Notify:=False _
+    )
+
+    Set mainSheet = mainWorkbook.Sheets("raw_data")
+    Set mainRange = mainSheet.UsedRange
+
+    ' Referens till denna arbetsboks lokala raw_data-blad
+    Set readOnlySheet = ThisWorkbook.Sheets("raw_data")
+    Set readOnlyRange = readOnlySheet.UsedRange
+
+    ' Avskydda bladet tillfälligt
+    readOnlySheet.Unprotect Password:="labbkontroll"
+
+    ' Rensa gammalt innehåll
+    readOnlyRange.ClearContents
+
+    ' Kopiera data från huvudfilen till den lokala kopian
+    mainRange.Copy Destination:=readOnlySheet.Range("A1")
+
+    ' Omordna varje block om 4 rader så att N/A-lot hamnar sist
+    Call ReorderNAInBlocks(readOnlySheet, 4)
+
+    ' Skydda bladet igen
+    readOnlySheet.Protect Password:="labbkontroll", UserInterfaceOnly:=True
+
+    ' Stäng huvudfilen utan att spara
+    mainWorkbook.Close SaveChanges:=False
+    Set mainWorkbook = Nothing
+
+    ' Återställ Excel-inställningar
+    Application.DisplayAlerts = oldDisplayAlerts
+    Application.ScreenUpdating = oldScreenUpdating
+    Application.EnableEvents = oldEnableEvents
+
+    MsgBox "Read-only kopian har synkats med huvudfilen.", vbInformation
+
+    Exit Sub
+
+ErrorHandler:
+
+    ' Försök stänga huvudfilen om den hann öppnas
+    On Error Resume Next
+    If Not mainWorkbook Is Nothing Then
+        mainWorkbook.Close SaveChanges:=False
+    End If
+    Set mainWorkbook = Nothing
+
+    ' Återställ Excel-inställningar
+    Application.DisplayAlerts = oldDisplayAlerts
+    Application.ScreenUpdating = oldScreenUpdating
+    Application.EnableEvents = oldEnableEvents
+    On Error GoTo 0
+
+    MsgBox "Ett fel uppstod vid synkning: " & Err.Description, vbCritical
+
+End Sub
+
+'--------------------------------------------------------------
+' Sorterar om varje block med angiven blockstorlek.
+'
+' Exempel:
+' blockSize = 4 betyder att raderna behandlas i block om 4:
+' rad 2–5, 6–9, 10–13, osv.
+'
+' Rader där kolumn B = "N/A" flyttas sist inom blocket.
+'--------------------------------------------------------------
+Sub ReorderNAInBlocks(ws As Worksheet, blockSize As Long)
+
+    Dim lastRow As Long
+    Dim startRow As Long
+    Dim dataBlock As Variant
+    Dim i As Long
+    Dim j As Long
+    Dim k As Long
+    Dim tempValue As Variant
+    Dim lastCol As Long
+
+    lastRow = ws.UsedRange.Rows(ws.UsedRange.Rows.Count).Row
+    lastCol = ws.UsedRange.Columns(ws.UsedRange.Columns.Count).Column
+
+    For startRow = 2 To lastRow Step blockSize
+
+        ' Om vi inte har ett komplett block, hoppa över det
+        If startRow + blockSize - 1 > lastRow Then Exit For
+
+        ' Läs in blocket
+        dataBlock = ws.Range( _
+            ws.Cells(startRow, 1), _
+            ws.Cells(startRow + blockSize - 1, lastCol) _
+        ).Value
+
+        ' Enkel sortering: N/A i kolumn B hamnar sist
+        For i = 1 To UBound(dataBlock, 1) - 1
+            For j = i + 1 To UBound(dataBlock, 1)
+
+                If LCase(CStr(dataBlock(i, 2))) = "n/a" _
+                   And LCase(CStr(dataBlock(j, 2))) <> "n/a" Then
+
+                    ' Byt plats på hela raden
+                    For k = 1 To UBound(dataBlock, 2)
+                        tempValue = dataBlock(i, k)
+                        dataBlock(i, k) = dataBlock(j, k)
+                        dataBlock(j, k) = tempValue
+                    Next k
+
+                End If
+
+            Next j
+        Next i
+
+        ' Skriv tillbaka det sorterade blocket
+        ws.Range( _
+            ws.Cells(startRow, 1), _
+            ws.Cells(startRow + blockSize - 1, lastCol) _
+        ).Value = dataBlock
+
+    Next startRow
+
+End Sub
