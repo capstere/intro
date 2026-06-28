@@ -1,7 +1,0 @@
-Testa gärna främst:
-
-* en “normal” körning utan CSV-avvikelser
-* en körning där du vet att CSV-avvikelser finns
-* Primary + Resample
-* MTB XDR-fallet där RES förekommer i Sample ID
-* att QC Summary känns renare och inte tappar något viktigt
