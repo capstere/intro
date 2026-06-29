@@ -1,0 +1,40 @@
+Dessa har jag testat>
+
+ZCV_PP_PRDORD_CMP_DTLS
+
+{    "BUoM": "EA",    "Bin": "PSA-AMBINT",    "Component": "302-2291",    "Component_x0020_Batch": "80260521A",    "Confirmed_x0020_Qty": 17100,    "Creation_x0020_Date": "2026-06-26",    "Material": "GXCT/NGX-CE-10",    "Material_x0020_Group": "Kits",    "Order_x0020_Batch": "1001539319",    "Order_x0020_Type": "CPH1",    "Ordernummer": "1117992",    "Planner": "03666448JWET",    "Prod_x0020_ver": "0070",    "Qty_x0020_in_x0020_UoM": 17100,    "Req_x0020_Qty": 17100,    "Reservation": "0011736239",    "ReservationPos": "0044",    "Staging_x0020_ind": "1",    "Status": "I0295",    "Status_x0020_long_x0020_text": "RA data in object currency",    "Status_x0020_short_x0020_text": "RAOC",    "Step": "0250",    "Total_x0020_order_x0020_Qty": 1500,    "UoM": "EA",    "Withdrawn_x0020_Qty": 0}
+
+
+WO_Header:
+
+{    "Batch": "1001483254",    "Change_ID": 114,    "Closure_Date": "2025-05-07T14:45:17.597Z",    "Closure_Function": "MH",    "Closure_User": "jack.bahdi@cepheid.com",    "Comment": "Vi behöver mer lock. linan har problem med skorstenar så vi måste sortera visa cavity av lock. \nproblemet är eskalerad till ingenjörer för att kunna undersöka och åtgärda problemet",    "Component": "302-1455",    "Component_batch": "250020007",    "Init_Date": "2025-05-07T10:26:44.340Z",    "Init_Function": "OP",    "Init_User": "afshin.shareghi@cepheid.com",    "Order": "1104648",    "Product": "GXMTB/RIF-ULTRA-50\nXPERT MTB/RIF ULTRA,50-TEST KIT,CE-IVD",    "Reason": "Extra material behövs",    "Req_qty": "20000",    "Standstill": "nej",    "UoM": "EA",    "Urgent": "nej",    "Workcenter": "ROBAL",    "change_Function": "PP-IVD",    "change_date": "2025-05-07T14:11:27.250Z",    "change_user": "jean.verhaeghe@cepheid.com",    "new_batch": "250020011",    "new_comment": "I've allocated 20000ea 250020011",    "new_component": "302-1455",    "new_qty": "20000"}
+
+OCLots:
+
+{    "BatchNo": "1000582424",    "FirstSerialNr": "177406268",    "LSP": "16601",    "MaterialCodeKit": "GXHBV-VL-CE-10",    "OCMold": " Y ",    "OCSAP": "\n1000484243",    "ProductionDay": "20221121                                                        ",    "ProductionOrder": "1074472",    "SamplingPoints": " 10"}
+
+IPT_SharepointToggle:
+
+{    "ID": 1,    "IPT_CompilingData": "2025-11-03T08:00:00.000Z",    "IPT_ErrorFreeText": "Test 123",    "IPT_TestResult": "Approved",    "IPT_TestingFinalized": "2025-11-03T02:00:00.000Z",    "LSP": 33202,    "OrderNumber": "1110751",    "ROBAL_End": "2025-11-02T23:00:00.000Z",    "ROBAL_Start": "2025-11-02T06:00:00.000Z"}
+
+IPT Ongoing:
+
+{    "BagTested": 5,    "BatchNo": "1.00038552310003e+19",    "Duration": 36935,    "LSP": "34002 ",    "MajorErrors": 0,    "STF": 0,    "Time": "2022-04-11T10:38:23.467Z",    "TimeUpdated": "2022-04-12T04:33:29.200Z",    "TotalNoErrors": 2}
+
+WMINVENTORY_CopyIPT:
+
+{    "Batch_Number": "1000273987",    "MOLD": "J",    "Material_Desc": "LID,CAP,REAGENT ON-BOARD,GX CART",    "Material_Number": "300-4705",    "Plant": "1010"}
+
+IPTApp_PALPackIt_Unique:
+
+{    "BagTested": 4,    "MajorError": 0,    "MinorError": 0,    "PALPackStatus": "Pending",    "ProductionOrder": "#REF!",    "STF": 0,    "SingleErrorFailureMode": 0}
+
+BusinessSolnaWorkflow:
+
+{    "Order_x0023_": "1115630",    "PAL_x0020__x002d__x0020_Work_x0020_Center": "PAL4"}
+
+
+MESNWK12_CopyIPT:
+
+{    "CVS": "E/F/M",    "Date": "09-10-22",    "Disposition": "Pass",    "LotNum1": "091022AJ08",    "cpdBottomMold": "F",    "cpdCapMold": "E",    "cpdCartBodyMold": "DF",    "cpdGXTubeMold": "H",    "cpdSyringeTubeMold": "M",    "cpdVBMold": "F",    "cpdbatchid": "1000504328",    "productname": "700-3605",    "resource": "NJ-PL08"}
+
